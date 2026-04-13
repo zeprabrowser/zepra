@@ -138,6 +138,8 @@ set(NXRENDER_SOURCES
     web/document_view.cpp
     web/forms.cpp
     web/accessibility.cpp
+    web/advanced.cpp
+    web/compositor.cpp
 
     # canvas 2D & WebGL
     nxgfx/canvas2d/canvas_context.cpp
