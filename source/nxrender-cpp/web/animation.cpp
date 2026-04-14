@@ -296,9 +296,10 @@ void KeyframeEffect::applyToStyle(ComputedValues& cv, const std::string& prop,
         // Serialize the animated TransformMatrix into CSS matrix() notation
         // for the paint pipeline. The 2D subset uses 6 values: a,b,c,d,tx,ty
         const auto& m = value.transform;
+        // CSS matrix(a,b,c,d,tx,ty) — column-major: a=m(0,0) b=m(1,0) c=m(0,1) d=m(1,1) tx=m(0,3) ty=m(1,3)
         char buf[256];
         snprintf(buf, sizeof(buf), "matrix(%.6g,%.6g,%.6g,%.6g,%.6g,%.6g)",
-                 m.m[0][0], m.m[1][0], m.m[0][1], m.m[1][1], m.m[3][0], m.m[3][1]);
+                 m.at(0,0), m.at(1,0), m.at(0,1), m.at(1,1), m.at(0,3), m.at(1,3));
         cv.transform = buf;
     } else if (prop == "width") {
         cv.width = std::max(0.0f, value.number);
