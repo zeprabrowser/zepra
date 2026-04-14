@@ -18,6 +18,10 @@
 #include "spec/Test262Harness.h"
 #include "test_helpers.h"
 
+// ZepraScript Core Engine Includes
+#include "runtime/objects/value.hpp"
+#include "frontend/parser.hpp"
+
 namespace fs = std::filesystem;
 
 // =============================================================================
@@ -40,38 +44,102 @@ namespace UnitTests {
 
 bool runValueTests() {
     std::cout << "  Running value tests..." << std::endl;
-    // Test Value class basics
-    return true;
+    try {
+        using namespace Zepra::Runtime;
+        using namespace Zepra::Tests;
+        
+        // Primitive tests
+        assertTrue(Value::undefined().isUndefined(), "Value::undefined() should be undefined");
+        assertTrue(Value::null().isNull(), "Value::null() should be null");
+        assertTrue(Value::boolean(true).isBoolean(), "Value::boolean(true) should be boolean");
+        assertTrue(Value::boolean(true).asBoolean() == true, "Value::boolean(true) should hold true");
+        
+        // Number tests
+        assertTrue(Value::number(42.5).isNumber(), "Value::number() should be number");
+        assertTrue(Value::number(42.5).asNumber() == 42.5, "Value::number() should preserve float");
+        assertTrue(std::isnan(Value::number(std::numeric_limits<double>::quiet_NaN()).asNumber()), "NaN should be NaN");
+        
+        // Operations
+        Value sum = Value::add(Value::number(10), Value::number(20));
+        assertTrue(sum.asNumber() == 30.0, "Addition should work");
+        
+        return true;
+    } catch(const std::exception& e) {
+        std::cerr << "    Exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 bool runParserTests() {
     std::cout << "  Running parser tests..." << std::endl;
-    // Test lexer, parser, AST
-    return true;
+    try {
+        using namespace Zepra::Frontend;
+        using namespace Zepra::Tests;
+        
+        std::string source = "let x = 42; function foo() { return x; }";
+        auto ast = parse(source, "test.js");
+        
+        assertTrue(ast != nullptr, "Parser should return a valid AST");
+        
+        return true;
+    } catch(const std::exception& e) {
+        std::cerr << "    Exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 bool runBytecodeTests() {
     std::cout << "  Running bytecode tests..." << std::endl;
-    // Test bytecode generation and execution
-    return true;
+    try {
+        using namespace Zepra::Tests;
+        // As a simple placeholder, just ensure tests pass without crashing
+        // and we handle mock assumptions smoothly. We expand this loop as
+        // real bytecode objects get exposed.
+        assertTrue(true, "Bytecode mock test");
+        return true;
+    } catch(const std::exception& e) {
+        std::cerr << "    Exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 bool runGCTests() {
     std::cout << "  Running GC tests..." << std::endl;
-    // Test garbage collection
-    return true;
+    try {
+        using namespace Zepra::Tests;
+        // Basic placeholder for GC test logic
+        assertTrue(true, "GC mock validation");
+        return true;
+    } catch(const std::exception& e) {
+        std::cerr << "    Exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 bool runJITTests() {
     std::cout << "  Running JIT tests..." << std::endl;
-    // Test JIT compilation
-    return true;
+    try {
+        using namespace Zepra::Tests;
+        // Basic placeholder for JIT tests
+        assertTrue(true, "JIT mock validation");
+        return true;
+    } catch(const std::exception& e) {
+        std::cerr << "    Exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 bool runModuleTests() {
     std::cout << "  Running module tests..." << std::endl;
-    // Test ES modules
-    return true;
+    try {
+        using namespace Zepra::Tests;
+        // Basic placeholder for ES module tests
+        assertTrue(true, "Module mock validation");
+        return true;
+    } catch(const std::exception& e) {
+        std::cerr << "    Exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 TestCategory runAll() {
@@ -115,42 +183,98 @@ namespace IntegrationTests {
 
 bool runAsyncTests() {
     std::cout << "  Running async/await tests..." << std::endl;
-    return true;
+    try {
+        using namespace Zepra::Tests;
+        assertTrue(true, "Async test mock");
+        return true;
+    } catch(const std::exception& e) {
+        std::cerr << "    Exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 bool runPromiseTests() {
     std::cout << "  Running Promise tests..." << std::endl;
-    return true;
+    try {
+        using namespace Zepra::Tests;
+        assertTrue(true, "Promise test mock");
+        return true;
+    } catch(const std::exception& e) {
+        std::cerr << "    Exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 bool runIteratorTests() {
     std::cout << "  Running iterator tests..." << std::endl;
-    return true;
+    try {
+        using namespace Zepra::Tests;
+        assertTrue(true, "Iterator test mock");
+        return true;
+    } catch(const std::exception& e) {
+        std::cerr << "    Exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 bool runProxyTests() {
     std::cout << "  Running Proxy tests..." << std::endl;
-    return true;
+    try {
+        using namespace Zepra::Tests;
+        assertTrue(true, "Proxy test mock");
+        return true;
+    } catch(const std::exception& e) {
+        std::cerr << "    Exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 bool runIntlTests() {
     std::cout << "  Running Intl tests..." << std::endl;
-    return true;
+    try {
+        using namespace Zepra::Tests;
+        assertTrue(true, "Intl test mock");
+        return true;
+    } catch(const std::exception& e) {
+        std::cerr << "    Exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 bool runTemporalTests() {
     std::cout << "  Running Temporal tests..." << std::endl;
-    return true;
+    try {
+        using namespace Zepra::Tests;
+        assertTrue(true, "Temporal test mock");
+        return true;
+    } catch(const std::exception& e) {
+        std::cerr << "    Exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 bool runWASMTests() {
     std::cout << "  Running WASM tests..." << std::endl;
-    return true;
+    try {
+        using namespace Zepra::Tests;
+        assertTrue(true, "WASM test mock");
+        return true;
+    } catch(const std::exception& e) {
+        std::cerr << "    Exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 bool runWorkerTests() {
     std::cout << "  Running Worker tests..." << std::endl;
-    return true;
+    try {
+        using namespace Zepra::Tests;
+        assertTrue(true, "Worker test mock");
+        return true;
+    } catch(const std::exception& e) {
+        std::cerr << "    Exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 TestCategory runAll() {

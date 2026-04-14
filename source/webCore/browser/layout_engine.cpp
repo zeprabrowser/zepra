@@ -475,10 +475,7 @@ void layoutBlock(LayoutBox& box, float containingWidth, float startY) {
     }
     
 
-    if (box.type == LayoutType::Inline || box.type == LayoutType::InlineBlock) {
-        printf("[Layout Debug] Inline element id=%d width=%f height=%f x=%f y=%f\n", 
-            (int)box.type, box.width, box.height, (double)box.x, (double)box.y);
-    }
+
 }
 
 // =============================================================================

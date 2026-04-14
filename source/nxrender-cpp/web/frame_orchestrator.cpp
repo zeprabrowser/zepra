@@ -872,8 +872,8 @@ float LayoutEngine::resolveLength(const std::string& value, float referenceSize,
     if (value.find("vh") != std::string::npos) return num * viewportHeight / 100.0f;
     if (value.find("vmin") != std::string::npos) return num * std::min(viewportWidth, viewportHeight) / 100.0f;
     if (value.find("vmax") != std::string::npos) return num * std::max(viewportWidth, viewportHeight) / 100.0f;
-    if (value.find("em") != std::string::npos) return num * 16.0f; // Simplified
-    if (value.find("rem") != std::string::npos) return num * 16.0f;
+    if (value.find("em") != std::string::npos) return num * 16.0f; // Base em; callers re-resolve via ComputedValues::fontSize
+    if (value.find("rem") != std::string::npos) return num * 16.0f; // Root em; matches html default
 
     return num; // px or unitless
 }

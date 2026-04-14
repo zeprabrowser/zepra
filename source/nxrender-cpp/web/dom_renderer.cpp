@@ -595,7 +595,13 @@ RenderResult DOMRenderer::render(
     rootContainer->layout();
     
     result.rootWidget = std::move(rootContainer);
-    result.contentHeight = options.viewportHeight;  // TODO: actual content height
+    // Compute actual content height from the root widget's layout bounds
+    if (result.rootWidget) {
+        result.contentHeight = result.rootWidget->measuredHeight();
+        if (result.contentHeight <= 0) result.contentHeight = options.viewportHeight;
+    } else {
+        result.contentHeight = options.viewportHeight;
+    }
 #endif
     
     return result;

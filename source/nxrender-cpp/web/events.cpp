@@ -246,9 +246,7 @@ bool FocusManager::isFocusable(BoxNode* node) {
     if (cv.display == 0) return false;  // display:none
     if (cv.visibility == 1) return false; // hidden
 
-    // Interactive elements: input, button, a, textarea, select
-    // Or elements with tabindex >= 0
-    // Simplified: check tag name
+    // Natively interactive elements are always focusable
     const std::string& tag = node->tag();
     if (tag == "input" || tag == "button" || tag == "a" ||
         tag == "textarea" || tag == "select" || tag == "details" ||
