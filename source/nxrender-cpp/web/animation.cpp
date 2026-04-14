@@ -293,10 +293,13 @@ void KeyframeEffect::applyToStyle(ComputedValues& cv, const std::string& prop,
     if (prop == "opacity") {
         cv.opacity = std::clamp(value.number, 0.0f, 1.0f);
     } else if (prop == "transform") {
-        // Store transform matrix — paint pipeline reads cv.transform
-        // We need to serialize back or store the matrix directly
-        // For now: mark as having an active animation transform
-        cv.transform = "matrix(1,0,0,1,0,0)"; // Placeholder — real path uses the matrix
+        // Serialize the animated TransformMatrix into CSS matrix() notation
+        // for the paint pipeline. The 2D subset uses 6 values: a,b,c,d,tx,ty
+        const auto& m = value.transform;
+        char buf[256];
+        snprintf(buf, sizeof(buf), "matrix(%.6g,%.6g,%.6g,%.6g,%.6g,%.6g)",
+                 m.m[0][0], m.m[1][0], m.m[0][1], m.m[1][1], m.m[3][0], m.m[3][1]);
+        cv.transform = buf;
     } else if (prop == "width") {
         cv.width = std::max(0.0f, value.number);
         cv.widthAuto = false;

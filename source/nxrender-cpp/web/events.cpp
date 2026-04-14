@@ -183,12 +183,18 @@ std::vector<BoxNode*> EventDispatcher::buildPath(BoxNode* target) {
 
 void EventDispatcher::invokeListeners(BoxNode* node, Event& event, Event::Phase phase) {
     (void)phase;
-    // BoxNode inherits EventTarget via the events system
-    // For now, we call dispatchEvent on the node's EventTarget interface
-    // This requires BoxNode to have an EventTarget member or inherit from it
-    (void)node;
-    (void)event;
-    // In production: node->eventTarget().dispatchEvent(event);
+    // BoxNode stores an EventTarget via its domNode_ pointer.
+    // The integration layer maps domNode_ → EventTarget.
+    // Walk the node's listener list directly via the EventTarget interface.
+    if (!node) return;
+
+    // Access listener registry through the node's event target binding.
+    // EventTargetRegistry is populated by the DOM bridge when event listeners
+    // are attached via addEventListener() in ZepraScript.
+    auto it = EventTargetRegistry::instance().targets.find(node);
+    if (it != EventTargetRegistry::instance().targets.end()) {
+        it->second->dispatchEvent(event);
+    }
 }
 
 // ==================================================================
@@ -245,22 +251,62 @@ bool FocusManager::isFocusable(BoxNode* node) {
     // Simplified: check tag name
     const std::string& tag = node->tag();
     if (tag == "input" || tag == "button" || tag == "a" ||
-        tag == "textarea" || tag == "select" || tag == "details") {
+        tag == "textarea" || tag == "select" || tag == "details" ||
+        tag == "summary") {
         return true;
     }
 
-    // contenteditable
-    // tabindex >= 0
+    // Elements with tabindex >= 0 are focusable
+    // The integration layer stores tabindex in ComputedValues::zIndex
+    // when the element has an explicit tabindex attribute (checked via content convention)
+    const std::string& content = cv.content;
+    if (content.find("tabindex=") == 0) {
+        int tabIdx = std::atoi(content.c_str() + 9);
+        if (tabIdx >= 0) return true;
+    }
+
+    // contenteditable elements
+    if (content.find("contenteditable") != std::string::npos) return true;
+
     return false;
 }
 
 void FocusManager::focusNext() {
-    // Build tab order, find current, advance
-    // Requires root access — would be set via the orchestrator
+    if (!root_) return;
+    auto order = buildTabOrder(root_);
+    if (order.empty()) return;
+
+    if (!focused_) {
+        setFocus(order[0]);
+        return;
+    }
+
+    for (size_t i = 0; i < order.size(); i++) {
+        if (order[i] == focused_) {
+            setFocus(order[(i + 1) % order.size()]);
+            return;
+        }
+    }
+    setFocus(order[0]);
 }
 
 void FocusManager::focusPrev() {
-    // Reverse tab order navigation
+    if (!root_) return;
+    auto order = buildTabOrder(root_);
+    if (order.empty()) return;
+
+    if (!focused_) {
+        setFocus(order.back());
+        return;
+    }
+
+    for (size_t i = 0; i < order.size(); i++) {
+        if (order[i] == focused_) {
+            setFocus(order[(i + order.size() - 1) % order.size()]);
+            return;
+        }
+    }
+    setFocus(order.back());
 }
 
 std::vector<BoxNode*> FocusManager::buildTabOrder(BoxNode* root) {

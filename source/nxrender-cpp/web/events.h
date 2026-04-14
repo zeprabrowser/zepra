@@ -237,6 +237,30 @@ protected:
 };
 
 // ==================================================================
+// EventTargetRegistry — maps BoxNodes to their EventTarget listeners
+// ==================================================================
+
+class EventTargetRegistry {
+public:
+    static EventTargetRegistry& instance() {
+        static EventTargetRegistry reg;
+        return reg;
+    }
+
+    std::unordered_map<BoxNode*, EventTarget*> targets;
+
+    void registerTarget(BoxNode* node, EventTarget* target) {
+        targets[node] = target;
+    }
+    void unregisterTarget(BoxNode* node) {
+        targets.erase(node);
+    }
+
+private:
+    EventTargetRegistry() = default;
+};
+
+// ==================================================================
 // EventDispatcher — captures + bubbles through the DOM tree
 // ==================================================================
 
@@ -275,7 +299,12 @@ public:
 private:
     FocusManager() = default;
     BoxNode* focused_ = nullptr;
+    BoxNode* root_ = nullptr;
 
+public:
+    void setRoot(BoxNode* root) { root_ = root; }
+
+private:
     std::vector<BoxNode*> buildTabOrder(BoxNode* root);
 };
 

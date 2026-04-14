@@ -361,9 +361,34 @@ std::vector<MediaQueryEvaluator::MediaQuery> MediaQueryEvaluator::parse(const st
                     f.name = f.name.substr(4);
                 }
             } else {
-                // Range syntax: width >= 768px
-                // Simplified: just store the name
-                f.name = feature;
+                // MQ Level 4 range syntax: e.g. "width >= 768px", "width < 1024px"
+                // Parse: name operator value
+                size_t opPos = std::string::npos;
+                std::string op;
+                for (size_t p = 0; p < feature.size(); p++) {
+                    if (feature[p] == '>' || feature[p] == '<') {
+                        opPos = p;
+                        op = feature[p];
+                        if (p + 1 < feature.size() && feature[p+1] == '=') {
+                            op += '=';
+                        }
+                        break;
+                    }
+                }
+                if (opPos != std::string::npos) {
+                    f.name = feature.substr(0, opPos);
+                    while (!f.name.empty() && std::isspace(f.name.back())) f.name.pop_back();
+                    std::string valStr = feature.substr(opPos + op.size());
+                    while (!valStr.empty() && std::isspace(valStr.front())) valStr.erase(0, 1);
+                    f.value = valStr;
+                    f.isRange = true;
+                    float val = parseLength(valStr);
+                    if (op == ">=" || op == ">") { f.hasMin = true; f.minValue = val; }
+                    else if (op == "<=" || op == "<") { f.hasMax = true; f.maxValue = val; }
+                } else {
+                    // Boolean feature (e.g. just "color" with no value)
+                    f.name = feature;
+                }
             }
 
             mq.features.push_back(f);

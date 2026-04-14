@@ -205,6 +205,12 @@ public:
 
     // JSON-encode form data
     static std::string jsonEncode(const std::vector<FormEntry>& entries);
+
+private:
+    // Extract form field name from a BoxNode.
+    // The DOMBoxBuilder stores the name attribute in ComputedValues::content
+    // using the convention "name=fieldname" for form controls.
+    static std::string extractFormFieldName(const BoxNode* node);
 };
 
 // ==================================================================

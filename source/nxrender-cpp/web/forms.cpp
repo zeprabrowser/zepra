@@ -771,14 +771,66 @@ std::vector<FormDataCollector::FormEntry> FormDataCollector::collect(const BoxNo
     std::vector<FormEntry> entries;
     if (!formRoot) return entries;
 
-    // DFS traverse looking for form control tags
     std::function<void(const BoxNode*)> walk = [&](const BoxNode* node) {
         const std::string& tag = node->tag();
-        if (tag == "input" || tag == "textarea" || tag == "select" ||
-            tag == "input-checkbox" || tag == "input-radio") {
-            // Extract name from computed values or domNode attributes
-            // For now, use tag as placeholder
+
+        // Standard text inputs and textarea
+        if (tag == "input" || tag == "textarea") {
+            FormEntry entry;
+            // Name is stored via computed values or from the DOM node's name attribute.
+            // BoxNode stores a domNode_ pointer; the integration layer resolves
+            // the name attribute at DOMBoxBuilder time and stores it in ComputedValues::content
+            // as a convention: content = "name=fieldname" for form controls.
+            entry.name = extractFormFieldName(node);
+            if (!entry.name.empty()) {
+                // Value: the text content of the first text child
+                for (const auto& child : node->children()) {
+                    if (child->isTextNode()) {
+                        entry.value = child->text();
+                        break;
+                    }
+                }
+                entries.push_back(entry);
+            }
         }
+        // Checkbox and radio — only submit if checked
+        else if (tag == "input-checkbox" || tag == "input-radio") {
+            // A checked checkbox/radio has a checkmark/dot child
+            bool checked = !node->children().empty();
+            if (checked) {
+                FormEntry entry;
+                entry.name = extractFormFieldName(node);
+                if (!entry.name.empty()) {
+                    entry.value = "on"; // Default HTML value for checked checkbox
+                    entries.push_back(entry);
+                }
+            }
+        }
+        // Select — find the selected option text
+        else if (tag == "select") {
+            FormEntry entry;
+            entry.name = extractFormFieldName(node);
+            if (!entry.name.empty()) {
+                // Walk children to find selected option text
+                for (const auto& child : node->children()) {
+                    if (child->tag() == "option" || child->tag() == "select-dropdown") {
+                        for (const auto& optChild : child->children()) {
+                            if (optChild->isTextNode()) {
+                                entry.value = optChild->text();
+                                break;
+                            }
+                        }
+                        if (!entry.value.empty()) break;
+                    }
+                    // Inline selected text (not inside dropdown)
+                    if (child->isTextNode() && child->text() != "\u25BC") {
+                        entry.value = child->text();
+                    }
+                }
+                entries.push_back(entry);
+            }
+        }
+
         for (const auto& child : node->children()) {
             walk(child.get());
         }
@@ -786,6 +838,24 @@ std::vector<FormDataCollector::FormEntry> FormDataCollector::collect(const BoxNo
     walk(formRoot);
 
     return entries;
+}
+
+std::string FormDataCollector::extractFormFieldName(const BoxNode* node) {
+    if (!node) return "";
+
+    // Convention: DOMBoxBuilder stores form field name in ComputedValues::content
+    // as "name=fieldname" for input/textarea/select elements.
+    const std::string& content = node->computed().content;
+    if (content.find("name=") == 0) {
+        return content.substr(5);
+    }
+
+    // Fallback: use the tag itself combined with child index to generate a unique name
+    // This ensures form data is still collected even without explicit naming
+    if (node->parent()) {
+        return node->tag() + "_" + std::to_string(node->childIndex());
+    }
+    return node->tag();
 }
 
 std::string FormDataCollector::urlEncode(const std::vector<FormEntry>& entries) {

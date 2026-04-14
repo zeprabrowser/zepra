@@ -784,7 +784,7 @@ std::vector<Shadow> Shadow::parse(const std::string& value) {
     std::istringstream stream(value);
     std::string segment;
 
-    // Simplified parser: split on commas not inside parens
+    // Split shadow list on commas, respecting parenthesized rgb()/hsl() groups
     std::vector<std::string> segments;
     int parenDepth = 0;
     std::string current;
@@ -922,19 +922,73 @@ TextEffects::WordBreak TextEffects::parseWordBreak(const std::string& value) {
     return WordBreak::Normal;
 }
 
-bool TextEffects::shouldHyphenate(const std::string& /*word*/, const std::string& /*lang*/) {
-    // Simplified: would need a hyphenation dictionary
-    return false;
+bool TextEffects::shouldHyphenate(const std::string& word, const std::string& /*lang*/) {
+    // Hyphenation requires at least 5 characters and checks that the word
+    // contains vowels (indicating it's a real word, not an abbreviation).
+    if (word.size() < 5) return false;
+    bool hasVowel = false;
+    for (char c : word) {
+        char lc = static_cast<char>(std::tolower(c));
+        if (lc == 'a' || lc == 'e' || lc == 'i' || lc == 'o' || lc == 'u') {
+            hasVowel = true;
+            break;
+        }
+    }
+    return hasVowel;
 }
 
 std::vector<int> TextEffects::hyphenationPoints(const std::string& word, const std::string& /*lang*/) {
     std::vector<int> points;
-    // Basic syllable boundary heuristic
+    if (word.size() < 5) return points;
+
+    // Liang-algorithm-inspired heuristic for syllable boundaries.
+    // Rules:
+    //   1. Never break within 2 chars of either end
+    //   2. Break between vowel-consonant-vowel (V-CV) at the consonant
+    //   3. Break between two consonants (VC-CV) at the boundary
+    //   4. Never break around digraphs (ch, sh, th, ph, wh, ck, ng)
+
+    auto isVowel = [](char c) -> bool {
+        char lc = static_cast<char>(std::tolower(c));
+        return lc == 'a' || lc == 'e' || lc == 'i' || lc == 'o' || lc == 'u' || lc == 'y';
+    };
+
+    auto isDigraph = [](char a, char b) -> bool {
+        char la = static_cast<char>(std::tolower(a));
+        char lb = static_cast<char>(std::tolower(b));
+        return (la == 'c' && lb == 'h') || (la == 's' && lb == 'h') ||
+               (la == 't' && lb == 'h') || (la == 'p' && lb == 'h') ||
+               (la == 'w' && lb == 'h') || (la == 'c' && lb == 'k') ||
+               (la == 'n' && lb == 'g') || (la == 'q' && lb == 'u');
+    };
+
     for (size_t i = 2; i < word.size() - 2; i++) {
-        bool prevVowel = std::string("aeiouAEIOU").find(word[i-1]) != std::string::npos;
-        bool currConsonant = std::string("aeiouAEIOU").find(word[i]) == std::string::npos;
-        if (prevVowel && currConsonant) {
+        // Skip non-alpha
+        if (!std::isalpha(word[i]) || !std::isalpha(word[i-1])) continue;
+
+        // Don't break digraphs
+        if (isDigraph(word[i-1], word[i]) || isDigraph(word[i], word[i+1])) continue;
+
+        bool prevV = isVowel(word[i-1]);
+        bool currC = !isVowel(word[i]);
+        bool nextV = isVowel(word[i+1]);
+
+        // V-CV pattern: break before the consonant
+        if (prevV && currC && nextV) {
             points.push_back(static_cast<int>(i));
+            i++; // skip to avoid adjacent breaks
+            continue;
+        }
+
+        // VC-CV pattern: break between the consonants
+        bool prevC = !isVowel(word[i-1]);
+        bool currV = isVowel(word[i]);
+        if (prevC && currV) {
+            // Check if i-2 was a vowel (VCC-V)
+            if (i >= 3 && isVowel(word[i-2])) {
+                points.push_back(static_cast<int>(i - 1));
+                continue;
+            }
         }
     }
     return points;

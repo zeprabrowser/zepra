@@ -533,7 +533,24 @@ Selection::Direction Selection::direction() const {
         if (focus_.offset < anchor_.offset) return Direction::Backward;
         return Direction::None;
     }
-    return Direction::Forward; // Simplified
+
+    // Determine tree order by walking ancestor chains
+    std::vector<BoxNode*> chainA, chainF;
+    for (auto* n = anchor_.node; n; n = n->parent()) chainA.push_back(n);
+    for (auto* n = focus_.node; n; n = n->parent()) chainF.push_back(n);
+
+    // Walk from root (back of chain) toward leaves until chains diverge
+    int ia = static_cast<int>(chainA.size()) - 1;
+    int ifa = static_cast<int>(chainF.size()) - 1;
+    while (ia >= 0 && ifa >= 0 && chainA[ia] == chainF[ifa]) { ia--; ifa--; }
+
+    if (ia < 0) return Direction::Forward;  // anchor is ancestor of focus
+    if (ifa < 0) return Direction::Backward; // focus is ancestor of anchor
+
+    // Compare sibling indices under their common ancestor
+    size_t idxA = chainA[ia]->childIndex();
+    size_t idxF = chainF[ifa]->childIndex();
+    return (idxA < idxF) ? Direction::Forward : Direction::Backward;
 }
 
 std::vector<BoxNode*> Selection::textNodesBetween(BoxNode* from, BoxNode* to) const {
