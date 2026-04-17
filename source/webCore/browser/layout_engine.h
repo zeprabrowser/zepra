@@ -96,9 +96,11 @@ struct LayoutBox {
     // Box sizing context
     int boxSizing = 0; // 0=ContentBox, 1=BorderBox
     
-    // Margin auto flags (for centering in layoutBlock)
+    // Margin auto flags (for centering)
     bool marginLeftAuto = false;
     bool marginRightAuto = false;
+    bool marginTopAuto = false;
+    bool marginBottomAuto = false;
     
     // Raw CSS dimensions — resolved in layoutBlock() with correct containing width
     LayoutLength cssWidth;

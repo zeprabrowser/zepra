@@ -202,9 +202,33 @@ void layoutBlock(LayoutBox& box, float containingWidth, float startY) {
             layoutBlock(child, childAvailableWidth, 0);
             child.type = oldType;
             
-            if (child.width == 0 && !child.text.empty())
-                child.width = measureTextWidth(child.text, child.fontSize) + 8;
-            if (child.height == 0) child.height = child.fontSize + 8;
+            // Shrink-to-fit: compute width from children if no explicit width was set
+            if (child.width == 0 || (!child.cssWidth.isSet() || child.cssWidth.isAuto())) {
+                float maxChildRight = 0;
+                for (auto& grandchild : child.children) {
+                    float right = grandchild.x + grandchild.width + grandchild.marginRight;
+                    maxChildRight = std::max(maxChildRight, right);
+                }
+                if (!child.text.empty()) {
+                    float tw = measureTextWidth(child.text, child.fontSize);
+                    maxChildRight = std::max(maxChildRight, tw);
+                }
+                float shrinkWidth = maxChildRight + child.paddingRight + child.borderRight;
+                if (shrinkWidth > child.width) child.width = shrinkWidth;
+                // Ensure at least padding box
+                float minPadBox = child.paddingLeft + child.paddingRight + child.borderLeft + child.borderRight;
+                if (child.width < minPadBox) child.width = minPadBox;
+            }
+            // Ensure minimum height from content
+            if (child.height == 0) {
+                float maxChildBottom = 0;
+                for (auto& grandchild : child.children) {
+                    float bottom = grandchild.y + grandchild.height + grandchild.marginBottom;
+                    maxChildBottom = std::max(maxChildBottom, bottom);
+                }
+                child.height = maxChildBottom + child.paddingBottom + child.borderBottom;
+                if (child.height == 0) child.height = child.fontSize + 8;
+            }
             
             FlexChild fc;
             fc.ptr = &child;
@@ -330,7 +354,35 @@ void layoutBlock(LayoutBox& box, float containingWidth, float startY) {
                 }
             }
             
-            // Recalculate line main size after flex resolution
+            // Clamp to min/max constraints
+            for (auto& fc : line.items) {
+                LayoutBox& child = *fc.ptr;
+                if (isColumn) {
+                    if (child.cssMinHeight.isSet() && !child.cssMinHeight.isAuto()) {
+                        float minH = child.cssMinHeight.resolve(containerMainSize, child.fontSize, vpW, vpH);
+                        float minMain = minH + child.marginTop + child.marginBottom;
+                        if (fc.mainSize < minMain) fc.mainSize = minMain;
+                    }
+                    if (child.cssMaxHeight.isSet() && !child.cssMaxHeight.isAuto()) {
+                        float maxH = child.cssMaxHeight.resolve(containerMainSize, child.fontSize, vpW, vpH);
+                        float maxMain = maxH + child.marginTop + child.marginBottom;
+                        if (fc.mainSize > maxMain) fc.mainSize = maxMain;
+                    }
+                } else {
+                    if (child.cssMinWidth.isSet() && !child.cssMinWidth.isAuto()) {
+                        float minW = child.cssMinWidth.resolve(containerMainSize, child.fontSize, vpW, vpH);
+                        float minMain = minW + child.marginLeft + child.marginRight;
+                        if (fc.mainSize < minMain) fc.mainSize = minMain;
+                    }
+                    if (child.cssMaxWidth.isSet() && !child.cssMaxWidth.isAuto()) {
+                        float maxW = child.cssMaxWidth.resolve(containerMainSize, child.fontSize, vpW, vpH);
+                        float maxMain = maxW + child.marginLeft + child.marginRight;
+                        if (fc.mainSize > maxMain) fc.mainSize = maxMain;
+                    }
+                }
+            }
+            
+            // Recalculate line main size after flex + clamping
             line.mainSize = 0;
             for (size_t i = 0; i < line.items.size(); i++) {
                 line.mainSize += line.items[i].mainSize;
@@ -338,6 +390,36 @@ void layoutBlock(LayoutBox& box, float containingWidth, float startY) {
             }
             line.freeSpace = containerMainSize - line.mainSize;
             if (line.freeSpace < 0) line.freeSpace = 0;
+            
+            // Margin auto: absorb remaining free space before alignment
+            // Per CSS Flexbox spec §9.5, auto margins consume free space first
+            if (line.freeSpace > 0) {
+                int autoMarginCount = 0;
+                for (auto& fc : line.items) {
+                    LayoutBox& child = *fc.ptr;
+                    if (isColumn) {
+                        if (child.marginTopAuto) autoMarginCount++;
+                        if (child.marginBottomAuto) autoMarginCount++;
+                    } else {
+                        if (child.marginLeftAuto) autoMarginCount++;
+                        if (child.marginRightAuto) autoMarginCount++;
+                    }
+                }
+                if (autoMarginCount > 0) {
+                    float perAutoMargin = line.freeSpace / autoMarginCount;
+                    for (auto& fc : line.items) {
+                        LayoutBox& child = *fc.ptr;
+                        if (isColumn) {
+                            if (child.marginTopAuto) child.marginTop = perAutoMargin;
+                            if (child.marginBottomAuto) child.marginBottom = perAutoMargin;
+                        } else {
+                            if (child.marginLeftAuto) child.marginLeft = perAutoMargin;
+                            if (child.marginRightAuto) child.marginRight = perAutoMargin;
+                        }
+                    }
+                    line.freeSpace = 0; // Auto margins consume all free space
+                }
+            }
             
             // Main-axis alignment (justify-content)
             float mainOffset = 0;

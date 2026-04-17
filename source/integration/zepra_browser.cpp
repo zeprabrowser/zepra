@@ -1966,12 +1966,14 @@ void buildLayoutFromDOM(DOMElement* element, LayoutBox* parentBox, bool inLink,
                     }
                     
                     // Margins — transfer values and detect auto for centering
-                    blockBox->marginTop = childStyle->marginTop.value;
-                    blockBox->marginBottom = childStyle->marginBottom.value;
+                    blockBox->marginTop = childStyle->marginTop.isAuto() ? 0 : childStyle->marginTop.value;
+                    blockBox->marginBottom = childStyle->marginBottom.isAuto() ? 0 : childStyle->marginBottom.value;
                     blockBox->marginLeft = childStyle->marginLeft.isAuto() ? 0 : childStyle->marginLeft.value;
                     blockBox->marginRight = childStyle->marginRight.isAuto() ? 0 : childStyle->marginRight.value;
                     blockBox->marginLeftAuto = childStyle->marginLeft.isAuto();
                     blockBox->marginRightAuto = childStyle->marginRight.isAuto();
+                    blockBox->marginTopAuto = childStyle->marginTop.isAuto();
+                    blockBox->marginBottomAuto = childStyle->marginBottom.isAuto();
                     
                     // Padding
                     blockBox->paddingTop = childStyle->paddingTop.value;
