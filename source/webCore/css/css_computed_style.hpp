@@ -271,6 +271,7 @@ public:
 
     FlexDirection flexDirection = FlexDirection::Row;
     bool flexWrap = false;
+    bool wrapReverse = false;
     JustifyAlign justifyContent = JustifyAlign::FlexStart;
     JustifyAlign alignItems = JustifyAlign::Stretch;
     JustifyAlign alignContent = JustifyAlign::Stretch;

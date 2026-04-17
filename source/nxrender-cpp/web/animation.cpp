@@ -438,7 +438,9 @@ void Animation::setCurrentTime(double ms) {
 double Animation::currentTime() const {
     if (holdTime_ >= 0) return holdTime_;
     if (startTime_ < 0) return 0;
-    return 0; // Would use timeline.currentTime - startTime
+    // Derive current time from the timeline's last tick timestamp
+    double timelineNow = AnimationTimeline::instance().lastTimestamp();
+    return (timelineNow - startTime_) * playbackRate_;
 }
 
 void Animation::tick(double timestamp) {
@@ -575,6 +577,7 @@ void AnimationTimeline::remove(uint32_t id) {
 }
 
 void AnimationTimeline::tick(double timestamp) {
+    timestamp_ = timestamp;
     for (auto& anim : animations_) {
         anim->tick(timestamp);
     }

@@ -144,17 +144,17 @@ void layoutBlock(LayoutBox& box, float containingWidth, float startY) {
     
     if (box.type == LayoutType::Flex) {
         float flexGap = box.gap;
+        bool isColumn = (box.flexDirection == 1 || box.flexDirection == 3);
+        bool isReverse = (box.flexDirection == 2 || box.flexDirection == 3);
         
-        // Pre-resolve container height for column flex (needed for justify-content centering)
-        if (box.flexDirection == 1) {
-            float vpW_f = (float)g_width;
-            float vpH_f = (float)g_height;
+        // Pre-resolve container height for column flex
+        if (isColumn) {
             if (box.cssHeight.isSet() && !box.cssHeight.isAuto()) {
-                float h = box.cssHeight.resolve(0, box.fontSize, vpW_f, vpH_f);
+                float h = box.cssHeight.resolve(0, box.fontSize, vpW, vpH);
                 if (h > box.height) box.height = h;
             }
             if (box.cssMinHeight.isSet() && !box.cssMinHeight.isAuto()) {
-                float minH = box.cssMinHeight.resolve(0, box.fontSize, vpW_f, vpH_f);
+                float minH = box.cssMinHeight.resolve(0, box.fontSize, vpW, vpH);
                 if (box.height < minH) box.height = minH;
             }
         }
@@ -163,6 +163,11 @@ void layoutBlock(LayoutBox& box, float containingWidth, float startY) {
             LayoutBox* ptr;
             float mainSize;
             float crossSize;
+            float flexBasis;
+            float flexGrow;
+            float flexShrink;
+            int alignSelf;
+            int order;
         };
         
         struct FlexLine {
@@ -174,21 +179,24 @@ void layoutBlock(LayoutBox& box, float containingWidth, float startY) {
         std::vector<FlexLine> lines;
         lines.push_back(FlexLine());
         
-        float containerMainSize = (box.flexDirection == 1)
+        float containerMainSize = isColumn
             ? (box.height - box.paddingTop - box.paddingBottom - box.borderTop - box.borderBottom)
             : contentWidth;
         if (containerMainSize < 0) containerMainSize = 0;
         
-        // Pass 1: Measure all flex children and partition into lines
+        float containerCrossSize = isColumn ? contentWidth
+            : (box.height - box.paddingTop - box.paddingBottom - box.borderTop - box.borderBottom);
+        
+        // Collect and measure all flex children
+        std::vector<FlexChild> allItems;
         for (auto& child : box.children) {
             if (child.type == LayoutType::None) continue;
             
             float childAvailableWidth = contentWidth > 0 ? contentWidth : 200;
             
-            // Flex items in a row normally shrink-to-fit unless width is set
             LayoutType oldType = child.type;
-            if (box.flexDirection == 0 && (child.type == LayoutType::Block || child.type == LayoutType::Flex) && (!child.cssWidth.isSet() || child.cssWidth.isAuto())) {
-                 child.type = LayoutType::InlineBlock; // Force shrink-to-fit measurement
+            if (!isColumn && (child.type == LayoutType::Block || child.type == LayoutType::Flex) && (!child.cssWidth.isSet() || child.cssWidth.isAuto())) {
+                 child.type = LayoutType::InlineBlock;
             }
             
             layoutBlock(child, childAvailableWidth, 0);
@@ -198,58 +206,158 @@ void layoutBlock(LayoutBox& box, float containingWidth, float startY) {
                 child.width = measureTextWidth(child.text, child.fontSize) + 8;
             if (child.height == 0) child.height = child.fontSize + 8;
             
-            float mainSize = (box.flexDirection == 1)
-                ? (child.height + child.marginTop + child.marginBottom)
-                : (child.width + child.marginLeft + child.marginRight);
-            float crossSize = (box.flexDirection == 1)
+            FlexChild fc;
+            fc.ptr = &child;
+            fc.flexGrow = child.flexGrow;
+            fc.flexShrink = child.flexShrink;
+            fc.alignSelf = child.alignSelf;
+            fc.order = child.order;
+            
+            // Resolve flex-basis: explicit overrides content size
+            if (child.flexBasis.isSet() && !child.flexBasis.isAuto()) {
+                fc.flexBasis = child.flexBasis.resolve(containerMainSize, child.fontSize, vpW, vpH);
+            } else {
+                fc.flexBasis = isColumn
+                    ? (child.height + child.marginTop + child.marginBottom)
+                    : (child.width + child.marginLeft + child.marginRight);
+            }
+            
+            fc.mainSize = fc.flexBasis;
+            fc.crossSize = isColumn
                 ? (child.width + child.marginLeft + child.marginRight)
                 : (child.height + child.marginTop + child.marginBottom);
             
+            allItems.push_back(fc);
+        }
+        
+        // Sort by CSS order
+        std::stable_sort(allItems.begin(), allItems.end(),
+            [](const FlexChild& a, const FlexChild& b) { return a.order < b.order; });
+        
+        // Reverse for row-reverse / column-reverse
+        if (isReverse) {
+            std::reverse(allItems.begin(), allItems.end());
+        }
+        
+        // Partition into lines
+        for (auto& fc : allItems) {
             FlexLine& currentLine = lines.back();
             float gapRequired = currentLine.items.empty() ? 0 : flexGap;
             
-            // Check if we need to wrap
-            if (box.flexWrap && !currentLine.items.empty() && 
-                currentLine.mainSize + gapRequired + mainSize > containerMainSize) {
+            if (box.flexWrap && !currentLine.items.empty() &&
+                currentLine.mainSize + gapRequired + fc.mainSize > containerMainSize) {
                 lines.push_back(FlexLine());
                 FlexLine& newLine = lines.back();
-                newLine.items.push_back({&child, mainSize, crossSize});
-                newLine.mainSize = mainSize;
-                newLine.crossSize = crossSize;
+                newLine.items.push_back(fc);
+                newLine.mainSize = fc.mainSize;
+                newLine.crossSize = fc.crossSize;
             } else {
-                currentLine.items.push_back({&child, mainSize, crossSize});
-                currentLine.mainSize += gapRequired + mainSize;
-                currentLine.crossSize = std::max(currentLine.crossSize, crossSize);
+                currentLine.items.push_back(fc);
+                currentLine.mainSize += gapRequired + fc.mainSize;
+                currentLine.crossSize = std::max(currentLine.crossSize, fc.crossSize);
             }
         }
         
-        // Pass 2 & 3: Iterate over lines, distribute main-axis space, position items
-        float crossCursor = 0; // Tracks vertical progression of wrapped lines (or horizontal if column)
+        // Wrap-reverse: reverse line stacking order
+        if (box.wrapReverse && lines.size() > 1) {
+            std::reverse(lines.begin(), lines.end());
+        }
+        
+        // Align-content: distribute cross-axis free space across lines
+        float totalLinesCross = 0;
+        for (auto& line : lines) totalLinesCross += line.crossSize;
+        totalLinesCross += flexGap * std::max(0, (int)lines.size() - 1);
+        
+        float crossFreeSpace = containerCrossSize - totalLinesCross;
+        if (crossFreeSpace < 0) crossFreeSpace = 0;
+        
+        float crossStart = 0;
+        float lineCrossSpacing = flexGap;
+        if (lines.size() > 1 && crossFreeSpace > 0) {
+            int lineCount = lines.size();
+            switch (box.alignContent) {
+                case 1: crossStart = 0; break; // start
+                case 2: crossStart = crossFreeSpace; break; // end
+                case 3: crossStart = crossFreeSpace / 2.0f; break; // center
+                case 4: // space-between
+                    if (lineCount > 1) lineCrossSpacing = flexGap + crossFreeSpace / (lineCount - 1);
+                    break;
+                case 5: // space-around
+                    if (lineCount > 0) {
+                        float pad = crossFreeSpace / (lineCount * 2);
+                        crossStart = pad;
+                        lineCrossSpacing = flexGap + pad * 2;
+                    }
+                    break;
+                default: // stretch (0)
+                    if (lineCount > 0) {
+                        float extra = crossFreeSpace / lineCount;
+                        for (auto& line : lines) line.crossSize += extra;
+                    }
+                    break;
+            }
+        }
+        
+        // Resolve grow/shrink per line, then position
+        float crossCursor = crossStart;
         
         for (auto& line : lines) {
             if (line.items.empty()) continue;
             
+            float freeSpace = containerMainSize - line.mainSize;
+            
+            // Grow: distribute positive free space proportionally
+            if (freeSpace > 0) {
+                float totalGrow = 0;
+                for (auto& fc : line.items) totalGrow += fc.flexGrow;
+                if (totalGrow > 0) {
+                    for (auto& fc : line.items) {
+                        fc.mainSize += freeSpace * (fc.flexGrow / totalGrow);
+                    }
+                }
+            }
+            // Shrink: distribute negative overflow weighted by shrink*basis
+            else if (freeSpace < 0) {
+                float totalShrinkWeighted = 0;
+                for (auto& fc : line.items)
+                    totalShrinkWeighted += fc.flexShrink * fc.flexBasis;
+                if (totalShrinkWeighted > 0) {
+                    for (auto& fc : line.items) {
+                        float ratio = (fc.flexShrink * fc.flexBasis) / totalShrinkWeighted;
+                        fc.mainSize += freeSpace * ratio;
+                        if (fc.mainSize < 0) fc.mainSize = 0;
+                    }
+                }
+            }
+            
+            // Recalculate line main size after flex resolution
+            line.mainSize = 0;
+            for (size_t i = 0; i < line.items.size(); i++) {
+                line.mainSize += line.items[i].mainSize;
+                if (i < line.items.size() - 1) line.mainSize += flexGap;
+            }
             line.freeSpace = containerMainSize - line.mainSize;
             if (line.freeSpace < 0) line.freeSpace = 0;
             
+            // Main-axis alignment (justify-content)
             float mainOffset = 0;
             float itemSpacing = flexGap;
             int childCount = line.items.size();
             
             switch (box.justifyContent) {
-                case 1: mainOffset = line.freeSpace; break; // flex-end
-                case 2: mainOffset = line.freeSpace / 2.0f; break; // center
-                case 3: // space-between
+                case 1: mainOffset = line.freeSpace; break;
+                case 2: mainOffset = line.freeSpace / 2.0f; break;
+                case 3:
                     if (childCount > 1) itemSpacing = flexGap + line.freeSpace / (childCount - 1);
                     break;
-                case 4: // space-around
+                case 4:
                     if (childCount > 0) {
                         float pad = line.freeSpace / (childCount * 2);
                         mainOffset = pad;
                         itemSpacing = flexGap + pad * 2;
                     }
                     break;
-                case 5: // space-evenly
+                case 5:
                     if (childCount > 0) {
                         float pad = line.freeSpace / (childCount + 1);
                         mainOffset = pad;
@@ -264,21 +372,34 @@ void layoutBlock(LayoutBox& box, float containingWidth, float startY) {
                 auto& fc = line.items[i];
                 LayoutBox& child = *fc.ptr;
                 
+                // Per-item align-self (-1 = inherit alignItems)
+                int effectiveAlign = (fc.alignSelf >= 0) ? fc.alignSelf : box.alignItems;
+                
+                // Write resolved main size back to child
+                if (isColumn) {
+                    child.height = fc.mainSize - child.marginTop - child.marginBottom;
+                    if (child.height < 0) child.height = 0;
+                } else {
+                    child.width = fc.mainSize - child.marginLeft - child.marginRight;
+                    if (child.width < 0) child.width = 0;
+                }
+                
+                // Cross-axis alignment
                 float crossOffset = 0;
-                float crossSpace = (box.flexDirection == 1) ? contentWidth : line.crossSize;
-                switch (box.alignItems) {
+                float crossSpace = isColumn ? contentWidth : line.crossSize;
+                switch (effectiveAlign) {
                     case 1: crossOffset = 0; break;
                     case 2: crossOffset = crossSpace - fc.crossSize; break;
                     case 3: crossOffset = (crossSpace - fc.crossSize) / 2.0f; break;
                     default:
-                        if (box.flexDirection == 1)
+                        if (isColumn)
                             child.width = contentWidth - child.marginLeft - child.marginRight;
                         else
                             child.height = line.crossSize - child.marginTop - child.marginBottom;
                         break;
                 }
                 
-                if (box.flexDirection == 1) {
+                if (isColumn) {
                     child.x = childX + child.marginLeft + crossOffset + crossCursor;
                     child.y = box.paddingTop + box.borderTop + cursor + child.marginTop;
                     cursor += fc.mainSize;
@@ -292,11 +413,10 @@ void layoutBlock(LayoutBox& box, float containingWidth, float startY) {
                 child.type = LayoutType::FlexItem;
             }
             
-            // Advance cross cursor for next line
-            crossCursor += line.crossSize + flexGap;
+            crossCursor += line.crossSize + lineCrossSpacing;
         }
         
-        if (box.flexDirection == 0) {
+        if (!isColumn) {
             lineHeight = std::max(lineHeight, crossCursor > 0 ? crossCursor - flexGap : 0);
         }
     } else {

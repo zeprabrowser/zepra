@@ -1050,7 +1050,11 @@ void parseWithWebCore(const std::string& html) {
                 using namespace Zepra::WebCore;
                 if (bodyStyle->flexDirection == FlexDirection::Column ||
                     bodyStyle->flexDirection == FlexDirection::ColumnReverse)
-                    g_layoutRoot->flexDirection = 1;
+                    g_layoutRoot->flexDirection = (bodyStyle->flexDirection == FlexDirection::ColumnReverse) ? 3 : 1;
+                else if (bodyStyle->flexDirection == FlexDirection::RowReverse)
+                    g_layoutRoot->flexDirection = 2;
+                g_layoutRoot->flexWrap = bodyStyle->flexWrap;
+                g_layoutRoot->wrapReverse = bodyStyle->wrapReverse;
                 g_layoutRoot->gap = bodyStyle->gap.value;
                 switch (bodyStyle->justifyContent) {
                     case JustifyAlign::FlexEnd: case JustifyAlign::End: g_layoutRoot->justifyContent = 1; break;
@@ -2019,11 +2023,28 @@ void buildLayoutFromDOM(DOMElement* element, LayoutBox* parentBox, bool inLink,
                     if (childStyle->display == DisplayValue::Flex || childStyle->display == DisplayValue::InlineFlex) {
                         blockBox->type = LayoutType::Flex;
                         using namespace Zepra::WebCore;
-                        if (childStyle->flexDirection == FlexDirection::Column || 
-                            childStyle->flexDirection == FlexDirection::ColumnReverse)
-                            blockBox->flexDirection = 1;
+
+                        // Direction: 0=row, 1=column, 2=row-reverse, 3=column-reverse
+                        switch (childStyle->flexDirection) {
+                            case FlexDirection::Row:           blockBox->flexDirection = 0; break;
+                            case FlexDirection::Column:        blockBox->flexDirection = 1; break;
+                            case FlexDirection::RowReverse:    blockBox->flexDirection = 2; break;
+                            case FlexDirection::ColumnReverse: blockBox->flexDirection = 3; break;
+                        }
+
+                        // Wrap
                         blockBox->flexWrap = childStyle->flexWrap;
-                        blockBox->gap = childStyle->gap.value;
+                        blockBox->wrapReverse = childStyle->wrapReverse;
+
+                        // Gap: prefer row-gap/column-gap if set, else fall back to gap
+                        float gapPx = childStyle->gap.toPx(style->fontSize, 16.0f, (float)g_width, (float)g_height, 0);
+                        blockBox->gap = gapPx;
+                        blockBox->rowGap = childStyle->rowGap.value > 0 ?
+                            childStyle->rowGap.toPx(style->fontSize, 16.0f, (float)g_width, (float)g_height, 0) : gapPx;
+                        blockBox->columnGap = childStyle->columnGap.value > 0 ?
+                            childStyle->columnGap.toPx(style->fontSize, 16.0f, (float)g_width, (float)g_height, 0) : gapPx;
+
+                        // justify-content
                         switch (childStyle->justifyContent) {
                             case JustifyAlign::FlexEnd: case JustifyAlign::End: blockBox->justifyContent = 1; break;
                             case JustifyAlign::Center: blockBox->justifyContent = 2; break;
@@ -2032,16 +2053,44 @@ void buildLayoutFromDOM(DOMElement* element, LayoutBox* parentBox, bool inLink,
                             case JustifyAlign::SpaceEvenly: blockBox->justifyContent = 5; break;
                             default: blockBox->justifyContent = 0; break;
                         }
+                        // align-items
                         switch (childStyle->alignItems) {
                             case JustifyAlign::FlexStart: case JustifyAlign::Start: blockBox->alignItems = 1; break;
                             case JustifyAlign::FlexEnd: case JustifyAlign::End: blockBox->alignItems = 2; break;
                             case JustifyAlign::Center: blockBox->alignItems = 3; break;
                             case JustifyAlign::Baseline: blockBox->alignItems = 4; break;
-                            default: blockBox->alignItems = 0; break;
+                            default: blockBox->alignItems = 0; break; // stretch
+                        }
+                        // align-content (multi-line)
+                        switch (childStyle->alignContent) {
+                            case JustifyAlign::FlexStart: case JustifyAlign::Start: blockBox->alignContent = 1; break;
+                            case JustifyAlign::FlexEnd: case JustifyAlign::End: blockBox->alignContent = 2; break;
+                            case JustifyAlign::Center: blockBox->alignContent = 3; break;
+                            case JustifyAlign::SpaceBetween: blockBox->alignContent = 4; break;
+                            case JustifyAlign::SpaceAround: blockBox->alignContent = 5; break;
+                            default: blockBox->alignContent = 0; break; // stretch
                         }
                     } else if (childStyle->display == DisplayValue::InlineBlock ||
                                childStyle->display == DisplayValue::InlineGrid) {
                         blockBox->type = LayoutType::InlineBlock;
+                    }
+
+                    // Flex item properties — applied to ALL children of flex containers.
+                    // The parent type isn't known here, so always store these; they're
+                    // only consumed when the parent is LayoutType::Flex.
+                    blockBox->flexGrow = childStyle->flexGrow;
+                    blockBox->flexShrink = childStyle->flexShrink;
+                    if (!childStyle->flexBasis.isAuto() && childStyle->flexBasis.value > 0) {
+                        blockBox->flexBasis = cssToLayout(childStyle->flexBasis);
+                    }
+                    blockBox->order = childStyle->order;
+                    // align-self: map to int (-1=auto, 0=stretch, 1=start, 2=end, 3=center)
+                    switch (childStyle->alignSelf) {
+                        case JustifyAlign::Stretch: blockBox->alignSelf = 0; break;
+                        case JustifyAlign::FlexStart: case JustifyAlign::Start: blockBox->alignSelf = 1; break;
+                        case JustifyAlign::FlexEnd: case JustifyAlign::End: blockBox->alignSelf = 2; break;
+                        case JustifyAlign::Center: blockBox->alignSelf = 3; break;
+                        default: blockBox->alignSelf = -1; break; // auto = inherit from parent
                     }
                 } else {
                     // Fallback margins for common block tags (no CSS engine available)

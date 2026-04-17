@@ -112,7 +112,7 @@ struct LayoutBox {
     
     // Display type
     LayoutType type = LayoutType::Block;
-    int flexDirection = 0; // 0=Row, 1=Column
+    int flexDirection = 0; // 0=Row, 1=Column, 2=RowReverse, 3=ColumnReverse
     
     // Content (for text nodes)
     std::string text;
@@ -144,8 +144,19 @@ struct LayoutBox {
     // Flex container properties
     int justifyContent = 0; // 0=start, 1=end, 2=center, 3=space-between, 4=space-around, 5=space-evenly
     int alignItems = 0;     // 0=stretch, 1=start, 2=end, 3=center, 4=baseline
+    int alignContent = 0;   // 0=stretch, 1=start, 2=end, 3=center, 4=space-between, 5=space-around
     bool flexWrap = false;
+    bool wrapReverse = false;
     float gap = 0;
+    float rowGap = 0;       // Explicit row-gap (fallback to gap)
+    float columnGap = 0;    // Explicit column-gap (fallback to gap)
+
+    // Flex item properties
+    float flexGrow = 0;
+    float flexShrink = 1;
+    LayoutLength flexBasis;  // auto = use content size, otherwise resolved value
+    int alignSelf = -1;      // -1=auto (inherit alignItems), 0=stretch, 1=start, 2=end, 3=center
+    int order = 0;
     
     // Text decoration
     std::string textDecoration;

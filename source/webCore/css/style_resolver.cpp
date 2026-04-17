@@ -540,6 +540,7 @@ void StyleResolver::applyProperty(CSSComputedStyle& style,
     }
     else if (property == "flex-wrap") {
         style.flexWrap = (value == "wrap" || value == "wrap-reverse");
+        style.wrapReverse = (value == "wrap-reverse");
     }
     else if (property == "justify-content") {
         if (value == "flex-start" || value == "start") style.justifyContent = JustifyAlign::FlexStart;

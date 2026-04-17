@@ -226,6 +226,10 @@ public:
 private:
     AnimationTimeline() = default;
     std::vector<std::shared_ptr<Animation>> animations_;
+    double timestamp_ = 0;
+
+public:
+    double lastTimestamp() const { return timestamp_; }
 };
 
 // ==================================================================
