@@ -1349,10 +1349,14 @@ void buildLayoutFromDOM(DOMElement* element, LayoutBox* parentBox, bool inLink,
                 }
                 
                 // Margins (from CSS)
-                box->marginTop = style->marginTop.value;
-                box->marginBottom = style->marginBottom.value;
-                box->marginLeft = style->marginLeft.value;
-                box->marginRight = style->marginRight.value;
+                box->marginTop = style->marginTop.isAuto() ? 0 : style->marginTop.value;
+                box->marginBottom = style->marginBottom.isAuto() ? 0 : style->marginBottom.value;
+                box->marginLeft = style->marginLeft.isAuto() ? 0 : style->marginLeft.value;
+                box->marginRight = style->marginRight.isAuto() ? 0 : style->marginRight.value;
+                box->marginLeftAuto = style->marginLeft.isAuto();
+                box->marginRightAuto = style->marginRight.isAuto();
+                box->marginTopAuto = style->marginTop.isAuto();
+                box->marginBottomAuto = style->marginBottom.isAuto();
                 
                 // Padding (from CSS)
                 box->paddingTop = style->paddingTop.value;

@@ -503,7 +503,17 @@ void layoutBlock(LayoutBox& box, float containingWidth, float startY) {
             crossCursor += line.crossSize + lineCrossSpacing;
         }
         
-        if (!isColumn) {
+        if (isColumn) {
+            // For column flex, set childY to total items height for auto-height
+            float totalMainSize = 0;
+            for (auto& line : lines) {
+                for (auto& fc : line.items) {
+                    totalMainSize += fc.mainSize;
+                }
+                totalMainSize += flexGap * (line.items.size() > 1 ? line.items.size() - 1 : 0);
+            }
+            childY = box.paddingTop + box.borderTop + totalMainSize;
+        } else {
             lineHeight = std::max(lineHeight, crossCursor > 0 ? crossCursor - flexGap : 0);
         }
     } else {
