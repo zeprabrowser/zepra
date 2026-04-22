@@ -18,6 +18,7 @@
 #include "frontend/parser.hpp"
 #include "frontend/syntax_checker.hpp"
 #include "bytecode/bytecode_generator.hpp"
+#include "safety/CrashBoundary.h"
 #include <string>
 #include <memory>
 #include <stdexcept>
@@ -29,61 +30,74 @@ using Runtime::VM;
 
 /**
  * Evaluate a JavaScript source string and return the result.
- * This is the primary entry point for host embedders.
+ * Wrapped with CrashBoundary for OOM/trap containment.
  */
 Value evaluate(VM* vm, const std::string& source, const std::string& filename) {
     if (!vm) {
         throw std::runtime_error("VM is null");
     }
 
-    // 1. Create SourceCode object
-    auto sourceCode = Frontend::SourceCode::fromString(source, filename);
+    Value returnValue;
 
-    // 2. Parse (Parser creates its own Lexer internally)
-    Frontend::Parser parser(sourceCode.get());
-    auto ast = parser.parseProgram();
+    auto boundary = Safety::CrashBoundary::execute([&]() {
+        // 1. Create SourceCode object
+        auto sourceCode = Frontend::SourceCode::fromString(source, filename);
 
-    if (parser.hasErrors()) {
-        std::string errors;
-        for (const auto& err : parser.errors()) {
-            if (!errors.empty()) errors += "\n";
-            errors += err;
+        // 2. Parse
+        Frontend::Parser parser(sourceCode.get());
+        auto ast = parser.parseProgram();
+
+        if (parser.hasErrors()) {
+            std::string errors;
+            for (const auto& err : parser.errors()) {
+                if (!errors.empty()) errors += "\n";
+                errors += err;
+            }
+            throw std::runtime_error("SyntaxError: " + errors);
         }
-        throw std::runtime_error("SyntaxError: " + errors);
-    }
 
-    // 4. Syntax check
-    Frontend::SyntaxChecker checker;
-    if (!checker.check(ast.get())) {
-        std::string errors;
-        for (const auto& err : checker.errors()) {
-            if (!errors.empty()) errors += "\n";
-            errors += err;
+        // 3. Syntax check
+        Frontend::SyntaxChecker checker;
+        if (!checker.check(ast.get())) {
+            std::string errors;
+            for (const auto& err : checker.errors()) {
+                if (!errors.empty()) errors += "\n";
+                errors += err;
+            }
+            throw std::runtime_error("SyntaxError: " + errors);
         }
-        throw std::runtime_error("SyntaxError: " + errors);
-    }
 
-    // 5. Compile to bytecode
-    Bytecode::BytecodeGenerator generator;
-    auto chunk = generator.compile(ast.get());
+        // 4. Compile to bytecode
+        Bytecode::BytecodeGenerator generator;
+        auto chunk = generator.compile(ast.get());
 
-    if (generator.hasErrors()) {
-        std::string errors;
-        for (const auto& err : generator.errors()) {
-            if (!errors.empty()) errors += "\n";
-            errors += err;
+        if (generator.hasErrors()) {
+            std::string errors;
+            for (const auto& err : generator.errors()) {
+                if (!errors.empty()) errors += "\n";
+                errors += err;
+            }
+            throw std::runtime_error("CompileError: " + errors);
         }
-        throw std::runtime_error("CompileError: " + errors);
+
+        // 5. Execute
+        auto result = vm->execute(chunk.get());
+
+        if (result.status == Runtime::ExecutionResult::Status::Exception) {
+            throw std::runtime_error(result.error);
+        }
+
+        returnValue = result.value;
+    });
+
+    // Convert CrashBoundary failures to runtime_error
+    if (boundary.result != Safety::CrashBoundary::Result::Success &&
+        boundary.result != Safety::CrashBoundary::Result::JSException) {
+        throw std::runtime_error(boundary.errorMessage);
     }
 
-    // 6. Execute
-    auto result = vm->execute(chunk.get());
-
-    if (result.status == Runtime::ExecutionResult::Status::Exception) {
-        throw std::runtime_error(result.error);
-    }
-
-    return result.value;
+    return returnValue;
 }
 
 } // namespace Zepra::Host
+

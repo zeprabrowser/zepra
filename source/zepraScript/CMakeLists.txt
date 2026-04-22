@@ -274,7 +274,10 @@ set(ZEPRA_CORE_SOURCES
     # WebAssembly
     wasm/wasm.cpp
     wasm/WasmValidate.cpp
+    wasm/WasmCodeBuffer.cpp
     wasm/WasmBaselineCompile.cpp
+    wasm/WasmBaselineOpcodes.cpp
+    wasm/WasmBaselineBulkGC.cpp
     wasm/WasmInterpreter.cpp
     wasm/WasmStackManager.cpp
     wasm/WasmSignalHandlers.cpp
