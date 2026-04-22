@@ -116,7 +116,9 @@ inline void LinearScanAllocator::computeLiveness() {
 inline void LinearScanAllocator::buildIntervals() {
     result_.intervals.clear();
     
-    for (BasicBlock* block : graph_->blocks()) {
+    for (uint32_t bi = 0; bi < graph_->numBlocks(); bi++) {
+        BasicBlock* block = graph_->block(bi);
+        if (!block) continue;
         for (Value* phi : block->phis()) {
             if (phi->isDead() || !hasResult(phi->opcode())) continue;
             
@@ -125,7 +127,6 @@ inline void LinearScanAllocator::buildIntervals() {
             interval.start = valuePosition_[phi];
             interval.end = interval.start;
             
-            // Extend interval to all uses
             for (Value* user : phi->users()) {
                 if (valuePosition_.count(user)) {
                     interval.end = std::max(interval.end, valuePosition_[user]);
@@ -143,14 +144,12 @@ inline void LinearScanAllocator::buildIntervals() {
             interval.start = valuePosition_[v];
             interval.end = interval.start;
             
-            // Extend interval to all uses
             for (Value* user : v->users()) {
                 if (valuePosition_.count(user)) {
                     interval.end = std::max(interval.end, valuePosition_[user]);
                 }
             }
             
-            // Ensure interval has non-zero length for values with uses
             if (interval.end == interval.start && !v->users().empty()) {
                 interval.end = interval.start + 1;
             }
@@ -159,7 +158,6 @@ inline void LinearScanAllocator::buildIntervals() {
         }
     }
     
-    // Sort intervals by start position
     std::sort(result_.intervals.begin(), result_.intervals.end(),
         [](const LiveInterval& a, const LiveInterval& b) {
             return a.start < b.start;

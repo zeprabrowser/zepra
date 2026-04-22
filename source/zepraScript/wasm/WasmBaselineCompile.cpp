@@ -6226,18 +6226,41 @@ bool BaselineCompiler::emitMemorySize(uint32_t memIndex) {
 
 bool BaselineCompiler::emitMemoryGrow(uint32_t memIndex) {
     ValueLocation delta = pop();
-    (void)delta;
     
-    // For now, emit placeholder that returns -1 (failure)
-    // Full implementation requires runtime call
+    Reg deltaReg = delta.isRegister() ? delta.reg : allocReg(ValType::i32());
+    if (!delta.isRegister()) {
+        if (delta.isImmediate()) {
+            EMIT_X64({ X86Assembler m(codeBuffer_.get()); m.mov32Imm(deltaReg.code, static_cast<int32_t>(delta.immediate)); });
+        } else {
+            EMIT_X64({ X86Assembler m(codeBuffer_.get()); m.load32(deltaReg.code, X86Assembler::RBP, delta.slot.offset); });
+        }
+    }
+    
     Reg result = allocReg(ValType::i32());
+    
     EMIT_X64({
         X86Assembler masm(codeBuffer_.get());
-        masm.mov32Imm(result.code, -1);
+        // Pass delta as first arg (RDI)
+        masm.mov32(X86Assembler::RDI, deltaReg.code);
+        // Load runtime memoryGrow function pointer from instance (RBP-40)
+        Reg fnPtr = allocReg(ValType::i64());
+        masm.load64(fnPtr.code, X86Assembler::RBP, -40);
+        masm.call(fnPtr.code);
+        freeReg(fnPtr);
+        // Result in RAX
+        masm.mov32(result.code, X86Assembler::RAX);
     });
     EMIT_ARM64({
         ARM64Assembler masm(codeBuffer_.get());
-        masm.movImm32(result.code, static_cast<uint32_t>(-1));
+        // Pass delta as X0
+        masm.mov32(0, deltaReg.code);
+        // Load runtime function pointer from frame
+        Reg fnPtr = allocReg(ValType::i64());
+        masm.ldr64(fnPtr.code, 29, -40);
+        masm.blr(fnPtr.code);
+        freeReg(fnPtr);
+        // Result in X0
+        masm.mov32(result.code, 0);
     });
     
     push(ValueLocation::inReg(result, ValType::i32()));
@@ -6465,10 +6488,11 @@ bool BaselineCompiler::emitReturnCall(uint32_t funcIndex) {
         // Restore callee-saved registers
         masm.pop(X86Assembler::RBP);
         
-        // Jump to target function (not call - no return address pushed)
-        // This would be a jmp to the function address
-        // In real impl: masm.jmp(funcAddress);
-        masm.int3();  // Placeholder
+        // Load callee address from function table and jump
+        Reg callTarget = allocReg(ValType::i64());
+        masm.load64(callTarget.code, X86Assembler::RBP, -16);
+        masm.load64(callTarget.code, callTarget.code, funcIndex * 8);
+        masm.jmp(callTarget.code);
     });
     EMIT_ARM64({
         ARM64Assembler masm(codeBuffer_.get());
@@ -6485,9 +6509,11 @@ bool BaselineCompiler::emitReturnCall(uint32_t funcIndex) {
         // Restore FP/LR
         masm.ldpPost64(29, 30, 31, frameSize_);
         
-        // Jump to target (B instruction, not BL)
-        // In real impl: masm.b(funcAddress);
-        masm.brk(0);  // Placeholder
+        // Load callee address from function table and jump
+        Reg callTarget = allocReg(ValType::i64());
+        masm.ldr64(callTarget.code, 29, -16);
+        masm.ldr64(callTarget.code, callTarget.code, funcIndex * 8);
+        masm.br(callTarget.code);
     });
     
     return true;
@@ -6660,8 +6686,39 @@ bool BaselineCompiler::emitSelect() {
     ValueLocation val2 = pop();
     ValueLocation val1 = pop();
     
-    // Emit conditional move
-    push(val1);  // Placeholder - actual selection would go here
+    // Materialize operands into registers
+    Reg condReg = cond.isRegister() ? cond.reg : allocReg(ValType::i32());
+    Reg r1 = val1.isRegister() ? val1.reg : allocReg(val1.type);
+    Reg r2 = val2.isRegister() ? val2.reg : allocReg(val2.type);
+    
+    if (!cond.isRegister()) {
+        if (cond.isImmediate()) {
+            EMIT_X64({ X86Assembler m(codeBuffer_.get()); m.mov32Imm(condReg.code, static_cast<int32_t>(cond.immediate)); });
+            EMIT_ARM64({ ARM64Assembler m(codeBuffer_.get()); m.movImm32(condReg.code, static_cast<uint32_t>(cond.immediate)); });
+        } else {
+            EMIT_X64({ X86Assembler m(codeBuffer_.get()); m.load32(condReg.code, X86Assembler::RBP, cond.slot.offset); });
+            EMIT_ARM64({ ARM64Assembler m(codeBuffer_.get()); m.ldr32(condReg.code, 29, cond.slot.offset); });
+        }
+    }
+    
+    EMIT_X64({
+        X86Assembler masm(codeBuffer_.get());
+        // test cond, cond
+        masm.cmp32Imm(condReg.code, 0);
+        // jnz skip — if cond != 0, keep r1 (val1)
+        size_t skipPatch = masm.jcc32(X86Assembler::NE);
+        // cond == 0: pick val2
+        masm.mov32(r1.code, r2.code);
+        // skip:
+        masm.patchJump(skipPatch, codeBuffer_->offset());
+    });
+    EMIT_ARM64({
+        ARM64Assembler masm(codeBuffer_.get());
+        masm.cmpImm32(condReg.code, 0);
+        masm.csel32(r1.code, r1.code, r2.code, ARM64Assembler::NE);
+    });
+    
+    push(ValueLocation::inReg(r1, val1.type));
     return true;
 }
 
@@ -7996,19 +8053,20 @@ bool BaselineCompiler::emitThrow(uint32_t tagIndex) {
     // Create exception object and throw it
     EMIT_X64({
         X86Assembler masm(codeBuffer_.get());
-        // Call runtime to allocate exception object
-        // Move tag index into first arg register
         masm.mov32Imm(X86Assembler::RDI, static_cast<int32_t>(tagIndex));
-        // Call to runtime throw function
-        // Runtime will: allocate exception, copy payload, unwind stack
-        masm.int3();  // Placeholder for call to throw runtime
+        // Call runtime throw handler at instance offset -48
+        Reg fnPtr = allocReg(ValType::i64());
+        masm.load64(fnPtr.code, X86Assembler::RBP, -48);
+        masm.call(fnPtr.code);
+        freeReg(fnPtr);
     });
     EMIT_ARM64({
         ARM64Assembler masm(codeBuffer_.get());
-        // Move tag index to X0
         masm.movImm64(0, tagIndex);
-        // Call throw runtime
-        masm.brk(0);  // Placeholder
+        Reg fnPtr = allocReg(ValType::i64());
+        masm.ldr64(fnPtr.code, 29, -48);
+        masm.blr(fnPtr.code);
+        freeReg(fnPtr);
     });
     
     return true;
@@ -8028,14 +8086,18 @@ bool BaselineCompiler::emitRethrow(uint32_t depth) {
     // Rethrow the current exception
     EMIT_X64({
         X86Assembler masm(codeBuffer_.get());
-        // Load current exception from handler frame and rethrow
-        // Call runtime rethrow function
-        masm.int3();  // Placeholder
+        // Call runtime rethrow handler at instance offset -48
+        Reg fnPtr = allocReg(ValType::i64());
+        masm.load64(fnPtr.code, X86Assembler::RBP, -48);
+        masm.call(fnPtr.code);
+        freeReg(fnPtr);
     });
     EMIT_ARM64({
         ARM64Assembler masm(codeBuffer_.get());
-        // Call runtime rethrow
-        masm.brk(0);  // Placeholder
+        Reg fnPtr = allocReg(ValType::i64());
+        masm.ldr64(fnPtr.code, 29, -48);
+        masm.blr(fnPtr.code);
+        freeReg(fnPtr);
     });
     
     return true;

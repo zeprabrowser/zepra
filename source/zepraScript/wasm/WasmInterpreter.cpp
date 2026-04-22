@@ -57,11 +57,68 @@ static int64_t readVarI64(const uint8_t*& ip) {
     return result;
 }
 
+// =============================================================================
+// GC Runtime (self-contained — avoids WasmGC.h ValType collision)
+// =============================================================================
+
+namespace GCOp {
+    constexpr uint8_t STRUCT_NEW = 0x00;
+    constexpr uint8_t STRUCT_NEW_DEFAULT = 0x01;
+    constexpr uint8_t STRUCT_GET = 0x02;
+    constexpr uint8_t STRUCT_SET = 0x05;
+    constexpr uint8_t ARRAY_NEW = 0x06;
+    constexpr uint8_t ARRAY_NEW_DEFAULT = 0x07;
+    constexpr uint8_t ARRAY_GET = 0x0B;
+    constexpr uint8_t ARRAY_SET = 0x0E;
+    constexpr uint8_t ARRAY_LEN = 0x0F;
+    constexpr uint8_t I31_NEW = 0x1C;
+    constexpr uint8_t I31_GET_S = 0x1D;
+    constexpr uint8_t I31_GET_U = 0x1E;
+    constexpr uint8_t REF_TEST = 0x14;
+    constexpr uint8_t REF_CAST = 0x16;
+}
+
+// Minimal GC object backing store
+struct GCObject {
+    enum Kind : uint8_t { Struct, Array };
+    Kind kind;
+    uint32_t typeIndex;
+    uint32_t fieldCount; // or length for arrays
+    std::vector<int64_t> slots;
+    
+    GCObject(Kind k, uint32_t ti, uint32_t n)
+        : kind(k), typeIndex(ti), fieldCount(n), slots(n, 0) {}
+};
+
+struct WasmInterpreter::GcState {
+    std::vector<std::unique_ptr<GCObject>> objects;
+    
+    // Subtype check (simple identity for now)
+    bool isSubtype(uint32_t sub, uint32_t super) const {
+        return sub == super;
+    }
+    
+    GCObject* alloc(GCObject::Kind k, uint32_t typeIdx, uint32_t count) {
+        auto obj = std::make_unique<GCObject>(k, typeIdx, count);
+        auto* ptr = obj.get();
+        objects.push_back(std::move(obj));
+        return ptr;
+    }
+};
+
+// i31 encoding (pointer tagging)
+static uintptr_t i31Encode(int32_t val) { return (static_cast<uintptr_t>(val) << 1) | 1; }
+static int32_t i31DecodeS(uintptr_t tagged) { return (static_cast<int32_t>(tagged >> 1) << 1) >> 1; }
+static uint32_t i31DecodeU(uintptr_t tagged) { return static_cast<uint32_t>((tagged >> 1) & 0x7FFFFFFF); }
+
 WasmInterpreter::WasmInterpreter(WasmInstance* instance)
-    : instance_(instance) {
+    : instance_(instance)
+    , gc_(std::make_unique<GcState>()) {
     stack_.reserve(4096);
     controlStack_.reserve(256);
 }
+
+WasmInterpreter::~WasmInterpreter() = default;
 
 WasmValue WasmInterpreter::execute(uint32_t funcIdx, const std::vector<WasmValue>& args) {
     WasmModule* module = instance_->module_;
@@ -966,6 +1023,54 @@ void WasmInterpreter::executeInstruction(uint8_t opcode, const uint8_t*& ip) {
             break;
         }
             
+        // GC prefix (0xFB)
+        case Opcode::GcPrefix: {
+            uint32_t gcOp = readVarU32(ip);
+            executeGcInstruction(gcOp, ip);
+            break;
+        }
+        
+        // Tail calls (return_call / return_call_indirect)
+        case Opcode::ReturnCall: {
+            uint32_t funcIdx = readVarU32(ip);
+            WasmModule* module = instance_->module_;
+            uint32_t typeIdx = module->funcTypeIndices_[funcIdx];
+            const FuncType& funcType = module->types_[typeIdx];
+            
+            std::vector<WasmValue> args(funcType.params.size());
+            for (int i = static_cast<int>(funcType.params.size()) - 1; i >= 0; i--) {
+                args[i] = pop();
+            }
+            
+            // Tail call: reuse current frame — clear control stack and re-enter
+            controlStack_.clear();
+            WasmValue result = execute(funcIdx, args);
+            push(result);
+            break;
+        }
+        
+        case Opcode::ReturnCallIndirect: {
+            uint32_t typeIdx = readVarU32(ip);
+            uint32_t tableIdx = readVarU32(ip);
+            auto idx = pop();
+            
+            WasmTable* table = instance_->getTable(tableIdx);
+            uint32_t funcIdx = static_cast<uint32_t>(reinterpret_cast<uintptr_t>(table->getElement(static_cast<uint32_t>(idx.i32))));
+            
+            WasmModule* module = instance_->module_;
+            const FuncType& funcType = module->types_[typeIdx];
+            
+            std::vector<WasmValue> args(funcType.params.size());
+            for (int i = static_cast<int>(funcType.params.size()) - 1; i >= 0; i--) {
+                args[i] = pop();
+            }
+            
+            controlStack_.clear();
+            WasmValue result = execute(funcIdx, args);
+            push(result);
+            break;
+        }
+            
         default:
             // Unimplemented opcode - skip
             break;
@@ -1540,6 +1645,174 @@ void WasmInterpreter::executeSimdInstruction(uint32_t simdOp, const uint8_t*& ip
         
         default:
             // Unimplemented SIMD opcode
+            break;
+    }
+}
+
+// =============================================================================
+// GC Instruction Dispatch (0xFB prefix)
+// =============================================================================
+
+void WasmInterpreter::executeGcInstruction(uint32_t gcOp, const uint8_t*& ip) {
+    switch (gcOp) {
+        case GCOp::STRUCT_NEW: {
+            uint32_t typeIdx = readVarU32(ip);
+            auto* obj = gc_->alloc(GCObject::Struct, typeIdx, 16);
+            WasmValue ref;
+            ref.type = ValType::ExternRef;
+            ref.i64 = reinterpret_cast<int64_t>(obj);
+            push(ref);
+            break;
+        }
+        
+        case GCOp::STRUCT_NEW_DEFAULT: {
+            uint32_t typeIdx = readVarU32(ip);
+            auto* obj = gc_->alloc(GCObject::Struct, typeIdx, 16);
+            WasmValue ref;
+            ref.type = ValType::ExternRef;
+            ref.i64 = reinterpret_cast<int64_t>(obj);
+            push(ref);
+            break;
+        }
+        
+        case GCOp::STRUCT_GET: {
+            uint32_t typeIdx = readVarU32(ip);
+            uint32_t fieldIdx = readVarU32(ip);
+            (void)typeIdx;
+            auto objRef = pop();
+            auto* obj = reinterpret_cast<GCObject*>(static_cast<uintptr_t>(objRef.i64));
+            if (!obj) throw std::runtime_error("Null struct reference");
+            if (fieldIdx >= obj->slots.size())
+                throw std::runtime_error("Struct field index out of bounds");
+            WasmValue result;
+            result.type = ValType::I64;
+            result.i64 = obj->slots[fieldIdx];
+            push(result);
+            break;
+        }
+        
+        case GCOp::STRUCT_SET: {
+            uint32_t typeIdx = readVarU32(ip);
+            uint32_t fieldIdx = readVarU32(ip);
+            (void)typeIdx;
+            auto val = pop();
+            auto objRef = pop();
+            auto* obj = reinterpret_cast<GCObject*>(static_cast<uintptr_t>(objRef.i64));
+            if (!obj) throw std::runtime_error("Null struct reference");
+            if (fieldIdx >= obj->slots.size())
+                throw std::runtime_error("Struct field index out of bounds");
+            obj->slots[fieldIdx] = val.i64;
+            break;
+        }
+        
+        case GCOp::ARRAY_NEW: {
+            uint32_t typeIdx = readVarU32(ip);
+            auto length = pop();
+            auto initVal = pop();
+            uint32_t len = static_cast<uint32_t>(length.i32);
+            auto* arr = gc_->alloc(GCObject::Array, typeIdx, len);
+            for (uint32_t i = 0; i < len; ++i) arr->slots[i] = initVal.i64;
+            WasmValue ref;
+            ref.type = ValType::ExternRef;
+            ref.i64 = reinterpret_cast<int64_t>(arr);
+            push(ref);
+            break;
+        }
+        
+        case GCOp::ARRAY_NEW_DEFAULT: {
+            uint32_t typeIdx = readVarU32(ip);
+            auto length = pop();
+            auto* arr = gc_->alloc(GCObject::Array, typeIdx, static_cast<uint32_t>(length.i32));
+            WasmValue ref;
+            ref.type = ValType::ExternRef;
+            ref.i64 = reinterpret_cast<int64_t>(arr);
+            push(ref);
+            break;
+        }
+        
+        case GCOp::ARRAY_GET: {
+            uint32_t typeIdx = readVarU32(ip);
+            (void)typeIdx;
+            auto idx = pop();
+            auto arrRef = pop();
+            auto* arr = reinterpret_cast<GCObject*>(static_cast<uintptr_t>(arrRef.i64));
+            if (!arr) throw std::runtime_error("Null array reference");
+            uint32_t i = static_cast<uint32_t>(idx.i32);
+            if (i >= arr->fieldCount) throw std::runtime_error("Array index out of bounds");
+            WasmValue result;
+            result.type = ValType::I64;
+            result.i64 = arr->slots[i];
+            push(result);
+            break;
+        }
+        
+        case GCOp::ARRAY_SET: {
+            uint32_t typeIdx = readVarU32(ip);
+            (void)typeIdx;
+            auto val = pop();
+            auto idx = pop();
+            auto arrRef = pop();
+            auto* arr = reinterpret_cast<GCObject*>(static_cast<uintptr_t>(arrRef.i64));
+            if (!arr) throw std::runtime_error("Null array reference");
+            uint32_t i = static_cast<uint32_t>(idx.i32);
+            if (i >= arr->fieldCount) throw std::runtime_error("Array index out of bounds");
+            arr->slots[i] = val.i64;
+            break;
+        }
+        
+        case GCOp::ARRAY_LEN: {
+            auto arrRef = pop();
+            auto* arr = reinterpret_cast<GCObject*>(static_cast<uintptr_t>(arrRef.i64));
+            if (!arr) throw std::runtime_error("Null array reference");
+            push(WasmValue::fromI32(static_cast<int32_t>(arr->fieldCount)));
+            break;
+        }
+        
+        case GCOp::I31_NEW: {
+            auto val = pop();
+            WasmValue ref;
+            ref.type = ValType::I32;
+            ref.i64 = static_cast<int64_t>(i31Encode(val.i32));
+            push(ref);
+            break;
+        }
+        
+        case GCOp::I31_GET_S: {
+            auto ref = pop();
+            push(WasmValue::fromI32(i31DecodeS(static_cast<uintptr_t>(ref.i64))));
+            break;
+        }
+        
+        case GCOp::I31_GET_U: {
+            auto ref = pop();
+            push(WasmValue::fromI32(static_cast<int32_t>(
+                i31DecodeU(static_cast<uintptr_t>(ref.i64)))));
+            break;
+        }
+        
+        case GCOp::REF_TEST: {
+            uint32_t typeIdx = readVarU32(ip);
+            auto ref = pop();
+            auto* obj = reinterpret_cast<GCObject*>(static_cast<uintptr_t>(ref.i64));
+            int32_t r = (obj && gc_->isSubtype(obj->typeIndex, typeIdx)) ? 1 : 0;
+            push(WasmValue::fromI32(r));
+            break;
+        }
+        
+        case GCOp::REF_CAST: {
+            uint32_t typeIdx = readVarU32(ip);
+            auto ref = pop();
+            auto* obj = reinterpret_cast<GCObject*>(static_cast<uintptr_t>(ref.i64));
+            if (!obj || !gc_->isSubtype(obj->typeIndex, typeIdx))
+                throw std::runtime_error("ref.cast failed: type mismatch");
+            WasmValue result;
+            result.type = ValType::ExternRef;
+            result.i64 = reinterpret_cast<int64_t>(obj);
+            push(result);
+            break;
+        }
+        
+        default:
             break;
     }
 }

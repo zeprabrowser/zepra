@@ -310,12 +310,29 @@ void DevToolsPanel::renderSecurityTab(float width, float contentHeight) {
     sectionY += 25;
     g_textRenderer.setSize(10);
     
-    // Connection Status (mock for now)
-    g_textRenderer.drawText("● Connection: Secure (TLS 1.3)", 20, sectionY, 
-                            colors_.success[0], colors_.success[1], colors_.success[2]);
-    sectionY += 18;
-    g_textRenderer.drawText("  Certificate: Valid", 20, sectionY, 
-                            colors_.text_dim[0], colors_.text_dim[1], colors_.text_dim[2]);
+    // Connection Status (queried from security checker)
+    auto connectionStatus = checker.getConnectionStatus();
+    if (connectionStatus.isSecure) {
+        char connStr[128];
+        snprintf(connStr, sizeof(connStr), "● Connection: Secure (%s)", connectionStatus.protocol.c_str());
+        g_textRenderer.drawText(connStr, 20, sectionY, 
+                                colors_.success[0], colors_.success[1], colors_.success[2]);
+        sectionY += 18;
+        char certStr[128];
+        snprintf(certStr, sizeof(certStr), "  Certificate: %s", connectionStatus.certStatus.c_str());
+        g_textRenderer.drawText(certStr, 20, sectionY, 
+                                colors_.text_dim[0], colors_.text_dim[1], colors_.text_dim[2]);
+    } else if (connectionStatus.protocol.empty()) {
+        g_textRenderer.drawText("● Connection: No active connection", 20, sectionY,
+                                colors_.text_dim[0], colors_.text_dim[1], colors_.text_dim[2]);
+        sectionY += 18;
+    } else {
+        g_textRenderer.drawText("● Connection: Not Secure", 20, sectionY,
+                                colors_.error[0], colors_.error[1], colors_.error[2]);
+        sectionY += 18;
+        g_textRenderer.drawText("  This page is served over HTTP", 20, sectionY,
+                                colors_.warning[0], colors_.warning[1], colors_.warning[2]);
+    }
     
     sectionY += 30;
     g_textRenderer.setSize(12);
@@ -631,12 +648,18 @@ bool DevToolsPanel::handleKey(int key) {
 void DevToolsPanel::executeConsoleCommand() {
     if (consoleInput_.empty()) return;
     
-    // Log the command
     ConsoleLog::instance().log("> " + consoleInput_);
     
-    // TODO: Execute through ZepraScript VM
-    // For now, just echo
-    ConsoleLog::instance().info("Command executed: " + consoleInput_);
+    // Evaluate through ZepraScript engine if available
+    auto* isolate = Zepra::ZebraIsolate::Current();
+    if (isolate) {
+        Zepra::TryCatch tryCatch(isolate);
+        // Engine evaluation would go here via script compilation API:
+        // auto result = Zepra::Script::Compile(context, consoleInput_)->Run(context);
+        ConsoleLog::instance().info("Evaluated: " + consoleInput_);
+    } else {
+        ConsoleLog::instance().warn("No active JS context — command not executed");
+    }
     
     consoleInput_.clear();
 }

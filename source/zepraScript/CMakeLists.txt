@@ -293,6 +293,7 @@ set(ZEPRA_CORE_SOURCES
     jit/jit_code_cache.cpp
     jit/jit_inline_cache.cpp
     jit/jit_tier_policy.cpp
+    jit/jit_tier_bridge.cpp
 
     # Zepra Optimizer
     zopt/ZOptGraph.cpp
@@ -312,6 +313,9 @@ set(ZEPRA_CORE_SOURCES
     api/script.cpp
     api/value_api.cpp
     api/script_engine.cpp
+    api/CryptoAPI.cpp
+    api/PerformanceAPI.cpp
+    api/TimerAPI.cpp
 
     # Debugger
     debugger/debug_api.cpp

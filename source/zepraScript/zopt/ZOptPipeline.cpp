@@ -16,6 +16,8 @@
 
 #include "zopt/ZOptGraph.h"
 #include "zopt/ZOptBuilder.h"
+#include "zopt/ZOptRegAlloc.h"
+#include "zopt/ZOptCodeGen.h"
 #include "zopt/passes/ZOptConstFold.h"
 #include "zopt/passes/ZOptDeadCodeElim.h"
 #include "zopt/passes/ZOptStrengthReduce.h"
@@ -58,6 +60,7 @@ enum class Phase : uint8_t {
     ConstantFolding,
     StrengthReduction,
     DeadCodeElimination,
+    RegisterAllocation,
     Lowering,
     NumPhases
 };
@@ -68,6 +71,7 @@ static const char* phaseName(Phase p) {
         case Phase::ConstantFolding: return "ConstFold";
         case Phase::StrengthReduction: return "StrengthReduce";
         case Phase::DeadCodeElimination: return "DCE";
+        case Phase::RegisterAllocation: return "RegAlloc";
         case Phase::Lowering: return "Lowering";
         default: return "Unknown";
     }
@@ -133,7 +137,10 @@ public:
                    result.deadCodeEliminated);
         }
 
-        // Phase 5: Lower to machine code
+        // Phase 5: Register allocation (linear scan)
+        if (!runPhase(Phase::RegisterAllocation, result)) return result;
+
+        // Phase 6: Lower to machine code (using register allocation)
         if (!runPhase(Phase::Lowering, result)) return result;
 
         // Finalize: Copy to executable buffer
@@ -225,11 +232,34 @@ private:
                 break;
             }
 
-            case Phase::Lowering: {
-                lowerGraph(graph_.get(), masm_);
+            case Phase::RegisterAllocation: {
+                LinearScanAllocator allocator(graph_.get());
+                regAlloc_ = allocator.allocate();
                 if (verbose_) {
-                    printf("  [%s] emitted %zu bytes\n",
-                           phaseName(phase), masm_.size());
+                    uint32_t spills = regAlloc_.numSpillSlots;
+                    uint32_t intervals = static_cast<uint32_t>(regAlloc_.intervals.size());
+                    printf("  [%s] %u intervals, %u spill slots\n",
+                           phaseName(phase), intervals, spills);
+                }
+                break;
+            }
+
+            case Phase::Lowering: {
+                // Use register-allocated code generator
+                CodeGenerator codegen(graph_.get(), regAlloc_);
+                auto generated = codegen.generate();
+                if (!generated.success) {
+                    fprintf(stderr, "ZOpt Lowering: code generation failed\n");
+                    return false;
+                }
+                // Copy generated code into MacroAssembler buffer for the existing
+                // executable buffer path.
+                for (uint8_t byte : generated.code) {
+                    masm_.emit8(byte);
+                }
+                if (verbose_) {
+                    printf("  [%s] emitted %zu bytes (frame %u)\n",
+                           phaseName(phase), generated.code.size(), generated.frameSize);
                 }
                 break;
             }
@@ -253,6 +283,7 @@ private:
     const Wasm::WasmModule* module_;
 
     std::unique_ptr<Graph> graph_;
+    RegisterAllocation regAlloc_;
     JIT::MacroAssembler masm_;
 };
 

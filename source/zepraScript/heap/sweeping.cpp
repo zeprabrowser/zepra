@@ -302,8 +302,8 @@ const SweepResult& getSweepStats() {
  * @brief Configuration for concurrent sweeping
  */
 struct ConcurrentSweepConfig {
-    bool enabled = false;
-    size_t numWorkers = 1;
+    bool enabled = true;
+    size_t numWorkers = std::min<size_t>(std::thread::hardware_concurrency(), 4);
     size_t pagesPerWorker = 4;
 };
 

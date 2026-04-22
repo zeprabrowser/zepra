@@ -562,4 +562,4 @@ Current: 470/470 tests passing (401 unit + 69 integration).
 ---
 
 _Update this document alongside any major subsystem addition or API change._
-_For bytecode instruction reference see `docs/zeprascript/bytecode-spec.md`. For JIT internals see `docs/zeprascript/jit-tiers.md`._
+_For bytecode instruction reference see `docs/zeprascript/bytecode-spec.md`. For JIT internals see `docs/zeprascript/jit-tiers.md`. For API catalog see `docs/zeprascript/api-surface.md`._

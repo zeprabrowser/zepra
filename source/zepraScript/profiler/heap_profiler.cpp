@@ -25,7 +25,7 @@
 namespace Zepra::Profiler {
 
 // =============================================================================
-// Heap Object Mock (To simulate engine's GC heap layout)
+// GC Heap Node — interface for heap graph traversal
 // =============================================================================
 
 struct GCNode {

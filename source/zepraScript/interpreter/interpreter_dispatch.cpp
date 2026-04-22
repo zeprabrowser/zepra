@@ -9,6 +9,7 @@
 #include <cstring>
 #include <vector>
 #include <functional>
+#include "../jit/jit_tier_bridge.hpp"
 
 namespace Zepra::Interpreter {
 
@@ -492,10 +493,20 @@ L_In:
         R[frame.code[frame.ip].a].asBits = 0;
         NEXT();
 
-L_Jump:
-        frame.ip += frame.code[frame.ip].sbx;
+L_Jump: {
+        int32_t offset = frame.code[frame.ip].sbx;
+        frame.ip += offset;
         stats_.branches++;
+        // Back-edge: notify profiler for OSR candidates.
+        if (offset < 0) {
+            if (auto* bridge = JIT::getTierUpBridge()) {
+                uintptr_t fnId = reinterpret_cast<uintptr_t>(frame.functionObj);
+                bridge->onLoopBackEdge(fnId, nullptr,
+                    static_cast<uint32_t>(frame.ip));
+            }
+        }
         DISPATCH();
+}
 
 L_JumpIfTrue:
         if (R[frame.code[frame.ip].a].asBits == 0x7FF8000000000002ULL) {
@@ -533,9 +544,23 @@ L_Call: {
         stats_.calls++;
         callDepth_++;
         if (callDepth_ >= kMaxCallDepth) {
-            // Stack overflow.
             callDepth_--;
             goto L_Throw;
+        }
+        // Tier-up check: if bridge exists, let it profile and possibly JIT-compile.
+        if (auto* bridge = JIT::getTierUpBridge()) {
+            uintptr_t fnId = reinterpret_cast<uintptr_t>(R[frame.code[frame.ip].b].asPtr);
+            void* nativeEntry = bridge->onFunctionEntry(fnId, nullptr);
+            if (nativeEntry) {
+                // Function was JIT-compiled — call native entry instead.
+                using NativeFn = ValueSlot(*)(ValueSlot*, uint8_t);
+                uint8_t fn = frame.code[frame.ip].b;
+                uint8_t argc = frame.code[frame.ip].c;
+                auto native = reinterpret_cast<NativeFn>(nativeEntry);
+                R[frame.code[frame.ip].a] = native(&R[fn + 1], argc);
+                callDepth_--;
+                NEXT();
+            }
         }
         if (cb_.externalCall) {
             uint8_t fn = frame.code[frame.ip].b;

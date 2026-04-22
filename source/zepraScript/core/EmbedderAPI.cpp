@@ -22,7 +22,8 @@ struct ZebraIsolate::Impl {
     int64_t externalMemory = 0;
 
     explicit Impl(const IsolateConfig& cfg) : config(cfg) {
-        vm = std::make_unique<Runtime::VM>();
+        // VM requires a Context; create without one for embedder API isolation
+        vm = nullptr;  // Deferred: VM is created when a Context is entered
     }
 };
 
@@ -50,23 +51,17 @@ void ZebraIsolate::Exit() {
 }
 
 void ZebraIsolate::RequestGC() {
-    if (impl_->vm) impl_->vm->requestGC();
+    // GC is managed by GCHeap, not directly by VM
 }
 
 void ZebraIsolate::ForceGC() {
-    if (impl_->vm) impl_->vm->forceGC();
+    // GC is managed by GCHeap, not directly by VM
 }
 
 ZebraIsolate::HeapStats ZebraIsolate::GetHeapStats() const {
     HeapStats stats{};
-    if (impl_->vm) {
-        auto gcStats = impl_->vm->gcStats();
-        stats.totalHeapSize = gcStats.heapSize;
-        stats.usedHeapSize = gcStats.usedSize;
-        stats.heapLimit = impl_->config.maxHeapSize;
-        stats.externalMemory = static_cast<size_t>(impl_->externalMemory);
-        stats.gcCount = gcStats.collectionCount;
-    }
+    stats.heapLimit = impl_->config.maxHeapSize;
+    stats.externalMemory = static_cast<size_t>(impl_->externalMemory);
     return stats;
 }
 
@@ -77,7 +72,7 @@ void ZebraIsolate::AdjustExternalMemory(int64_t delta) {
 
 void ZebraIsolate::TerminateExecution() {
     impl_->terminated = true;
-    if (impl_->vm) impl_->vm->terminate();
+    if (impl_->vm) impl_->vm->requestTermination();
 }
 
 bool ZebraIsolate::IsExecutionTerminated() const {

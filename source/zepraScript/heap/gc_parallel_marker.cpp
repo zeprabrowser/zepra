@@ -11,6 +11,7 @@
 #include <functional>
 #include <memory>
 #include <chrono>
+#include <thread>
 
 namespace Zepra::Heap {
 
@@ -109,9 +110,22 @@ public:
 
         auto start = std::chrono::steady_clock::now();
 
-        // Simple single-threaded fallback for now.
-        // Multi-threaded marking uses GCThreadPool externally.
-        markLoop(0);
+        if (config_.threadCount <= 1) {
+            // Single-threaded fast path
+            markLoop(0);
+        } else {
+            // Multi-threaded: spawn N workers, each runs markLoop on its worklist
+            std::vector<std::thread> workers;
+            workers.reserve(config_.threadCount);
+
+            for (uint32_t w = 0; w < config_.threadCount; ++w) {
+                workers.emplace_back([this, w]() { markLoop(w); });
+            }
+
+            for (auto& t : workers) {
+                t.join();
+            }
+        }
 
         auto end = std::chrono::steady_clock::now();
         durationMs_ = std::chrono::duration<double, std::milli>(end - start).count();
@@ -190,8 +204,8 @@ public:
 
 private:
     void processItem(const MarkWorkItem& item, uint32_t workerId) {
-        totalMarked_++;
-        totalBytes_ += item.cellSize;
+        totalMarked_.fetch_add(1, std::memory_order_relaxed);
+        totalBytes_.fetch_add(item.cellSize, std::memory_order_relaxed);
 
         if (cb_.traceCell) {
             cb_.traceCell(item.cell, item.cellSize,
@@ -231,8 +245,8 @@ private:
     Config config_;
     Callbacks cb_;
     std::vector<MarkWorklist> worklists_;
-    size_t totalMarked_ = 0;
-    size_t totalBytes_ = 0;
+    std::atomic<size_t> totalMarked_{0};
+    std::atomic<size_t> totalBytes_{0};
     size_t rootCount_ = 0;
     double durationMs_ = 0;
     uint64_t stealCount_ = 0;

@@ -474,6 +474,7 @@ private:
 class WasmInterpreter {
 public:
     explicit WasmInterpreter(WasmInstance* instance);
+    ~WasmInterpreter();
     
     WasmValue execute(uint32_t funcIdx, const std::vector<WasmValue>& args);
     
@@ -499,6 +500,11 @@ private:
     // Instruction execution
     void executeInstruction(uint8_t opcode, const uint8_t*& ip);
     void executeSimdInstruction(uint32_t simdOp, const uint8_t*& ip);
+    void executeGcInstruction(uint32_t gcOp, const uint8_t*& ip);
+    
+    // GC state (owned, defined in WasmGC.h — allocated in .cpp)
+    struct GcState;
+    std::unique_ptr<GcState> gc_;
     
     // Stack operations
     void push(WasmValue v) { stack_.push_back(v); }
@@ -739,6 +745,11 @@ namespace Opcode {
     
     // Prefix bytes
     constexpr uint8_t SIMD_PREFIX = 0xFD;
+    constexpr uint8_t GcPrefix = 0xFB;
+    
+    // Tail call opcodes
+    constexpr uint8_t ReturnCall = 0x12;
+    constexpr uint8_t ReturnCallIndirect = 0x13;
     
     // SIMD opcodes (following 0xFD prefix, use LEB128 encoded)
     namespace Simd {
