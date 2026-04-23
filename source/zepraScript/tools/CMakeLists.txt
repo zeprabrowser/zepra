@@ -14,7 +14,7 @@ target_link_libraries(zepra-repl
 
 target_include_directories(zepra-repl
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
 # Bytecode Dumper - Debug tool for inspecting bytecode
@@ -29,7 +29,7 @@ target_link_libraries(zepra-dump-bytecode
 
 target_include_directories(zepra-dump-bytecode
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
 # Install tools

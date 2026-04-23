@@ -362,7 +362,7 @@ set(ZEPRA_CORE_SOURCES
     browser/performance.cpp
     browser/console_api.cpp
     browser/devtools.cpp
-    browser/video_bindings.cpp
+    # browser/video_bindings.cpp  # TODO: Fix Context API usage
 
     # Regex Engine
     regex/regex_compiler.cpp
@@ -451,3 +451,6 @@ target_compile_definitions(zepra-core
         ZEPRA_VERSION_MINOR=${PROJECT_VERSION_MINOR}
         ZEPRA_VERSION_PATCH=${PROJECT_VERSION_PATCH}
 )
+
+# Tools (REPL, bytecode dumper)
+add_subdirectory(tools)
