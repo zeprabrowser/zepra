@@ -679,7 +679,15 @@ ExprPtr Parser::parseExpression() {
 #ifndef NDEBUG
     assertProgress();
 #endif
-    return parseAssignmentExpression();
+    ExprPtr expr = parseAssignmentExpression();
+    
+    // Comma operator: (a, b, c) evaluates all, returns last
+    while (match(TokenType::Comma)) {
+        ExprPtr right = parseAssignmentExpression();
+        expr = std::make_unique<BinaryExpr>(TokenType::Comma, std::move(expr), std::move(right));
+    }
+    
+    return expr;
 }
 
 ExprPtr Parser::parseAssignmentExpression() {
@@ -1129,6 +1137,22 @@ ExprPtr Parser::parsePrimaryExpression() {
     }
     if (match(TokenType::Undefined)) {
         return std::make_unique<LiteralExpr>(LiteralExpr::LiteralValue{}, previousToken_.start);
+    }
+    
+    // Regex literal: /pattern/flags → new RegExp("pattern", "flags")
+    if (match(TokenType::RegExp)) {
+        std::string raw = previousToken_.value;  // "pattern/flags"
+        size_t sep = raw.rfind('/');
+        std::string pattern = (sep != std::string::npos) ? raw.substr(0, sep) : raw;
+        std::string flags = (sep != std::string::npos) ? raw.substr(sep + 1) : "";
+        
+        auto regexpId = std::make_unique<IdentifierExpr>("RegExp", previousToken_.start);
+        std::vector<ExprPtr> args;
+        args.push_back(std::make_unique<LiteralExpr>(pattern, previousToken_.start));
+        if (!flags.empty()) {
+            args.push_back(std::make_unique<LiteralExpr>(flags, previousToken_.start));
+        }
+        return std::make_unique<NewExpr>(std::move(regexpId), std::move(args));
     }
     
     // this

@@ -961,6 +961,14 @@ void BytecodeGenerator::compileIdentifier(const Frontend::IdentifierExpr* expr) 
 }
 
 void BytecodeGenerator::compileBinaryExpression(const Frontend::BinaryExpr* expr) {
+    // Comma operator: evaluate left, discard, keep right
+    if (expr->op() == Frontend::TokenType::Comma) {
+        compileExpression(expr->left());
+        emit(Opcode::OP_POP);
+        compileExpression(expr->right());
+        return;
+    }
+    
     compileExpression(expr->left());
     compileExpression(expr->right());
     
@@ -985,6 +993,8 @@ void BytecodeGenerator::compileBinaryExpression(const Frontend::BinaryExpr* expr
         case Frontend::TokenType::LeftShift: emit(Opcode::OP_LEFT_SHIFT); break;
         case Frontend::TokenType::RightShift: emit(Opcode::OP_RIGHT_SHIFT); break;
         case Frontend::TokenType::UnsignedRightShift: emit(Opcode::OP_UNSIGNED_RIGHT_SHIFT); break;
+        case Frontend::TokenType::Instanceof: emit(Opcode::OP_INSTANCEOF); break;
+        case Frontend::TokenType::In: emit(Opcode::OP_IN); break;
         default:
             error("Unknown binary operator");
             break;
@@ -999,6 +1009,10 @@ void BytecodeGenerator::compileUnaryExpression(const Frontend::UnaryExpr* expr) 
         case Frontend::TokenType::Not: emit(Opcode::OP_NOT); break;
         case Frontend::TokenType::Tilde: emit(Opcode::OP_BITWISE_NOT); break;
         case Frontend::TokenType::Typeof: emit(Opcode::OP_TYPEOF); break;
+        case Frontend::TokenType::Void:
+            emit(Opcode::OP_POP);
+            emit(Opcode::OP_NIL);  // void always produces undefined
+            break;
         default:
             error("Unknown unary operator");
             break;
@@ -1970,33 +1984,52 @@ void BytecodeGenerator::compileYieldExpression(const Frontend::YieldExpr* expr) 
 
 void BytecodeGenerator::compileForInStatement(const Frontend::ForInStmt* stmt) {
     // for (let key in object) { body }
-    // becomes:
-    // let keys = Object.keys(object);
-    // for (let i = 0; i < keys.length; i++) {
-    //     let key = keys[i];
-    //     body
-    // }
+    // Lowered to:
+    //   let $keys = Object.keys(object);
+    //   let $idx = 0;
+    //   let key;  // declared once
+    //   while ($idx < $keys.length) { key = $keys[$idx]; body; $idx++; }
     
     beginScope();
     
     // Compile object and get its keys
     compileExpression(stmt->right());
     emit(Opcode::OP_FOR_IN);  // Pushes array of keys
-    
-    // Store keys array in hidden local
     addLocal("$keys", false);
+    size_t keysSlot = current_->locals.size() - 1;
     
     // Store index counter (starts at 0)
     emitConstant(Runtime::Value::number(0));
     addLocal("$idx", false);
+    size_t idxSlot = current_->locals.size() - 1;
+    
+    // Declare loop variable BEFORE the loop with a placeholder value
+    size_t varSlot = SIZE_MAX;
+    const Frontend::ASTNode* left = stmt->left();
+    bool isVarDecl = (left->type() == Frontend::NodeType::VariableDeclaration);
+    std::string loopVarName;
+    
+    if (isVarDecl) {
+        const auto* varDecl = static_cast<const Frontend::VariableDecl*>(left);
+        if (!varDecl->declarators().empty()) {
+            const auto* id = static_cast<const Frontend::IdentifierExpr*>(
+                varDecl->declarators()[0].id.get());
+            loopVarName = id->name();
+            bool isConst = varDecl->kind() == Frontend::VariableDecl::Kind::Const;
+            emit(Opcode::OP_NIL);  // Placeholder
+            declareVariable(loopVarName, isConst);
+            defineVariable(loopVarName);
+            varSlot = current_->locals.size() - 1;
+        }
+    }
     
     size_t loopStart = currentChunk()->currentOffset();
     
     // Check: $idx < $keys.length
     emit(Opcode::OP_GET_LOCAL);
-    emit(static_cast<uint8_t>(current_->locals.size() - 1));  // $idx
+    emit(static_cast<uint8_t>(idxSlot));
     emit(Opcode::OP_GET_LOCAL);
-    emit(static_cast<uint8_t>(current_->locals.size() - 2));  // $keys
+    emit(static_cast<uint8_t>(keysSlot));
     size_t lenConst = makeConstant(
         Runtime::Value::string(new Runtime::String("length")));
     emit(Opcode::OP_GET_PROPERTY);
@@ -2008,22 +2041,16 @@ void BytecodeGenerator::compileForInStatement(const Frontend::ForInStmt* stmt) {
     
     // Get current key: $keys[$idx]
     emit(Opcode::OP_GET_LOCAL);
-    emit(static_cast<uint8_t>(current_->locals.size() - 2));  // $keys
+    emit(static_cast<uint8_t>(keysSlot));
     emit(Opcode::OP_GET_LOCAL);
-    emit(static_cast<uint8_t>(current_->locals.size() - 1));  // $idx
+    emit(static_cast<uint8_t>(idxSlot));
     emit(Opcode::OP_GET_ELEMENT);
     
-    // Assign to loop variable
-    const Frontend::ASTNode* left = stmt->left();
-    if (left->type() == Frontend::NodeType::VariableDeclaration) {
-        const auto* varDecl = static_cast<const Frontend::VariableDecl*>(left);
-        if (!varDecl->declarators().empty()) {
-            const auto* id = static_cast<const Frontend::IdentifierExpr*>(
-                varDecl->declarators()[0].id.get());
-            bool isConst = varDecl->kind() == Frontend::VariableDecl::Kind::Const;
-            declareVariable(id->name(), isConst);
-            defineVariable(id->name());
-        }
+    // Assign key to loop variable
+    if (isVarDecl && varSlot != SIZE_MAX) {
+        emit(Opcode::OP_SET_LOCAL);
+        emit(static_cast<uint8_t>(varSlot));
+        emit(Opcode::OP_POP);
     } else if (left->type() == Frontend::NodeType::Identifier) {
         const auto* id = static_cast<const Frontend::IdentifierExpr*>(left);
         int slot = resolveLocal(id->name());
@@ -2048,11 +2075,11 @@ void BytecodeGenerator::compileForInStatement(const Frontend::ForInStmt* stmt) {
     
     // Increment $idx
     emit(Opcode::OP_GET_LOCAL);
-    emit(static_cast<uint8_t>(current_->locals.size() - 1));  // $idx
+    emit(static_cast<uint8_t>(idxSlot));
     emitConstant(Runtime::Value::number(1));
     emit(Opcode::OP_ADD);
     emit(Opcode::OP_SET_LOCAL);
-    emit(static_cast<uint8_t>(current_->locals.size() - 1));  // $idx
+    emit(static_cast<uint8_t>(idxSlot));
     emit(Opcode::OP_POP);
     
     // Loop back
@@ -2071,6 +2098,7 @@ void BytecodeGenerator::compileForInStatement(const Frontend::ForInStmt* stmt) {
     
     endScope();
 }
+
 
 void BytecodeGenerator::compileTemplateLiteral(const Frontend::TemplateLiteralExpr* expr) {
     // `hello ${name}, you are ${age}!`

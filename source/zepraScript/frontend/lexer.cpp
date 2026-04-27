@@ -165,7 +165,9 @@ void Lexer::skipBlockComment() {
 Token Lexer::nextToken() {
     if (hasPeeked_) {
         hasPeeked_ = false;
-        return std::move(peekedToken_);
+        Token tok = std::move(peekedToken_);
+        updateDivisionContext(tok.type);
+        return tok;
     }
     
     skipWhitespace();
@@ -179,26 +181,61 @@ Token Lexer::nextToken() {
     
     // Identifiers and keywords
     if (isIdentifierStart(c)) {
-        return scanIdentifierOrKeyword();
+        Token tok = scanIdentifierOrKeyword();
+        updateDivisionContext(tok.type);
+        return tok;
     }
     
     // Numbers
     if (isDigit(c) || (c == '.' && isDigit(peek(0)))) {
-        return scanNumber();
+        Token tok = scanNumber();
+        updateDivisionContext(tok.type);
+        return tok;
     }
     
     // Strings
     if (c == '"' || c == '\'') {
-        return scanString(c);
+        Token tok = scanString(c);
+        updateDivisionContext(tok.type);
+        return tok;
     }
     
     // Template literals
     if (c == '`') {
-        return scanTemplate();
+        Token tok = scanTemplate();
+        updateDivisionContext(tok.type);
+        return tok;
     }
     
     // Operators and punctuation
-    return scanOperator();
+    Token tok = scanOperator();
+    updateDivisionContext(tok.type);
+    return tok;
+}
+
+void Lexer::updateDivisionContext(TokenType type) {
+    // After these tokens, `/` is division. After everything else, it's regex.
+    switch (type) {
+        case TokenType::Identifier:
+        case TokenType::Number:
+        case TokenType::String:
+        case TokenType::RegExp:
+        case TokenType::True:
+        case TokenType::False:
+        case TokenType::Null:
+        case TokenType::Undefined:
+        case TokenType::This:
+        case TokenType::RightParen:
+        case TokenType::RightBracket:
+        case TokenType::RightBrace:
+        case TokenType::PlusPlus:
+        case TokenType::MinusMinus:
+            canFollowDivision_ = true;
+            break;
+        default:
+            canFollowDivision_ = false;
+            break;
+    }
 }
 
 const Token& Lexer::peek() {
@@ -545,6 +582,10 @@ Token Lexer::scanOperator() {
             return makeToken(TokenType::Star);
             
         case '/':
+            if (!canFollowDivision_) {
+                // Regex literal context
+                return scanRegExp();
+            }
             if (match('=')) return makeToken(TokenType::SlashAssign);
             return makeToken(TokenType::Slash);
             
@@ -617,6 +658,41 @@ Token Lexer::scanOperator() {
     }
     
     return errorToken("Unexpected character");
+}
+
+Token Lexer::scanRegExp() {
+    // The opening '/' has already been consumed by scanOperator's switch
+    std::string pattern;
+    std::string flags;
+    
+    // Scan pattern until unescaped closing '/'
+    bool inCharClass = false;
+    while (current() != '\0' && current() != '\n') {
+        if (current() == '\\') {
+            // Escape sequence — include both chars
+            pattern += advance();
+            if (current() != '\0') pattern += advance();
+            continue;
+        }
+        if (current() == '[') inCharClass = true;
+        if (current() == ']') inCharClass = false;
+        if (current() == '/' && !inCharClass) break;
+        pattern += advance();
+    }
+    
+    if (current() != '/') {
+        return errorToken("Unterminated regex literal");
+    }
+    advance(); // closing '/'
+    
+    // Scan flags: g, i, m, s, u, y
+    while (current() != '\0' && isAlpha(current())) {
+        flags += advance();
+    }
+    
+    // Value format: "pattern/flags" for downstream use
+    std::string value = pattern + "/" + flags;
+    return makeToken(TokenType::RegExp, std::move(value));
 }
 
 Token Lexer::makeToken(TokenType type) {

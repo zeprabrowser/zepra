@@ -116,6 +116,7 @@ private:
     bool isAlphaNumeric(char c) const;
     bool isIdentifierStart(char c) const;
     bool isIdentifierPart(char c) const;
+    void updateDivisionContext(TokenType type);
     
     const SourceCode* source_;
     const char* src_;          // Cached raw pointer into source content
