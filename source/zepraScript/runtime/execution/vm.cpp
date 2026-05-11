@@ -1535,7 +1535,9 @@ void VM::dispatch(Opcode op) {
             Value obj = pop();
             Value key = pop();
             if (!obj.isObject()) {
-                throw std::runtime_error("Right-hand side of 'in' must be an object");
+                throw std::runtime_error(
+                    "Cannot use 'in' operator to search for '" +
+                    key.toString() + "' in " + obj.toString());
             }
             std::string keyStr;
             if (key.isString()) {
@@ -1543,7 +1545,16 @@ void VM::dispatch(Opcode op) {
             } else {
                 keyStr = key.toString();
             }
-            bool found = obj.asObject()->has(keyStr);
+            // Walk prototype chain per ES spec
+            bool found = false;
+            Object* current = obj.asObject();
+            while (current) {
+                if (current->has(keyStr)) {
+                    found = true;
+                    break;
+                }
+                current = current->prototype();
+            }
             push(Value::boolean(found));
             break;
         }

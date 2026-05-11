@@ -1,4 +1,4 @@
-#pragma once
+Y0ITgma once
 
 // Inline Top Navigation rendering logic
 // Matches exactly to Figma design reference (Image 5)

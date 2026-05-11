@@ -125,6 +125,7 @@ private:
     void compileForInStatement(const Frontend::ForInStmt* stmt);
     void compileTemplateLiteral(const Frontend::TemplateLiteralExpr* expr);
     void compileSwitchStatement(const Frontend::SwitchStmt* stmt);
+    void compileLabeledStatement(const Frontend::LabeledStmt* stmt);
     
     // Expression compilation
     void compileExpression(const Frontend::Expression* expr);

@@ -381,6 +381,13 @@ void BytecodeGenerator::compileStatement(const Frontend::Statement* stmt) {
         case Frontend::NodeType::ForInStatement:
             compileForInStatement(static_cast<const Frontend::ForInStmt*>(stmt));
             break;
+        case Frontend::NodeType::LabeledStatement:
+            compileLabeledStatement(static_cast<const Frontend::LabeledStmt*>(stmt));
+            break;
+        case Frontend::NodeType::EmptyStatement:
+            break;
+        case Frontend::NodeType::DebuggerStatement:
+            break;
         default:
             error("Unknown statement type");
             break;
@@ -620,7 +627,14 @@ void BytecodeGenerator::compileDoWhileStatement(const Frontend::DoWhileStmt* stm
 }
 
 void BytecodeGenerator::compileForStatement(const Frontend::ForStmt* stmt) {
-    beginScope();
+    // var is function-scoped — only create a block scope for let/const init
+    bool needsScope = false;
+    if (stmt->init() && stmt->init()->type() == Frontend::NodeType::VariableDeclaration) {
+        auto* varDecl = static_cast<const Frontend::VariableDecl*>(stmt->init());
+        needsScope = (varDecl->kind() != Frontend::VariableDecl::Kind::Var);
+    }
+    
+    if (needsScope) beginScope();
     
     // Initializer
     if (stmt->init()) {
@@ -674,7 +688,7 @@ void BytecodeGenerator::compileForStatement(const Frontend::ForStmt* stmt) {
     breakJumps_.pop_back();
     continueTargets_.pop_back();
     
-    endScope();
+    if (needsScope) endScope();
 }
 
 void BytecodeGenerator::compileReturnStatement(const Frontend::ReturnStmt* stmt) {
@@ -1011,7 +1025,7 @@ void BytecodeGenerator::compileUnaryExpression(const Frontend::UnaryExpr* expr) 
         case Frontend::TokenType::Typeof: emit(Opcode::OP_TYPEOF); break;
         case Frontend::TokenType::Void:
             emit(Opcode::OP_POP);
-            emit(Opcode::OP_NIL);  // void always produces undefined
+            emitConstant(Runtime::Value::undefined());
             break;
         default:
             error("Unknown unary operator");
@@ -1980,6 +1994,21 @@ void BytecodeGenerator::compileYieldExpression(const Frontend::YieldExpr* expr) 
         emit(static_cast<uint8_t>(0));  // No delegation
     }
     // The value passed to next() is left on stack
+}
+
+void BytecodeGenerator::compileLabeledStatement(const Frontend::LabeledStmt* stmt) {
+    // Labeled statement: label: innerStatement
+    // The label enables targeted break/continue from nested loops.
+    // Push a break target so `break label` resolves to the exit of this labeled block.
+    breakJumps_.push_back({});
+
+    compileStatement(stmt->body());
+
+    // Patch any break jumps targeting this label
+    for (size_t breakJump : breakJumps_.back()) {
+        patchJump(breakJump);
+    }
+    breakJumps_.pop_back();
 }
 
 void BytecodeGenerator::compileForInStatement(const Frontend::ForInStmt* stmt) {

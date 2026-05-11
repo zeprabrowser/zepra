@@ -135,6 +135,10 @@ private:
     bool inLoop_ = false;
     bool inSwitch_ = false;
     bool inFunction_ = false;
+    bool noIn_ = false;  // Suppress 'in' as binary operator (for-loop init context)
+
+    // Labeled statement: `label: statement`
+    StmtPtr parseLabeledStatement(const std::string& label);
     
 #ifndef NDEBUG
     // Debug: Infinite loop detection

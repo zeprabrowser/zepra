@@ -474,6 +474,27 @@ public:
 };
 
 /**
+ * @brief Labeled statement (label: statement)
+ *
+ * Attaches a label to a statement for break/continue targeting.
+ * Example: outer: for (var i = 0; i < 10; i++) { break outer; }
+ */
+class LabeledStmt : public Statement {
+public:
+    LabeledStmt(std::string label, StmtPtr body, SourceLocation loc = {})
+        : Statement(NodeType::LabeledStatement, loc)
+        , label_(std::move(label))
+        , body_(std::move(body)) {}
+
+    const std::string& label() const { return label_; }
+    Statement* body() const { return body_.get(); }
+
+private:
+    std::string label_;
+    StmtPtr body_;
+};
+
+/**
  * @brief Return statement
  */
 class ReturnStmt : public Statement {

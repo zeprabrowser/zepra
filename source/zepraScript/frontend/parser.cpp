@@ -364,6 +364,20 @@ StmtPtr Parser::parseStatement() {
     if (match(TokenType::Semicolon)) {
         return std::make_unique<EmptyStmt>();
     }
+    if (match(TokenType::Debugger)) {
+        match(TokenType::Semicolon);
+        return std::make_unique<EmptyStmt>();
+    }
+    
+    // Labeled statement: identifier followed by colon
+    // e.g., outer: for (;;) { break outer; }
+    if (check(TokenType::Identifier) && peek().type == TokenType::Colon) {
+        std::string label = currentToken_.value;
+        SourceLocation loc = currentToken_.start;
+        advance(); // consume identifier
+        advance(); // consume colon
+        return parseLabeledStatement(label);
+    }
     
     return parseExpressionStatement();
 }
@@ -508,8 +522,12 @@ StmtPtr Parser::parseForStatement() {
         init = std::make_unique<VariableDecl>(kind, std::move(declarators));
         consume(TokenType::Semicolon, "Expected ';' after for initializer");
     } else {
-        // Expression or identifier that might be for...of
+        // Expression or identifier that might be for...of / for...in
+        // Suppress 'in' as binary operator so for(x in obj) works
+        bool savedNoIn = noIn_;
+        noIn_ = true;
         ExprPtr expr = parseExpression();
+        noIn_ = savedNoIn;
         
         // Check if this is for...of or for...in with an existing identifier
         if (match(TokenType::Of) || match(TokenType::In)) {
@@ -672,6 +690,11 @@ StmtPtr Parser::parseExpressionStatement() {
     ExprPtr expr = parseExpression();
     match(TokenType::Semicolon);
     return std::make_unique<ExprStmt>(std::move(expr));
+}
+
+StmtPtr Parser::parseLabeledStatement(const std::string& label) {
+    StmtPtr body = parseStatement();
+    return std::make_unique<LabeledStmt>(label, std::move(body));
 }
 
 // Expression parsing - uses precedence climbing
@@ -881,12 +904,24 @@ ExprPtr Parser::parseEqualityExpression() {
 ExprPtr Parser::parseRelationalExpression() {
     ExprPtr left = parseShiftExpression();
     
-    while (match({TokenType::Less, TokenType::LessEqual, 
-                  TokenType::Greater, TokenType::GreaterEqual,
-                  TokenType::Instanceof, TokenType::In})) {
-        TokenType op = previousToken_.type;
-        ExprPtr right = parseShiftExpression();
-        left = std::make_unique<BinaryExpr>(op, std::move(left), std::move(right));
+    // When noIn_ is set (for-loop init context), exclude 'in' from
+    // relational operators per ES spec [In] grammar parameter.
+    // This prevents for(x in obj) from consuming 'in' as binary op.
+    for (;;) {
+        if (match({TokenType::Less, TokenType::LessEqual,
+                   TokenType::Greater, TokenType::GreaterEqual,
+                   TokenType::Instanceof})) {
+            TokenType op = previousToken_.type;
+            ExprPtr right = parseShiftExpression();
+            left = std::make_unique<BinaryExpr>(op, std::move(left), std::move(right));
+            continue;
+        }
+        if (!noIn_ && match(TokenType::In)) {
+            ExprPtr right = parseShiftExpression();
+            left = std::make_unique<BinaryExpr>(TokenType::In, std::move(left), std::move(right));
+            continue;
+        }
+        break;
     }
     
     return left;

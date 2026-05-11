@@ -760,11 +760,18 @@ void tokenize(const std::string& code) {
  */
 void evaluate(const std::string& code, Runtime::VM& vm) {
     try {
+        auto t0 = std::chrono::steady_clock::now();
+        
         // 1. Parse source code to AST
         auto source = Frontend::SourceCode::fromString(code, "<repl>");
         Frontend::Parser parser(source.get());
         
         auto program = parser.parseProgram();
+        
+        auto t1 = std::chrono::steady_clock::now();
+        fprintf(stderr, "[phase] parse: %ldms, stmts=%zu\n",
+            std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count(),
+            program ? program->body().size() : 0);
         
         if (parser.hasErrors()) {
             for (const auto& err : parser.errors()) {
@@ -777,6 +784,11 @@ void evaluate(const std::string& code, Runtime::VM& vm) {
         Bytecode::BytecodeGenerator generator;
         auto chunk = generator.compile(program.get());
         
+        auto t2 = std::chrono::steady_clock::now();
+        fprintf(stderr, "[phase] compile: %ldms, bytecode=%zu bytes\n",
+            std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count(),
+            chunk ? chunk->code().size() : 0);
+        
         if (generator.hasErrors()) {
             for (const auto& err : generator.errors()) {
                 std::cerr << "Compile error: " << err << "\n";
@@ -786,6 +798,10 @@ void evaluate(const std::string& code, Runtime::VM& vm) {
         
         // 3. Execute bytecode
         Runtime::ExecutionResult result = vm.execute(chunk.get());
+        
+        auto t3 = std::chrono::steady_clock::now();
+        fprintf(stderr, "[phase] execute: %ldms\n",
+            std::chrono::duration_cast<std::chrono::milliseconds>(t3 - t2).count());
         
         if (result.status == Runtime::ExecutionResult::Status::Error) {
             std::cerr << "Runtime error: " << result.error << "\n";
