@@ -3,6 +3,7 @@
 // ZepraScript — gc_idle_scheduler.cpp — GC during browser idle periods
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <functional>
 #include <cstdint>

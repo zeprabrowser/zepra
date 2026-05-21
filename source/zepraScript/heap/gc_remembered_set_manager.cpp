@@ -3,6 +3,7 @@
 // ZepraScript — gc_remembered_set_manager.cpp — Coordinated remembered set + card table
 
 #include <mutex>
+#include <algorithm>
 #include <vector>
 #include <functional>
 #include <cstdint>

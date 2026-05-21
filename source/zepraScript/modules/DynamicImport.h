@@ -14,6 +14,7 @@
 #pragma once
 
 #include "../modules/ModuleLoader.h"
+#include <algorithm>
 #include "../modules/ModuleExecutor.h"
 #include "runtime/async/PromiseAPI.h"
 #include <functional>

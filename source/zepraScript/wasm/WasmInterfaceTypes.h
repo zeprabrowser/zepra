@@ -13,6 +13,7 @@
 #pragma once
 
 #include "wasm.hpp"
+#include <algorithm>
 #include "WasmCanonicalABI.h"
 #include <string>
 #include <vector>

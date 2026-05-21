@@ -4,6 +4,7 @@
 #pragma once
 
 #include "web/events.h"
+#include <algorithm>
 #include "web/input.h"
 #include "web/box/box_tree.h"
 #include <vector>

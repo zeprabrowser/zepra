@@ -16,8 +16,10 @@
  */
 
 #pragma once
+#include "zepra_alloc.h"
 
 #include <cstdint>
+#include <algorithm>
 #include <cstddef>
 #include <cstring>
 #include <atomic>
@@ -502,7 +504,7 @@ inline void* LargeObjectSpace::platformAllocate(size_t size) {
                      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     return (ptr == MAP_FAILED) ? nullptr : ptr;
 #else
-    return std::aligned_alloc(config_.pageSize, size);
+    return zepra_aligned_alloc(config_.pageSize, size);
 #endif
 }
 

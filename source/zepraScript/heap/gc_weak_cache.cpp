@@ -3,6 +3,7 @@
 // ZepraScript — gc_weak_cache.cpp — Weak-value caches (JIT, shape, transition table)
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <mutex>

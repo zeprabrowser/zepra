@@ -3,6 +3,7 @@
 // ZepraScript — error_builtins.cpp — Error subclasses, stack traces, AggregateError
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <string>
 #include <vector>

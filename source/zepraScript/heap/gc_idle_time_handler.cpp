@@ -3,6 +3,7 @@
 // ZepraScript — gc_idle_time_handler.cpp — Idle-time GC trigger for background collection
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <chrono>

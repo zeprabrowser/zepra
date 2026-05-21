@@ -11,6 +11,7 @@
 #pragma once
 
 #include "BlobAPI.h"
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <variant>

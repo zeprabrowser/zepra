@@ -9,6 +9,7 @@
  */
 
 #include "config.hpp"
+#include <algorithm>
 #include "runtime/objects/value.hpp"
 #include "runtime/objects/object.hpp"
 #include "runtime/objects/function.hpp"

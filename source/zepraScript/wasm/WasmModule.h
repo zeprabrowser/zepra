@@ -11,6 +11,7 @@
 #pragma once
 
 #include "WasmConstants.h"
+#include <algorithm>
 #include "WasmTypeDef.h"
 #include "WasmBinary.h"
 #include <vector>

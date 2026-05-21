@@ -18,6 +18,7 @@
  * All collection decisions flow through here.
  */
 
+#include "zepra_alloc.h"
 #include <atomic>
 #include <thread>
 #include <mutex>
@@ -969,7 +970,7 @@ inline HeapRegionManager::Region* HeapRegionManager::allocateRegion() {
     if (regions_.size() >= MAX_REGIONS) return nullptr;
 
     auto* region = new Region();
-    region->start = static_cast<char*>(std::aligned_alloc(4096, regionSize_));
+    region->start = static_cast<char*>(zepra_aligned_alloc(4096, regionSize_));
     if (!region->start) {
         delete region;
         return nullptr;

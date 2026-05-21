@@ -17,6 +17,7 @@
  * 10. Percentile tracker insert throughput
  */
 
+#include "zepra_alloc.h"
 #include <atomic>
 #include <mutex>
 #include <thread>
@@ -126,7 +127,7 @@ static BenchResult makeResult(uint64_t iters, double ms,
 
 static BenchResult benchTLABAllocation() {
     constexpr size_t SIZE = 64 * 1024 * 1024;  // 64MB
-    auto heap = static_cast<char*>(std::aligned_alloc(4096, SIZE));
+    auto heap = static_cast<char*>(zepra_aligned_alloc(4096, SIZE));
     if (!heap) return makeResult(0, 0);
 
     char* cursor = heap;
@@ -239,8 +240,8 @@ static BenchResult benchSATBPush() {
 
 static BenchResult benchObjectCopy() {
     constexpr size_t BUF_SIZE = 64 * 1024 * 1024;  // 64MB
-    auto src = static_cast<char*>(std::aligned_alloc(4096, BUF_SIZE));
-    auto dst = static_cast<char*>(std::aligned_alloc(4096, BUF_SIZE));
+    auto src = static_cast<char*>(zepra_aligned_alloc(4096, BUF_SIZE));
+    auto dst = static_cast<char*>(zepra_aligned_alloc(4096, BUF_SIZE));
     if (!src || !dst) {
         std::free(src);
         std::free(dst);

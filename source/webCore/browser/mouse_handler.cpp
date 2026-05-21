@@ -6,6 +6,7 @@
  */
 
 #include "mouse_handler.h"
+#include <algorithm>
 #include <iostream>
 
 namespace ZepraBrowser {

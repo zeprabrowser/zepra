@@ -3,6 +3,7 @@
 // ZepraScript — gc_scavenger_controller.cpp — Minor GC orchestration
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <vector>
 #include <functional>

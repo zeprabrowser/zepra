@@ -15,6 +15,7 @@
  */
 
 #include "zopt/ZOptGraph.h"
+#include <algorithm>
 #include "zopt/ZOptBuilder.h"
 #include "zopt/ZOptRegAlloc.h"
 #include "zopt/ZOptCodeGen.h"

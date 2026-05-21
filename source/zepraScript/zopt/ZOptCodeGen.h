@@ -11,6 +11,7 @@
 #pragma once
 
 #include "jit/zopt/ZOptGraph.h"
+#include <algorithm>
 #include "ZOptRegAlloc.h"
 #include <vector>
 #include <cstdint>

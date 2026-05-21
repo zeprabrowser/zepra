@@ -12,6 +12,7 @@
  */
 
 #include "debugger/debugger.hpp"
+#include <algorithm>
 #include "config.hpp"
 #include <chrono>
 #include <atomic>

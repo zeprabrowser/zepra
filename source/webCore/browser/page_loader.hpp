@@ -6,6 +6,7 @@
 #pragma once
 
 #include "networking/http_client.hpp"
+#include <algorithm>
 #include "networking/http_request.hpp"
 #include "networking/http_response.hpp"
 #include "networking/http_cache.hpp"

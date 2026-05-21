@@ -4,6 +4,7 @@
 #pragma once
 
 #include "web/box/box_tree.h"
+#include <algorithm>
 #include "web/css/cascade.h"
 #include "web/frame_orchestrator.h"
 #include "web/input.h"

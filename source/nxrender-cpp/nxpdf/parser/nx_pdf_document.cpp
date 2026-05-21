@@ -4,6 +4,7 @@
  */
 
 #include "nx_pdf_document.h"
+#include <algorithm>
 #include <zlib.h>
 
 namespace nxrender {

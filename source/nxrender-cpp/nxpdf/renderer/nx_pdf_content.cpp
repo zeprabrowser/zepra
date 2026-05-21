@@ -4,6 +4,7 @@
  */
 
 #include "nx_pdf_content.h"
+#include <algorithm>
 
 namespace nxrender {
 namespace pdf {

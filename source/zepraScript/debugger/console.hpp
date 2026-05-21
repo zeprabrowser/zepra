@@ -6,6 +6,7 @@
  */
 
 #include "../config.hpp"
+#include <algorithm>
 #include "runtime/objects/value.hpp"
 #include <string>
 #include <vector>

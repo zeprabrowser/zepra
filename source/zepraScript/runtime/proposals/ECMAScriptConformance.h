@@ -14,6 +14,7 @@
 #pragma once
 
 #include "runtime/objects/value.hpp"
+#include <algorithm>
 #include <string>
 #include <optional>
 #include <cmath>

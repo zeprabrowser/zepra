@@ -36,6 +36,7 @@
  *    instead of global stop-the-world.
  */
 
+#include "zepra_alloc.h"
 #include <atomic>
 #include <mutex>
 #include <condition_variable>
@@ -139,7 +140,7 @@ public:
         return true;
 #else
         pageSize_ = 4096;
-        page_ = std::aligned_alloc(pageSize_, pageSize_);
+        page_ = zepra_aligned_alloc(pageSize_, pageSize_);
         return page_ != nullptr;
 #endif
     }

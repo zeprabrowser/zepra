@@ -28,6 +28,7 @@
  * - When scan catches alloc, all reachable objects are copied
  */
 
+#include "zepra_alloc.h"
 #include <atomic>
 #include <mutex>
 #include <vector>
@@ -293,9 +294,9 @@ private:
 inline ScavengerImpl::ScavengerImpl(const Config& config)
     : config_(config) {
     fromSpace_ = static_cast<char*>(
-        std::aligned_alloc(4096, config.semiSpaceSize));
+        zepra_aligned_alloc(4096, config.semiSpaceSize));
     toSpace_ = static_cast<char*>(
-        std::aligned_alloc(4096, config.semiSpaceSize));
+        zepra_aligned_alloc(4096, config.semiSpaceSize));
 
     if (fromSpace_) std::memset(fromSpace_, 0, config.semiSpaceSize);
     if (toSpace_) std::memset(toSpace_, 0, config.semiSpaceSize);

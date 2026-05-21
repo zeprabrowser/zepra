@@ -3,6 +3,7 @@
 // ZepraScript — gc_tab_isolator.cpp — Per-tab heap isolation for security
 
 #include <mutex>
+#include <algorithm>
 #include <unordered_map>
 #include <vector>
 #include <functional>

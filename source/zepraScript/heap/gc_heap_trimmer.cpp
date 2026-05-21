@@ -3,6 +3,7 @@
 // ZepraScript — gc_heap_trimmer.cpp — Return unused heap to OS
 
 #include <mutex>
+#include <algorithm>
 #include <vector>
 #include <functional>
 #include <cstdint>

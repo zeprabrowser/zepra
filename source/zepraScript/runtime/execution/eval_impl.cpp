@@ -3,6 +3,7 @@
 // ZepraScript — eval_impl.cpp — Direct/indirect eval, strict mode, scope injection
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <string>

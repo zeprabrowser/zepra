@@ -13,6 +13,7 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
 #include <vector>
 #include <chrono>
 #include <functional>

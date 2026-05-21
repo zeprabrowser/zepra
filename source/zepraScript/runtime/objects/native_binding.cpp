@@ -3,6 +3,7 @@
 // ZepraScript — native_binding.cpp — C++ ↔ JS binding, argument marshalling
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <string>

@@ -3,6 +3,7 @@
 // ZepraScript — gc_subspace.cpp — Type-partitioned allocation subspace
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <mutex>

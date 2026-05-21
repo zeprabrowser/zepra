@@ -13,6 +13,7 @@
  * triggers GC, and verifies the right objects survive.
  */
 
+#include "zepra_alloc.h"
 #include <atomic>
 #include <mutex>
 #include <vector>
@@ -86,7 +87,7 @@ public:
         size_t totalSize = sizeof(SimObject) + extraSize;
         totalSize = (totalSize + 7) & ~size_t(7);
 
-        void* mem = std::aligned_alloc(8, totalSize);
+        void* mem = zepra_aligned_alloc(8, totalSize);
         if (!mem) return 0;
 
         auto* obj = new (mem) SimObject();

@@ -27,6 +27,7 @@
  * Uses a minimal assertion framework (no external dependency).
  */
 
+#include "zepra_alloc.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -139,7 +140,7 @@ class TestHeapRegion {
 public:
     explicit TestHeapRegion(size_t size)
         : size_(size) {
-        data_ = static_cast<char*>(std::aligned_alloc(4096, size));
+        data_ = static_cast<char*>(zepra_aligned_alloc(4096, size));
         if (data_) std::memset(data_, 0, size);
     }
 

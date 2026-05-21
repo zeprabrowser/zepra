@@ -4,6 +4,7 @@
 #pragma once
 
 #include "css_math.h"
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <variant>

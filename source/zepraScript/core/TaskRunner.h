@@ -13,6 +13,7 @@
 #pragma once
 
 #include <functional>
+#include <algorithm>
 #include <queue>
 #include <memory>
 #include <chrono>

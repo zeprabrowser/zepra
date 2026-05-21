@@ -8,6 +8,7 @@
 #pragma once
 
 #include <atomic>
+#include <algorithm>
 #include <vector>
 #include <optional>
 #include <cstddef>

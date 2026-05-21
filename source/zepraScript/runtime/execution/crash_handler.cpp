@@ -5,7 +5,11 @@
  * @brief Crash recovery implementation
  */
 
+
+#ifndef _WIN32  // Crash handler uses POSIX signals — Windows needs SEH (TODO)
+
 #include "runtime/execution/CrashHandler.h"
+#include <algorithm>
 
 #include <cstring>
 #include <cstdlib>
@@ -295,7 +299,7 @@ void ExecutionWatchdog::watchdogLoop() {
 
         uint64_t current = progressCounter_.load(std::memory_order_relaxed);
         if (current == lastProgress) {
-            // No progress — potential hang
+            // No progress â€” potential hang
             timedOut_ = true;
             if (terminationFlag_) {
                 terminationFlag_->store(true, std::memory_order_release);
@@ -310,4 +314,6 @@ void ExecutionWatchdog::watchdogLoop() {
     }
 }
 
-} // namespace Zepra::Runtime
+
+#endif // _WIN32
+

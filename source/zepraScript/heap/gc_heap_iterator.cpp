@@ -3,6 +3,7 @@
 // ZepraScript — gc_heap_iterator.cpp — Safe heap walking for DevTools/snapshots
 
 #include <mutex>
+#include <algorithm>
 #include <vector>
 #include <functional>
 #include <cstdint>

@@ -3,6 +3,7 @@
 // ZepraScript — gc_tab_memory_policy.cpp — Per-tab memory caps and GC frequency by state
 
 #include <mutex>
+#include <algorithm>
 #include <unordered_map>
 #include <functional>
 #include <cstdint>

@@ -6,6 +6,7 @@
  */
 
 #include "browser/dom.hpp"
+#include <algorithm>
 
 namespace Zepra::WebCore {
 

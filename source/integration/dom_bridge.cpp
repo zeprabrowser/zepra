@@ -6,6 +6,7 @@
  */
 
 #include "integration/dom_bridge.hpp"
+#include <algorithm>
 #include "browser/dom.hpp"
 #include "rendering/page_renderer.hpp"
 #include <memory>

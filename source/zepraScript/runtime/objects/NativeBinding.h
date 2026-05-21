@@ -16,6 +16,7 @@
 #pragma once
 
 #include "value.hpp"
+#include <algorithm>
 #include "object.hpp"
 #include <functional>
 #include <string>

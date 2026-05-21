@@ -17,6 +17,7 @@
  */
 
 #pragma once
+#include "zepra_alloc.h"
 
 #include <cstdint>
 #include <cstddef>
@@ -282,7 +283,7 @@ private:
 // =============================================================================
 
 inline bool SemiSpace::initialize(size_t size) {
-    start_ = static_cast<char*>(std::aligned_alloc(4096, size));
+    start_ = static_cast<char*>(zepra_aligned_alloc(4096, size));
     if (!start_) return false;
     current_ = start_;
     end_ = start_ + size;

@@ -3,6 +3,7 @@
 // ZepraScript — gc_low_memory_protector.cpp — Emergency actions for low-memory
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <functional>
 #include <cstdint>

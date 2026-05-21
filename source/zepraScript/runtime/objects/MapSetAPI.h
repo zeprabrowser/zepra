@@ -8,6 +8,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <algorithm>
 #include <unordered_set>
 #include <vector>
 #include <functional>

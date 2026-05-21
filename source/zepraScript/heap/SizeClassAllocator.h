@@ -22,6 +22,7 @@
  */
 
 #pragma once
+#include "zepra_alloc.h"
 
 #include <cstdint>
 #include <cstddef>
@@ -551,7 +552,7 @@ inline ClassSlab* SizeClassAllocator::allocateNewSlab(size_t classIndex) {
 
     // Allocate page for slab
     size_t slabSize = std::max(sc.pageSize, size_t(4096));
-    char* page = static_cast<char*>(std::aligned_alloc(4096, slabSize));
+    char* page = static_cast<char*>(zepra_aligned_alloc(4096, slabSize));
     if (!page) return nullptr;
     std::memset(page, 0, slabSize);
 

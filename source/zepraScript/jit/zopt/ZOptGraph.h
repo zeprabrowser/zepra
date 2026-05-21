@@ -10,6 +10,7 @@
 #pragma once
 
 #include "ZOptBasicBlock.h"
+#include <algorithm>
 #include <vector>
 #include <memory>
 #include <unordered_map>

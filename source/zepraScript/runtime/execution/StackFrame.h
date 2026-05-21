@@ -15,6 +15,7 @@
 #pragma once
 
 #include "runtime/objects/value.hpp"
+#include <algorithm>
 #include <cstdint>
 #include <vector>
 #include <stdexcept>

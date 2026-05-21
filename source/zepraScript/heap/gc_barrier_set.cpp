@@ -3,6 +3,7 @@
 // ZepraScript — gc_barrier_set.cpp — Unified barrier API: card + store-buffer + SATB + conditional
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <atomic>

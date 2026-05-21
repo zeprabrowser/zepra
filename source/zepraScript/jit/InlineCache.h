@@ -12,6 +12,7 @@
 #pragma once
 
 #include <cstdint>
+#include <algorithm>
 #include <cstring>
 #include <vector>
 #include <memory>

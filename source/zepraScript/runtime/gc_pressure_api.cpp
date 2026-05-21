@@ -3,6 +3,7 @@
 // ZepraScript — gc_pressure_api.cpp — Embedder-facing memory pressure API
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <vector>
 #include <functional>

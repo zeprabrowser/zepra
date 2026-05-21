@@ -3,6 +3,7 @@
 // ZepraScript — gc_parallel_task.cpp — GC parallel task abstraction, thread pool integration
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <atomic>

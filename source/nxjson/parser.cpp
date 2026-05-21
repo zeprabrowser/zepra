@@ -8,6 +8,7 @@
  */
 
 #include "nxjson.h"
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <cmath>

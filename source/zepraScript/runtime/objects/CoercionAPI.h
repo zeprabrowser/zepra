@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <variant>

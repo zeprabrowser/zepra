@@ -13,6 +13,7 @@
 #pragma once
 
 #include <functional>
+#include <algorithm>
 #include <memory>
 #include <vector>
 #include <variant>

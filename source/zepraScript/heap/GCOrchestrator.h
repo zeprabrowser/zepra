@@ -36,6 +36,7 @@
 #pragma once
 
 #include "Scavenger.h"
+#include <algorithm>
 #include "RegionAllocator.h"
 #include "LargeObjectSpace.h"
 #include "ParallelMarker.h"

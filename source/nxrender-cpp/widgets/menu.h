@@ -4,6 +4,7 @@
 #pragma once
 
 #include "widgets/widget.h"
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <functional>

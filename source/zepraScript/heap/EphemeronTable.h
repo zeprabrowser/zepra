@@ -25,6 +25,7 @@
 #pragma once
 
 #include <cstdint>
+#include <algorithm>
 #include <cstddef>
 #include <vector>
 #include <functional>

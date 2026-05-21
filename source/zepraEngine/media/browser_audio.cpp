@@ -9,6 +9,7 @@
  */
 
 #include "media/browser_audio.h"
+#include <algorithm>
 #include <unordered_map>
 #include <mutex>
 #include <cstring>

@@ -8,6 +8,7 @@
 #pragma once
 
 #include <any>
+#include <algorithm>
 #include <vector>
 #include <string>
 #include <optional>

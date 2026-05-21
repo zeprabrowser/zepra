@@ -4,6 +4,7 @@
  */
 
 #include "nx_pdf.h"
+#include <algorithm>
 #include "parser/nx_pdf_document.h"
 #include "renderer/nx_pdf_page.h"
 #include <fstream>

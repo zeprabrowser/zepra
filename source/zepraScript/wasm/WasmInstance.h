@@ -14,6 +14,7 @@
 #pragma once
 
 #include "WasmConstants.h"
+#include <algorithm>
 #include "WasmTypeDef.h"
 #include "WasmMemory.h"
 #include "WasmTable.h"

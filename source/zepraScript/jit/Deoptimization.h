@@ -15,6 +15,7 @@
 #pragma once
 
 #include "MacroAssembler.h"
+#include <algorithm>
 #include <vector>
 #include <string>
 #include <functional>

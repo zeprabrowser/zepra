@@ -9,6 +9,7 @@
  */
 
 #include "runtime/handles/module.hpp"
+#include <algorithm>
 #include "runtime/objects/object.hpp"
 #include "runtime/objects/function.hpp"
 #include "runtime/async/promise.hpp"

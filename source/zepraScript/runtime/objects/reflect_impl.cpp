@@ -3,6 +3,7 @@
 // ZepraScript — reflect_impl.cpp — Reflect API: apply, construct, defineProperty, etc.
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <string>

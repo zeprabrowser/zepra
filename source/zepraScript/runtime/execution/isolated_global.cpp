@@ -3,6 +3,7 @@
 // ZepraScript — isolated_global.cpp — Per-realm isolated global, frozen intrinsics
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <string>

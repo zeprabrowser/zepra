@@ -26,6 +26,7 @@
  *   5. Old from-space is now garbage
  */
 
+#include "zepra_alloc.h"
 #include <atomic>
 #include <mutex>
 #include <vector>
@@ -68,7 +69,7 @@ public:
             return false;
         }
 #else
-        base_ = static_cast<uint8_t*>(std::aligned_alloc(4096, size));
+        base_ = static_cast<uint8_t*>(zepra_aligned_alloc(4096, size));
         if (!base_) return false;
 #endif
         cursor_ = 0;

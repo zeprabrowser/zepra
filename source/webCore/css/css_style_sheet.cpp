@@ -6,6 +6,7 @@
  */
 
 #include "css/css_style_sheet.hpp"
+#include <algorithm>
 #include "css/css_rule.hpp"
 
 namespace Zepra::WebCore {

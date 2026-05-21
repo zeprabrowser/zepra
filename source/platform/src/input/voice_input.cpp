@@ -10,6 +10,7 @@
  */
 
 #include "../../source/platform/include/input/voice_input.h"
+#include <algorithm>
 
 namespace zepra {
 namespace input {

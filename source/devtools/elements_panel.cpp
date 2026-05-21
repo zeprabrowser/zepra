@@ -6,6 +6,7 @@
  */
 
 #include "devtools/elements_panel.hpp"
+#include <algorithm>
 #include <sstream>
 
 namespace Zepra::DevTools {

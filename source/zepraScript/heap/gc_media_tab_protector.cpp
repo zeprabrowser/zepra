@@ -3,6 +3,7 @@
 // ZepraScript — gc_media_tab_protector.cpp — Media-playing tab keep-alive and GC pause capping
 
 #include <mutex>
+#include <algorithm>
 #include <unordered_set>
 #include <functional>
 #include <cstdint>

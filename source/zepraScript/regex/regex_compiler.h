@@ -8,6 +8,7 @@
 #pragma once
 
 #include "regex_bytecode.h"
+#include <algorithm>
 #include <string>
 
 namespace Zepra::Regex {

@@ -6,6 +6,7 @@
  */
 
 #include "memory/arena_allocator.hpp"
+#include <algorithm>
 #include <cstring>
 
 namespace Zepra::Memory {

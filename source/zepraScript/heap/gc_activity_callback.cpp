@@ -3,6 +3,7 @@
 // ZepraScript — gc_activity_callback.cpp — Eden/full GC activity callbacks for embedder
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <mutex>

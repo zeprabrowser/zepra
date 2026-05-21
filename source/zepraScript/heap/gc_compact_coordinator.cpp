@@ -3,6 +3,7 @@
 // ZepraScript — gc_compact_coordinator.cpp — Orchestrates concurrent compaction
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <vector>
 #include <functional>

@@ -6,6 +6,7 @@
  */
 
 #include "config.hpp"
+#include <algorithm>
 #include "runtime/objects/function.hpp"
 #include "promise.hpp"
 #include <memory>

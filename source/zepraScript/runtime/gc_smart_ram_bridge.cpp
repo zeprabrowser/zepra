@@ -3,6 +3,7 @@
 // ZepraScript — gc_smart_ram_bridge.cpp — Runtime hook connecting Smart RAM to GC pipeline
 
 #include <functional>
+#include <algorithm>
 #include <cstdint>
 #include <cstdio>
 #include <cassert>

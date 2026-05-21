@@ -10,6 +10,7 @@
  */
 
 #include "script_engine.hpp"
+#include <algorithm>
 #include "runtime/objects/function.hpp"
 #include <fstream>
 #include <sstream>

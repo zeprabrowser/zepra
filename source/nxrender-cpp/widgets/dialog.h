@@ -8,6 +8,7 @@
 #pragma once
 
 #include "widget.h"
+#include <algorithm>
 #include "button.h"
 #include "label.h"
 #include <functional>

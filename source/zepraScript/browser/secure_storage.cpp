@@ -9,6 +9,7 @@
  */
 
 #include "browser/secure_storage.hpp"
+#include <algorithm>
 #include <cstring>
 #include <fstream>
 #include <random>

@@ -6,6 +6,7 @@
  */
 
 #include "runtime/objects/proxy.hpp"
+#include <algorithm>
 #include "runtime/objects/function.hpp"
 
 namespace Zepra::Runtime {

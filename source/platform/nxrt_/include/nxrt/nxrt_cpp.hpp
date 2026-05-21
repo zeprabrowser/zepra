@@ -9,6 +9,7 @@
 
 extern "C" {
 #include "nxrt/nxrt.h"
+#include <algorithm>
 }
 
 #include <string>

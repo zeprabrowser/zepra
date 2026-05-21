@@ -3,6 +3,7 @@
 // ZepraScript — jit_tier_bridge.cpp — Connects profiler, tier policy, and JIT compiler
 
 #include "jit/jit_profiler.hpp"
+#include <algorithm>
 #include "jit/baseline_jit.hpp"
 #include "jit/osr.hpp"
 #include <unordered_map>

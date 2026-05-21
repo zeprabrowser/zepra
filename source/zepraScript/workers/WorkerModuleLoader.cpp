@@ -6,6 +6,7 @@
  */
 
 #include "workers/WorkerModuleLoader.h"
+#include <algorithm>
 #include <sstream>
 #include <stdexcept>
 

@@ -3,6 +3,7 @@
 // ZepraScript — gc_finalization_executor.cpp — Run weak ref/FinalizationRegistry callbacks
 
 #include <mutex>
+#include <algorithm>
 #include <deque>
 #include <functional>
 #include <vector>

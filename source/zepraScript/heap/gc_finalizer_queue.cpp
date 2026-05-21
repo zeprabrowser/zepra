@@ -18,6 +18,7 @@
  */
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <deque>
 #include <vector>

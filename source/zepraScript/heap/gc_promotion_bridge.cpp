@@ -3,6 +3,7 @@
 // ZepraScript — gc_promotion_bridge.cpp — Nursery→OldGen promotion logic
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <vector>
 #include <functional>

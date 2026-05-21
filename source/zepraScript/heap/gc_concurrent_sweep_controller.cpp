@@ -3,6 +3,7 @@
 // ZepraScript — gc_concurrent_sweep_controller.cpp — Orchestrate concurrent sweep phases
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <vector>
 #include <functional>

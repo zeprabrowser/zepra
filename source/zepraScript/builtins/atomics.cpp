@@ -6,6 +6,7 @@
  */
 
 #include "builtins/atomics.hpp"
+#include <algorithm>
 #include "runtime/objects/function.hpp"
 #include <thread>
 #include <chrono>

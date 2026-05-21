@@ -12,6 +12,7 @@
 #pragma once
 
 #include "InlineCache.h"
+#include <algorithm>
 #include "type_profiler.hpp"
 #include "../zopt/ZOptGraph.h"
 #include "../zopt/ZOptValue.h"

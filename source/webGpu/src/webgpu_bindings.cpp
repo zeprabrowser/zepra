@@ -6,6 +6,7 @@
  */
 
 #include "webgpu/webgpu_bindings.hpp"
+#include <algorithm>
 #include "zeprascript/runtime/object.hpp"
 #include "zeprascript/runtime/value.hpp"
 #include "zeprascript/runtime/vm.hpp"

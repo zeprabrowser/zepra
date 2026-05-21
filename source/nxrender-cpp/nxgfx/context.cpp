@@ -6,6 +6,7 @@
  */
 
 #include "nxgfx/context.h"
+#include <algorithm>
 #include "nxgfx/text.h"
 #include <GL/gl.h>
 #include <cmath>

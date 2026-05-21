@@ -6,6 +6,7 @@
  */
 
 #include "builtins/math.hpp"
+#include <algorithm>
 #include "runtime/objects/function.hpp"
 
 namespace Zepra::Builtins {

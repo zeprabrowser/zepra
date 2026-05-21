@@ -3,6 +3,7 @@
 // ZepraScript — gc_tab_lifecycle.cpp — Tab lifecycle events → GC/allocator coordination
 
 #include <mutex>
+#include <algorithm>
 #include <functional>
 #include <cstdint>
 #include <cstdio>

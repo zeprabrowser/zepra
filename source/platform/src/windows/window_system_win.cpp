@@ -15,6 +15,7 @@
 #  define WIN32_LEAN_AND_MEAN
 #endif
 #include <windows.h>
+1#include <algorithm>
 // GET_X_LPARAM / GET_Y_LPARAM
 #include <windowsx.h>
 

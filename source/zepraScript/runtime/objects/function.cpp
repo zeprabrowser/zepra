@@ -10,6 +10,7 @@
  */
 
 #include "runtime/objects/function.hpp"
+#include <algorithm>
 #include "runtime/execution/environment.hpp"
 #include "runtime/execution/vm.hpp"
 

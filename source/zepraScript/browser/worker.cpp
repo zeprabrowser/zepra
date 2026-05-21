@@ -6,6 +6,7 @@
  */
 
 #include "browser/worker.hpp"
+#include <algorithm>
 #include "runtime/execution/vm.hpp"
 #include "runtime/objects/function.hpp"
 #include <fstream>

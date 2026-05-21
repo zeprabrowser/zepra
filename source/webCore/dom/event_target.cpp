@@ -6,6 +6,7 @@
  */
 
 #include "browser/event_target.hpp"
+#include <algorithm>
 #include "browser/dom.hpp"
 
 namespace Zepra::WebCore {

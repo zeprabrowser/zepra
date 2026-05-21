@@ -3,6 +3,7 @@
 // ZepraScript — gc_zone_allocator.cpp — Zone-scoped bump allocator with arena request
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
 #include <cassert>

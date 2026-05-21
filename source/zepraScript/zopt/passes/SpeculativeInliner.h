@@ -13,6 +13,7 @@
 #pragma once
 
 #include "jit/zopt/ZOptGraph.h"
+#include <algorithm>
 #include "zopt/ZOptValue.h"
 #include "jit/type_profiler.hpp"
 

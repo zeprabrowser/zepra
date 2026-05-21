@@ -3,6 +3,7 @@
 // ZepraScript — interpreter_debug.cpp — Debug hooks, breakpoints, single-step
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <vector>

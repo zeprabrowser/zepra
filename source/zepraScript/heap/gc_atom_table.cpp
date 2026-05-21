@@ -3,6 +3,7 @@
 // ZepraScript — gc_atom_table.cpp — GC-managed atom table with weak entries
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <cstring>

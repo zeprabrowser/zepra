@@ -12,6 +12,7 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
 #include <cstdint>
 #include <string>
 #include <random>

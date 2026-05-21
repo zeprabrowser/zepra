@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
 #include <set>
 #include <map>
 #include <functional>

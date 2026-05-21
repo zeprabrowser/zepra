@@ -2,6 +2,7 @@
 // Licensed under KPL-2.0. See LICENSE file for details.
 
 #include "platform/display_info.h"
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>

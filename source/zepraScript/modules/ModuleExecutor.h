@@ -16,6 +16,7 @@
 #pragma once
 
 #include "ModuleLoader.h"
+#include <algorithm>
 #include "ModuleLinker.h"
 #include "ModuleNamespace.h"
 #include "runtime/objects/value.hpp"

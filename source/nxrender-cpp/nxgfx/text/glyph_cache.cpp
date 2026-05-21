@@ -2,6 +2,7 @@
 // Licensed under KPL-2.0. See LICENSE file for details.
 
 #include "glyph_cache.h"
+#include <algorithm>
 #include "font_fallback.h"
 #include "nxgfx/context.h"
 #include <ft2build.h>

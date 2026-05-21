@@ -8,6 +8,7 @@
  */
 
 #include "wasm/wasm.hpp"
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <stdexcept>

@@ -6,6 +6,7 @@
  */
 
 #include "runtime/objects/value.hpp"
+#include <algorithm>
 #include "runtime/objects/object.hpp"
 #include "frontend/source_code.hpp"
 #include "frontend/parser.hpp"

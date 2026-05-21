@@ -14,6 +14,7 @@
 #pragma once
 
 #include "../core/EmbedderAPI.h"
+#include <algorithm>
 #include <string>
 #include <functional>
 #include <unordered_map>

@@ -3,6 +3,7 @@
 // ZepraScript — interpreter_dispatch.cpp — Threaded bytecode dispatch engine
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cassert>

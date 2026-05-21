@@ -15,6 +15,7 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
 #include <vector>
 #include <unordered_map>
 #include <functional>

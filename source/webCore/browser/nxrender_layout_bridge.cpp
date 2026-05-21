@@ -6,6 +6,7 @@
  */
 
 #include "nxrender_layout_bridge.h"
+#include <algorithm>
 #include "layout_engine.h"
 
 // NXRender C++ headers

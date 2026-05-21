@@ -3,6 +3,7 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
 #include <unordered_map>
 #include <optional>
 #include <functional>

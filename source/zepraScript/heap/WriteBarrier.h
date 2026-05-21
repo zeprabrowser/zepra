@@ -13,8 +13,10 @@
 #pragma once
 
 #include "gc_heap.hpp"
+#include <algorithm>
 #include <atomic>
 #include <cstring>
+#include <cstdlib>
 
 namespace Zepra::GC {
 

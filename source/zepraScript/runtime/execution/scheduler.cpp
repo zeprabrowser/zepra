@@ -3,6 +3,7 @@
 // ZepraScript — scheduler.cpp — Microtask/macrotask queues, priority scheduling
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <queue>

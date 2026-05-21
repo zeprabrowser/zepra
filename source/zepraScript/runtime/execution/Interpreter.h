@@ -16,6 +16,7 @@
 #pragma once
 
 #include "bytecode/OpcodeReference.h"
+#include <algorithm>
 #include "StackFrame.h"
 #include "heap/handle.hpp"
 #include <functional>

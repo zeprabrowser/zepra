@@ -8,6 +8,7 @@
 #pragma once
 
 #include "../nxgfx/primitives.h"
+#include <algorithm>
 
 namespace NXRender {
 

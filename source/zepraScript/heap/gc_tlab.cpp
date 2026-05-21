@@ -3,6 +3,7 @@
 // ZepraScript — gc_tlab.cpp — Thread-Local Allocation Buffers
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <vector>
 #include <cstdint>

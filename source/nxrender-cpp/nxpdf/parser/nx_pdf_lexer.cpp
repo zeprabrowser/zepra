@@ -4,6 +4,7 @@
  */
 
 #include "nx_pdf_lexer.h"
+#include <algorithm>
 #include <cctype>
 #include <charconv>
 #include <cstdint>

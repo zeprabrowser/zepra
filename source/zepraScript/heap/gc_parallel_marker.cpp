@@ -3,6 +3,7 @@
 // ZepraScript — gc_parallel_marker.cpp — Multi-threaded marking with per-thread worklists
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <atomic>

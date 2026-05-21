@@ -13,6 +13,7 @@
 #pragma once
 
 #include "wasm.hpp"
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <unordered_map>

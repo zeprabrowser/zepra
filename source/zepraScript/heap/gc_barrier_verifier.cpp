@@ -3,6 +3,7 @@
 // ZepraScript — gc_barrier_verifier.cpp — Debug-mode write barrier verification
 
 #include <mutex>
+#include <algorithm>
 #include <vector>
 #include <unordered_set>
 #include <cstdint>

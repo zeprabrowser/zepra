@@ -2,6 +2,7 @@
 // Licensed under KPL-2.0. See LICENSE file for details.
 
 #include "input/clipboard.h"
+#include <algorithm>
 
 #ifdef __linux__
 #include <X11/Xlib.h>

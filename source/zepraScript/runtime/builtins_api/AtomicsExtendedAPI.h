@@ -8,6 +8,7 @@
 #pragma once
 
 #include <atomic>
+#include <algorithm>
 #include <chrono>
 #include <condition_variable>
 #include <mutex>

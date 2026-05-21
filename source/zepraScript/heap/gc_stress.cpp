@@ -17,6 +17,7 @@
  * Failures are detected via consistency checks after each round.
  */
 
+#include "zepra_alloc.h"
 #include <atomic>
 #include <mutex>
 #include <thread>
@@ -121,7 +122,7 @@ class StressHeap {
 public:
     explicit StressHeap(size_t size)
         : size_(size) {
-        data_ = static_cast<char*>(std::aligned_alloc(4096, size));
+        data_ = static_cast<char*>(zepra_aligned_alloc(4096, size));
         if (data_) std::memset(data_, 0, size);
         cursor_ = data_;
     }

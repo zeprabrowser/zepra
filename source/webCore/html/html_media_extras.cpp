@@ -6,6 +6,7 @@
  */
 
 #include "html/html_audio_element.hpp"
+#include <algorithm>
 #include "html/html_source_element.hpp"
 #include "html/html_picture_element.hpp"
 #include "html/html_details_element.hpp"

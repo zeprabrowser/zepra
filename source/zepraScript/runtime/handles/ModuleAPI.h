@@ -11,6 +11,7 @@
 #pragma once
 
 #include <memory>
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <unordered_map>

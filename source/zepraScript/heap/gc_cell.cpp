@@ -3,6 +3,7 @@
 // ZepraScript — gc_cell.cpp — Cell header, mark bits, age, type tag, traversal
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
 #include <cassert>

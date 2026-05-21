@@ -9,6 +9,7 @@
  */
 
 #include "heap/GCController.h"
+#include <algorithm>
 #include "heap/Nursery.h"
 #include "heap/OldGeneration.h"
 #include "heap/WriteBarrier.h"

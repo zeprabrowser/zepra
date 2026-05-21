@@ -3,6 +3,7 @@
 // ZepraScript — gc_parallel_sweeper.cpp — Concurrent/parallel page sweeping with per-zone tasks
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <atomic>

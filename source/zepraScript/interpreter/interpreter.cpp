@@ -10,6 +10,7 @@
  */
 
 #include "config.hpp"
+#include <algorithm>
 #include "runtime/execution/vm.hpp"
 #include "bytecode/opcode.hpp"
 #include <functional>

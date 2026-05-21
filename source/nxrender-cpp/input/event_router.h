@@ -4,6 +4,7 @@
 #pragma once
 
 #include "event.h"
+#include <algorithm>
 #include <vector>
 #include <memory>
 #include <functional>

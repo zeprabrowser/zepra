@@ -3,6 +3,7 @@
 // ZepraScript — gc_atom_marking.cpp — Concurrent-safe atom mark bitmap, atom sweep
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <atomic>

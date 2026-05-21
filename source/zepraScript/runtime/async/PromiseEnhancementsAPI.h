@@ -3,6 +3,7 @@
 #pragma once
 
 #include <functional>
+#include <algorithm>
 #include <future>
 #include <exception>
 #include <optional>

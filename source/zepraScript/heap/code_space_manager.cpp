@@ -32,6 +32,7 @@
  *    embedded absolute addresses must be patched.
  */
 
+#include "zepra_alloc.h"
 #include <atomic>
 #include <mutex>
 #include <vector>
@@ -397,7 +398,7 @@ private:
         return std::make_unique<CodePage>(
             reinterpret_cast<uintptr_t>(mem), config_.pageSize);
 #else
-        void* mem = std::aligned_alloc(4096, config_.pageSize);
+        void* mem = zepra_aligned_alloc(4096, config_.pageSize);
         if (!mem) return nullptr;
         return std::make_unique<CodePage>(
             reinterpret_cast<uintptr_t>(mem), config_.pageSize);

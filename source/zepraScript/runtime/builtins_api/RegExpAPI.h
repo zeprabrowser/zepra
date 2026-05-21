@@ -11,6 +11,7 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
 #include <vector>
 #include <memory>
 #include <optional>

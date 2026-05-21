@@ -3,6 +3,7 @@
 // ZepraScript — gc_barrier_batch.cpp — Bulk barrier for memcpy/memmove of reference arrays
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <cstring>

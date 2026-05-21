@@ -3,6 +3,7 @@
 // ZepraScript — gc_stats_api.cpp — Runtime API exposing GC stats to JS
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <vector>
 #include <functional>

@@ -16,6 +16,7 @@
  * The GC tracks them in a list and frees unmapped ones on sweep.
  */
 
+#include "zepra_alloc.h"
 #include <atomic>
 #include <mutex>
 #include <vector>
@@ -89,7 +90,7 @@ public:
         if (mem == MAP_FAILED) return 0;
         addr = reinterpret_cast<uintptr_t>(mem);
 #else
-        void* mem = std::aligned_alloc(pageSize, allocSize);
+        void* mem = zepra_aligned_alloc(pageSize, allocSize);
         if (!mem) return 0;
         addr = reinterpret_cast<uintptr_t>(mem);
         std::memset(mem, 0, allocSize);

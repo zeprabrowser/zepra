@@ -10,6 +10,7 @@
 #define WEBCORE_WEB_AUDIO_API_HPP
 
 #include <string>
+#include <algorithm>
 #include <vector>
 #include <memory>
 #include <functional>

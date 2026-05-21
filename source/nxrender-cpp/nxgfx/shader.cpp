@@ -2,6 +2,7 @@
 // Licensed under KPL-2.0. See LICENSE file for details.
 
 #include "nxgfx/shader.h"
+#include <algorithm>
 #include <GL/gl.h>
 #include <cstring>
 #include <iostream>

@@ -28,6 +28,7 @@
  * - During minor GC, only regions with dirty cards are scanned
  */
 
+#include "zepra_alloc.h"
 #include <atomic>
 #include <mutex>
 #include <shared_mutex>
@@ -292,7 +293,7 @@ public:
         if (base == MAP_FAILED) return false;
         heapBase_ = reinterpret_cast<uintptr_t>(base);
 #else
-        void* base = std::aligned_alloc(REGION_ALIGNMENT, reserveSize);
+        void* base = zepra_aligned_alloc(REGION_ALIGNMENT, reserveSize);
         if (!base) return false;
         heapBase_ = reinterpret_cast<uintptr_t>(base);
 #endif

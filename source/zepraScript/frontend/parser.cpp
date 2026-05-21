@@ -6,6 +6,7 @@
  */
 
 #include "frontend/parser.hpp"
+#include <algorithm>
 #include "frontend/ast.hpp"
 #include <stdexcept>
 

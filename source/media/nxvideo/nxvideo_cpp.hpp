@@ -10,6 +10,7 @@
 
 extern "C" {
 #include "nxvideo/nxvideo.h"
+#include <algorithm>
 }
 
 #include <string>

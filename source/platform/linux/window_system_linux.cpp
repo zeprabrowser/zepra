@@ -6,6 +6,7 @@
  */
 
 #include "platform/window_system.hpp"
+#include <algorithm>
 #include <SDL2/SDL.h>
 #include <unordered_map>
 

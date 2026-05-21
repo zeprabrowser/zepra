@@ -12,6 +12,7 @@
  */
 
 #include "threading/thread_pool.h"
+#include <algorithm>
 #include <cassert>
 #include <stdexcept>
 

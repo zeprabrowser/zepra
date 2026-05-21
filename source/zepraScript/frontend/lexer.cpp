@@ -6,6 +6,7 @@
  */
 
 #include "frontend/lexer.hpp"
+#include <algorithm>
 #include <cctype>
 #include <cstdlib>
 #include <cstring>

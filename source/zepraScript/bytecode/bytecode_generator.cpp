@@ -6,6 +6,7 @@
  */
 
 #include "bytecode/bytecode_generator.hpp"
+#include <algorithm>
 #include "runtime/objects/object.hpp"
 #include "runtime/objects/function.hpp"
 #include <iostream>

@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
 #include <vector>
 
 namespace Zepra::Runtime {

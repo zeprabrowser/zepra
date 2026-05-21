@@ -22,6 +22,7 @@
  * Object::visitRefs() is the callback the GC uses to trace objects.
  */
 
+#include "zepra_alloc.h"
 #include <atomic>
 #include <mutex>
 #include <vector>
@@ -298,11 +299,11 @@ public:
 
         // In a full implementation, this calls RegionAllocator.
         // For now, use the system allocator as backing.
-        void* mem = std::aligned_alloc(8, size);
+        void* mem = zepra_aligned_alloc(8, size);
         if (!mem) {
             // OOM — try emergency GC
             collectGarbage(true);
-            mem = std::aligned_alloc(8, size);
+            mem = zepra_aligned_alloc(8, size);
             if (!mem) return 0;
         }
 

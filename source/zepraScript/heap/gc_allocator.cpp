@@ -18,6 +18,7 @@
  *   Request GC → Retry → Grow heap → OOM
  */
 
+#include "zepra_alloc.h"
 #include <atomic>
 #include <mutex>
 #include <vector>
@@ -220,7 +221,7 @@ inline void* LargeObjectSpace::allocate(size_t size, uint32_t typeId) {
         return nullptr;
     }
 #else
-    base = std::aligned_alloc(pageSize_, totalMapped);
+    base = zepra_aligned_alloc(pageSize_, totalMapped);
     if (!base) return nullptr;
     void* objectBase = static_cast<char*>(base) + guardSize;
     std::memset(objectBase, 0, mappedSize);
@@ -504,7 +505,7 @@ inline void* CodeSpace::allocateWritable(size_t size) {
                 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     if (base == MAP_FAILED) return nullptr;
 #else
-    base = std::aligned_alloc(pageSize_, regionSize);
+    base = zepra_aligned_alloc(pageSize_, regionSize);
     if (!base) return nullptr;
     std::memset(base, 0, regionSize);
 #endif
@@ -798,7 +799,7 @@ private:
 inline UnifiedAllocator::UnifiedAllocator(const AllocatorConfig& config)
     : config_(config) {
     // Allocate nursery
-    nurseryBase_ = static_cast<char*>(std::aligned_alloc(4096, config.nurserySize));
+    nurseryBase_ = static_cast<char*>(zepra_aligned_alloc(4096, config.nurserySize));
     if (nurseryBase_) {
         std::memset(nurseryBase_, 0, config.nurserySize);
         nurseryCursor_ = nurseryBase_;

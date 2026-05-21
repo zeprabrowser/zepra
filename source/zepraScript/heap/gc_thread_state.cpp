@@ -3,6 +3,7 @@
 // ZepraScript — gc_thread_state.cpp — Per-thread GC state, allocation context, safepoint flag
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <atomic>

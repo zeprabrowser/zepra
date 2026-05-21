@@ -6,6 +6,7 @@
  */
 
 #include "widgets/tabview.h"
+#include <algorithm>
 #include "nxgfx/context.h"
 
 namespace NXRender {

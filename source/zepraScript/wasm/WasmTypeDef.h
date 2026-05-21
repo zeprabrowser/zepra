@@ -12,6 +12,7 @@
 #pragma once
 
 #include "WasmValType.h"
+#include <algorithm>
 #include <vector>
 #include <memory>
 #include <optional>

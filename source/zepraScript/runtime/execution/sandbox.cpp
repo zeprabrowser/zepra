@@ -3,6 +3,7 @@
 // ZepraScript — sandbox.cpp — Tab-isolated sandbox enforcement
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <mutex>

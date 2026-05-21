@@ -3,6 +3,7 @@
 // ZepraScript — gc_complete_subspace.cpp — Full subspace with destructor dispatch table
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <mutex>

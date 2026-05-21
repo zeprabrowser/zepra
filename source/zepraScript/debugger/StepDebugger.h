@@ -15,6 +15,7 @@
 #pragma once
 
 #include "BreakpointManager.h"
+#include <algorithm>
 #include "runtime/execution/StackFrame.h"
 #include <functional>
 #include <regex>

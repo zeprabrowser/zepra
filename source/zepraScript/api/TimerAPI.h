@@ -14,6 +14,7 @@
 #pragma once
 
 #include <functional>
+#include <algorithm>
 #include <chrono>
 #include <map>
 #include <mutex>

@@ -14,6 +14,7 @@
 #pragma once
 
 #include "wasm.hpp"
+#include <algorithm>
 #include <functional>
 #include <variant>
 #include <vector>

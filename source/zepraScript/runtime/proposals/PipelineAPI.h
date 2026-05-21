@@ -8,6 +8,7 @@
 #pragma once
 
 #include <functional>
+#include <algorithm>
 #include <tuple>
 #include <utility>
 

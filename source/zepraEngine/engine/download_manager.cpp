@@ -1,6 +1,7 @@
 // Copyright (c) 2025 KetiveeAI. All rights reserved.
 // Licensed under KPL-2.0. See LICENSE file for details.
 #include "engine/download_manager.h"
+#include <algorithm>
 #include <iostream>
 #include <thread>
 #include <fstream>

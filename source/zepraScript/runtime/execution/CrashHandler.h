@@ -42,8 +42,13 @@ struct CrashContext {
     size_t heapUsedBytes = 0;
 
     // System info
+#ifdef _WIN32
+    int processId = 0;
+    int threadId = 0;
+#else
     pid_t processId = 0;
     pid_t threadId = 0;
+#endif
     uint64_t timestampMs = 0;
 
     // Stack frames (best-effort, signal-safe)
@@ -134,8 +139,10 @@ public:
     static void setActiveVMState(size_t ip, size_t stackDepth, size_t heapUsed);
 
 private:
+#ifndef _WIN32
     static void signalHandler(int sig, siginfo_t* info, void* ucontext);
     static CrashContext captureContext(int sig, siginfo_t* info);
+#endif
 
     static std::atomic<bool> installed_;
     static std::vector<CrashCallback> callbacks_;
@@ -147,11 +154,13 @@ private:
     static thread_local size_t activeStackDepth_;
     static thread_local size_t activeHeapUsed_;
 
+#ifndef _WIN32
     // Saved previous handlers for chaining
     static struct sigaction prevSIGSEGV_;
     static struct sigaction prevSIGBUS_;
     static struct sigaction prevSIGABRT_;
     static struct sigaction prevSIGFPE_;
+#endif
 };
 
 // =============================================================================

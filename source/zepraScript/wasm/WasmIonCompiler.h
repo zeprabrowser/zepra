@@ -13,6 +13,7 @@
 #pragma once
 
 #include "wasm/WasmModule.h"
+#include <algorithm>
 #include "wasm/WasmInstance.h"
 #include "jit/zopt/ZOptGraph.h"
 

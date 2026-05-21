@@ -28,6 +28,7 @@
 #include "runtime/objects/well_known_symbols.hpp"
 #include "builtins/map.hpp"
 #include "builtins/set.hpp"
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <stdexcept>

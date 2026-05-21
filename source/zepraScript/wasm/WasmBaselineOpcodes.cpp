@@ -7,6 +7,7 @@
  */
 
 #include "wasm/WasmBaselineInternal.h"
+#include <algorithm>
 
 namespace Zepra::Wasm {
 // =============================================================================

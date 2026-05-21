@@ -3,6 +3,7 @@
 // ZepraScript — gc_rss_limiter.cpp — Resident set size control for low RAM
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <functional>
 #include <cstdint>

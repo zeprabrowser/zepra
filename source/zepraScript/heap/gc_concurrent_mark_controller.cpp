@@ -3,6 +3,7 @@
 // ZepraScript — gc_concurrent_mark_controller.cpp — Orchestrate concurrent marking phases
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <functional>
 #include <vector>

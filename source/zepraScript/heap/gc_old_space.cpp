@@ -19,6 +19,7 @@
  * - evacuate fragmented pages to fresh pages
  */
 
+#include "zepra_alloc.h"
 #include <atomic>
 #include <mutex>
 #include <vector>
@@ -224,7 +225,7 @@ public:
             return false;
         }
 #else
-        base_ = static_cast<uint8_t*>(std::aligned_alloc(4096, PAGE_SIZE));
+        base_ = static_cast<uint8_t*>(zepra_aligned_alloc(4096, PAGE_SIZE));
         if (!base_) return false;
 #endif
         return true;

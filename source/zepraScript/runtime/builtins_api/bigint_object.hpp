@@ -9,6 +9,7 @@
 #pragma once
 
 #include "runtime/objects/object.hpp"
+#include <algorithm>
 #include "BigIntAPI.h"
 
 namespace Zepra::Runtime {

@@ -2,6 +2,7 @@
 // Licensed under KPL-2.0. See LICENSE file for details.
 
 #include "widgets/checkbox.h"
+#include <algorithm>
 #include "nxgfx/context.h"
 #include <cmath>
 

@@ -3,6 +3,7 @@
 // ZepraScript — gc_background_throttle_policy.cpp — Background task footprint minimizer
 
 #include <mutex>
+#include <algorithm>
 #include <unordered_map>
 #include <functional>
 #include <cstdint>

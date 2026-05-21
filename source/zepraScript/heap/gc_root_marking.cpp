@@ -3,6 +3,7 @@
 // ZepraScript — gc_root_marking.cpp — Root enumeration: stack, global, handle, VM roots
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <vector>

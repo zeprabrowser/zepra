@@ -6,6 +6,7 @@
 #pragma once
 
 #include <functional>
+#include <algorithm>
 #include <chrono>
 #include <queue>
 #include <mutex>

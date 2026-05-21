@@ -6,6 +6,7 @@
  */
 
 #include "browser/document.hpp"
+#include <algorithm>
 #include "browser/window.hpp"
 #include "runtime/objects/function.hpp"
 #include "runtime/execution/context.hpp"

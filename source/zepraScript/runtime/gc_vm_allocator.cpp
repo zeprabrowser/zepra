@@ -3,6 +3,7 @@
 // ZepraScript — gc_vm_allocator.cpp — VM-facing allocation interface
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <functional>
 #include <cstdint>

@@ -6,6 +6,7 @@
  */
 
 #include "modules/DynamicImport.h"
+#include <algorithm>
 
 namespace Zepra::Modules {
 

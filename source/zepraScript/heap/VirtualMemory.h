@@ -22,8 +22,10 @@
  */
 
 #pragma once
+#include "zepra_alloc.h"
 
 #include <cstdint>
+#include <algorithm>
 #include <cstddef>
 #include <cstring>
 #include <atomic>
@@ -622,7 +624,7 @@ inline VirtualRegion VirtualMemory::reserve(size_t size,
 
         region.base = reinterpret_cast<void*>(aligned);
 #else
-        region.base = std::aligned_alloc(flags.alignment, size);
+        region.base = zepra_aligned_alloc(flags.alignment, size);
 #endif
     } else {
 #ifdef __linux__
@@ -641,7 +643,7 @@ inline VirtualRegion VirtualMemory::reserve(size_t size,
         }
         region.base = ptr;
 #else
-        region.base = std::aligned_alloc(pageInfo_.regularPageSize, size);
+        region.base = zepra_aligned_alloc(pageInfo_.regularPageSize, size);
 #endif
     }
 
@@ -679,7 +681,7 @@ inline VirtualRegion VirtualMemory::reserveAt(void* address, size_t size,
 #else
     (void)address;
     (void)flags;
-    region.base = std::aligned_alloc(pageInfo_.regularPageSize, size);
+    region.base = zepra_aligned_alloc(pageInfo_.regularPageSize, size);
 #endif
 
     region.size = size;

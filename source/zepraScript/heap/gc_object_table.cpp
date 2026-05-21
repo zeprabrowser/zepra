@@ -3,6 +3,7 @@
 // ZepraScript — gc_object_table.cpp — Flat array object registry with bitmap free-slot tracking
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <vector>
 #include <functional>

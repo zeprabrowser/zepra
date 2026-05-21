@@ -8,6 +8,7 @@
 #pragma once
 
 #include <functional>
+#include <algorithm>
 #include <memory>
 #include <any>
 #include <unordered_map>

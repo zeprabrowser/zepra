@@ -4,6 +4,7 @@
 #pragma once
 
 #include "web/box/box_tree.h"
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>

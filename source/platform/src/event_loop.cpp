@@ -6,6 +6,7 @@
  */
 
 #include "platform/event_loop.hpp"
+#include <algorithm>
 #include <thread>
 
 namespace Zepra::Platform {

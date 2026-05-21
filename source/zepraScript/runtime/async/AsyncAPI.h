@@ -13,6 +13,7 @@
 #pragma once
 
 #include "PromiseAPI.h"
+#include <algorithm>
 #include "GeneratorAPI.h"
 #include <memory>
 #include <functional>

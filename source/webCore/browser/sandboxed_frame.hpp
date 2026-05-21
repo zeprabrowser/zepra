@@ -6,6 +6,7 @@
 #pragma once
 
 #include "storage/site_settings.hpp"
+#include <algorithm>
 #include <string>
 #include <memory>
 #include <unordered_set>

@@ -6,6 +6,7 @@
  */
 
 #include "../config.hpp"
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <chrono>

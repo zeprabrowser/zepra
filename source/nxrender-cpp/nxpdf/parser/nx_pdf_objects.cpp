@@ -2,6 +2,7 @@
 // Licensed under KPL-2.0. See LICENSE file for details.
 
 #include "nx_pdf_objects.h"
+#include <algorithm>
 #include <sstream>
 #include <iomanip>
 #include <cstring>

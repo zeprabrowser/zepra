@@ -10,6 +10,7 @@
  */
 
 #include "css/css_engine.hpp"
+#include <algorithm>
 #include "browser/dom.hpp"
 #include <iostream>
 #include <sstream>

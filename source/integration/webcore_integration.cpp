@@ -10,6 +10,7 @@
  */
 
 #include "html_parser.hpp"
+#include <algorithm>
 #include "browser/dom.hpp"
 #include "css/css_engine.hpp"
 #include "scripting/script_context.hpp"

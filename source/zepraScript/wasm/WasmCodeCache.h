@@ -14,6 +14,7 @@
 #pragma once
 
 #include "WasmAOT.h"
+#include <algorithm>
 #include <string>
 #include <memory>
 #include <unordered_map>

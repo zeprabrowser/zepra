@@ -3,6 +3,7 @@
 // ZepraScript — gc_marking_visitor.cpp — Object graph traversal for GC marking
 
 #include <functional>
+#include <algorithm>
 #include <cstdint>
 #include <cstdio>
 #include <cassert>

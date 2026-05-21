@@ -12,8 +12,10 @@
  */
 
 #pragma once
+#include "zepra_alloc.h"
 
 #include "gc_heap.hpp"
+#include <algorithm>
 #include "Compaction.h"
 #include <map>
 #include <list>
@@ -238,7 +240,7 @@ private:
     std::list<void*> largeObjects_;
     
     bool addChunk(size_t size) {
-        void* mem = std::aligned_alloc(4096, size);
+        void* mem = zepra_aligned_alloc(4096, size);
         if (!mem) return false;
         
         chunks_.push_back({mem, static_cast<char*>(mem) + size, size});
@@ -247,7 +249,7 @@ private:
     }
     
     void* allocateLargeObject(size_t size) {
-        void* mem = std::aligned_alloc(4096, size);
+        void* mem = zepra_aligned_alloc(4096, size);
         if (mem) {
             largeObjects_.push_back(mem);
             stats_.largeObjectBytes += size;

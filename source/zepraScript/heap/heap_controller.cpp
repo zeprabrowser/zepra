@@ -27,6 +27,7 @@
  * This file is ~1000 lines and covers the production heap lifecycle.
  */
 
+#include "zepra_alloc.h"
 #include <cstdint>
 #include <cstddef>
 #include <cstring>
@@ -790,8 +791,8 @@ private:
 
 inline NurseryAllocator::NurseryAllocator(size_t semiSpaceSize)
     : semiSpaceSize_(semiSpaceSize) {
-    fromSpace_ = static_cast<char*>(std::aligned_alloc(4096, semiSpaceSize));
-    toSpace_ = static_cast<char*>(std::aligned_alloc(4096, semiSpaceSize));
+    fromSpace_ = static_cast<char*>(zepra_aligned_alloc(4096, semiSpaceSize));
+    toSpace_ = static_cast<char*>(zepra_aligned_alloc(4096, semiSpaceSize));
 
     if (fromSpace_) std::memset(fromSpace_, 0, semiSpaceSize);
     if (toSpace_) std::memset(toSpace_, 0, semiSpaceSize);
@@ -808,8 +809,8 @@ inline NurseryAllocator::~NurseryAllocator() {
 inline bool NurseryAllocator::grow(size_t newSize) {
     if (newSize <= semiSpaceSize_) return true;
 
-    char* newFrom = static_cast<char*>(std::aligned_alloc(4096, newSize));
-    char* newTo = static_cast<char*>(std::aligned_alloc(4096, newSize));
+    char* newFrom = static_cast<char*>(zepra_aligned_alloc(4096, newSize));
+    char* newTo = static_cast<char*>(zepra_aligned_alloc(4096, newSize));
     if (!newFrom || !newTo) {
         if (newFrom) std::free(newFrom);
         if (newTo) std::free(newTo);

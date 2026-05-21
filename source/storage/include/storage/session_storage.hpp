@@ -6,6 +6,7 @@
 #pragma once
 
 #include "local_storage.hpp"
+#include <algorithm>
 #include <string>
 #include <unordered_map>
 #include <mutex>

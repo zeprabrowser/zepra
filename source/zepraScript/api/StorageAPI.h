@@ -13,6 +13,7 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
 #include <unordered_map>
 #include <vector>
 #include <functional>

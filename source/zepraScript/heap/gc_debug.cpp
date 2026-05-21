@@ -139,7 +139,12 @@ public:
     std::string toString() {
         // Create temp file in memory
         char buf[8192];
+        #ifdef _WIN32
+        // Windows: use snprintf directly since fmemopen is POSIX-only
+        FILE* stream = tmpfile();
+#else
         FILE* stream = fmemopen(buf, sizeof(buf), "w");
+#endif
         if (!stream) return "";
         printTo(stream);
         fclose(stream);

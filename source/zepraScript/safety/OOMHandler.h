@@ -8,6 +8,7 @@
 #pragma once
 
 #include "UncatchableException.h"
+#include <algorithm>
 #include <cstddef>
 #include <cstdio>
 #include <cstring>

@@ -6,6 +6,7 @@
  */
 
 #include "../config.hpp"
+#include <algorithm>
 #include "token.hpp"
 #include <memory>
 #include <vector>

@@ -3,6 +3,7 @@
 // ZepraScript — gc_heap_init.cpp — Heap initialization and subsystem wiring
 
 #include <mutex>
+#include <algorithm>
 #include <memory>
 #include <functional>
 #include <cstdint>

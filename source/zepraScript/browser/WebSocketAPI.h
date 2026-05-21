@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../config.hpp"
+#include <algorithm>
 #include "runtime/objects/value.hpp"
 #include "runtime/objects/object.hpp"
 #include "event_system.hpp"

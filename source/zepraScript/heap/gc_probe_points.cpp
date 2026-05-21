@@ -3,6 +3,7 @@
 // ZepraScript — gc_probe_points.cpp — Probe points for external GC tooling
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <atomic>

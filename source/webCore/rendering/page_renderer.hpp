@@ -6,6 +6,7 @@
 #pragma once
 
 #include "rendering/compositor.hpp"
+#include <algorithm>
 #include "rendering/layout_engine.hpp"
 #include "css/css_engine.hpp"
 #include "browser/dom.hpp"

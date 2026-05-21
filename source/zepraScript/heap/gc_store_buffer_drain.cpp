@@ -3,6 +3,7 @@
 // ZepraScript — gc_store_buffer_drain.cpp — Drain store buffer into nursery root set
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <vector>

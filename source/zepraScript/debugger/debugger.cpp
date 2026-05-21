@@ -6,6 +6,7 @@
  */
 
 #include "debugger/debugger.hpp"
+#include <algorithm>
 #include "runtime/execution/vm.hpp"
 #include <sstream>
 

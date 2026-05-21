@@ -10,6 +10,7 @@
  */
 
 #include "heap/heap.hpp"
+#include <algorithm>
 #include "runtime/objects/object.hpp"
 #include <vector>
 #include <atomic>

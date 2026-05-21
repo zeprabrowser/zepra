@@ -3,6 +3,7 @@
 // ZepraScript — gc_string_dedup.cpp — String deduplication during GC
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <cstring>

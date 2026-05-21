@@ -16,6 +16,7 @@
 #pragma once
 
 #include "ast.hpp"
+#include <algorithm>
 #include <functional>
 #include <stack>
 

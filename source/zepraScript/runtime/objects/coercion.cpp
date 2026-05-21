@@ -3,6 +3,7 @@
 // ZepraScript — coercion.cpp — ES spec type coercion: ToPrimitive, ToNumber, etc.
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <cstring>

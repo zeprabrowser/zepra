@@ -4,6 +4,7 @@
 #pragma once
 
 #include "nxgfx/primitives.h"
+#include <algorithm>
 #include "nxgfx/transform.h"
 #include <string>
 #include <vector>

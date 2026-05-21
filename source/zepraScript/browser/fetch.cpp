@@ -13,6 +13,7 @@
  */
 
 #include "browser/fetch.hpp"
+#include <algorithm>
 #include "builtins/json.hpp"
 #include "runtime/objects/function.hpp"
 #include "nxhttp.h"

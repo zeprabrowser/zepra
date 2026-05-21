@@ -26,6 +26,7 @@
  * - Could be extended with per-thread magazining
  */
 
+#include "zepra_alloc.h"
 #include <atomic>
 #include <mutex>
 #include <vector>
@@ -266,7 +267,7 @@ private:
                          MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
         if (mem == MAP_FAILED) return nullptr;
 #else
-        void* mem = std::aligned_alloc(4096, SLAB_PAGE_SIZE);
+        void* mem = zepra_aligned_alloc(4096, SLAB_PAGE_SIZE);
         if (!mem) return nullptr;
         std::memset(mem, 0, SLAB_PAGE_SIZE);
 #endif

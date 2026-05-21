@@ -9,6 +9,7 @@
  */
 
 #include "zopt/ZOptBuilder.h"
+#include <algorithm>
 #include "zopt/ZOptGraph.h"
 #include <cstdio>
 #include <cstring>  // For std::memcpy

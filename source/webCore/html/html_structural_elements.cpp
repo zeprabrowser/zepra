@@ -6,6 +6,7 @@
  */
 
 #include "html/html_head_element.hpp"
+#include <algorithm>
 #include "html/html_body_element.hpp"
 #include "html/html_title_element.hpp"
 #include "html/html_base_element.hpp"

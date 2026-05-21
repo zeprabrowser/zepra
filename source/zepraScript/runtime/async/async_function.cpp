@@ -6,6 +6,7 @@
  */
 
 #include "runtime/async/async_function.hpp"
+#include <algorithm>
 #include "runtime/async/promise.hpp"
 #include "runtime/objects/function.hpp"
 

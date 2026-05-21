@@ -8,6 +8,7 @@
 #pragma once
 
 #include "color.h"
+#include <algorithm>
 #include "primitives.h"
 #include <cmath>
 #include <vector>

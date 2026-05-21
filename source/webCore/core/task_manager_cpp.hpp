@@ -7,6 +7,7 @@
 
 extern "C" {
 #include "core/include/browser_core/task_manager.h"
+#include <algorithm>
 }
 
 #include <string>

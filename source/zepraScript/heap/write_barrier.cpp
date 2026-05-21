@@ -10,6 +10,7 @@
  */
 
 #include "heap/incremental_gc.hpp"
+#include <algorithm>
 #include "runtime/objects/object.hpp"
 #include <atomic>
 #include <vector>

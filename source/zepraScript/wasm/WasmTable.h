@@ -14,6 +14,7 @@
 #pragma once
 
 #include "WasmConstants.h"
+#include <algorithm>
 #include "WasmValType.h"
 #include <vector>
 #include <cstdint>

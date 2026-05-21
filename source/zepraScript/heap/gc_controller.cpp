@@ -3,6 +3,7 @@
 // ZepraScript — gc_controller.cpp — Unified GC controller connecting all subsystems
 
 #include <atomic>
+#include <algorithm>
 #include <mutex>
 #include <functional>
 #include <cstdint>

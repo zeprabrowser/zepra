@@ -13,6 +13,7 @@
 #pragma once
 
 #include "wasm.hpp"
+#include <algorithm>
 #include <memory>
 #include <vector>
 #include <cstring>

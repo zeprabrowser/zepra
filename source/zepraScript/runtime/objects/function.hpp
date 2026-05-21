@@ -6,6 +6,7 @@
  */
 
 #include "config.hpp"
+#include <algorithm>
 #include "object.hpp"
 #include "value.hpp"
 #include "frontend/ast.hpp"

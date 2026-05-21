@@ -3,6 +3,7 @@
 // ZepraScript — gc_heap_verifier.cpp — Debug-mode heap invariant checks
 
 #include <mutex>
+#include <algorithm>
 #include <functional>
 #include <vector>
 #include <cstdint>

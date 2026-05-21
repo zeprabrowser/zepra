@@ -3,6 +3,7 @@
 // ZepraScript — gc_vm_hooks.cpp — VM opcode hooks for GC integration
 
 #include <atomic>
+#include <algorithm>
 #include <functional>
 #include <cstdint>
 #include <cstdio>

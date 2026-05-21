@@ -13,6 +13,7 @@
 #pragma once
 
 #include "IteratorAPI.h"
+#include <algorithm>
 #include <memory>
 #include <functional>
 #include <optional>

@@ -2,6 +2,7 @@
 // Licensed under KPL-2.0. See LICENSE file for details.
 // ZepraScript — gc_arena.cpp — Arena page (16KB), cell layout, per-arena free list
 
+#include "zepra_alloc.h"
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
@@ -67,7 +68,7 @@ public:
                    MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
         if (mem == MAP_FAILED) return nullptr;
 #else
-        mem = aligned_alloc(kArenaSize, kArenaSize);
+        mem = zepra_aligned_alloc(kArenaSize, kArenaSize);
         if (!mem) return nullptr;
         memset(mem, 0, kArenaSize);
 #endif

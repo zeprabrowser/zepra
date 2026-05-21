@@ -10,6 +10,7 @@
 #pragma once
 
 #include "ZIRProcedure.h"
+#include <algorithm>
 #include "ZIRReduceStrength.h"
 #include "ZIREliminateDeadCode.h"
 #include <vector>

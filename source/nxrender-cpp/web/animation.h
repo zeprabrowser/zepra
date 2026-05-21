@@ -4,6 +4,7 @@
 #pragma once
 
 #include "nxgfx/transform.h"
+#include <algorithm>
 #include "web/css/cascade.h"
 #include <string>
 #include <vector>

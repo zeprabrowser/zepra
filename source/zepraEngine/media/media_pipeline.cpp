@@ -9,6 +9,7 @@
  */
 
 #include "media/media_pipeline.h"
+#include <algorithm>
 #include "media/video_processor.h"
 #include "media/audio_equalizer.h"
 #include "media/browser_audio.h"

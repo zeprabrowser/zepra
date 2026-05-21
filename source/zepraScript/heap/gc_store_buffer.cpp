@@ -3,6 +3,7 @@
 // ZepraScript — gc_store_buffer.cpp — Batched generational barrier records
 
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <cstring>
