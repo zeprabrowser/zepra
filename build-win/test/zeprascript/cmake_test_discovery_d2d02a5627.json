@@ -1,0 +1,2614 @@
+{
+  "tests": 434,
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "OptionalChaining",
+      "tests": 5,
+      "testsuite": [
+        {
+          "name": "PropertyAccess",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 42
+        },
+        {
+          "name": "ComputedAccess",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 52
+        },
+        {
+          "name": "MethodCall",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 62
+        },
+        {
+          "name": "ChainedAccess",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 74
+        },
+        {
+          "name": "MixedWithRegularAccess",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 86
+        }
+      ]
+    },
+    {
+      "name": "NullishCoalescing",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "BasicParsing",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 101
+        },
+        {
+          "name": "WithOptionalChaining",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 110
+        },
+        {
+          "name": "Chained",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 123
+        }
+      ]
+    },
+    {
+      "name": "CompoundAssignment",
+      "tests": 4,
+      "testsuite": [
+        {
+          "name": "NullishAssign",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 137
+        },
+        {
+          "name": "LogicalAndAssign",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 146
+        },
+        {
+          "name": "LogicalOrAssign",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 154
+        },
+        {
+          "name": "ExponentiationAssign",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 162
+        }
+      ]
+    },
+    {
+      "name": "Destructuring",
+      "tests": 13,
+      "testsuite": [
+        {
+          "name": "ObjectBasic",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 174
+        },
+        {
+          "name": "ObjectWithRename",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 185
+        },
+        {
+          "name": "ObjectWithDefault",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 196
+        },
+        {
+          "name": "ObjectWithRest",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 208
+        },
+        {
+          "name": "ArrayBasic",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 218
+        },
+        {
+          "name": "ArrayWithElision",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 227
+        },
+        {
+          "name": "ArrayWithRest",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 240
+        },
+        {
+          "name": "ArrayWithDefault",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 250
+        },
+        {
+          "name": "NestedObject",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 261
+        },
+        {
+          "name": "NestedArray",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 272
+        },
+        {
+          "name": "FunctionParam",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 283
+        },
+        {
+          "name": "FunctionParamArray",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 293
+        },
+        {
+          "name": "ObjectComputedKey",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 302
+        }
+      ]
+    },
+    {
+      "name": "ForOfDestructuring",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "ObjectPattern",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 316
+        },
+        {
+          "name": "ArrayPattern",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 329
+        }
+      ]
+    },
+    {
+      "name": "ForAwaitOf",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "BasicSyntax",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 343
+        },
+        {
+          "name": "WithDestructuring",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 352
+        }
+      ]
+    },
+    {
+      "name": "TaggedTemplate",
+      "tests": 1,
+      "testsuite": [
+        {
+          "name": "BasicTag",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 367
+        }
+      ]
+    },
+    {
+      "name": "ForLoop",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "RegularForLoop",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 383
+        },
+        {
+          "name": "ForOf",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 391
+        },
+        {
+          "name": "ForIn",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/syntax_p0_tests.cpp",
+          "line": 400
+        }
+      ]
+    },
+    {
+      "name": "JITStress",
+      "tests": 17,
+      "testsuite": [
+        {
+          "name": "HotThreshold",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 27
+        },
+        {
+          "name": "VeryHotThreshold",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 44
+        },
+        {
+          "name": "ProfilerCapacity",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 62
+        },
+        {
+          "name": "ProfilerReset",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 72
+        },
+        {
+          "name": "ProfilerEnable",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 86
+        },
+        {
+          "name": "HotFunctionList",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 104
+        },
+        {
+          "name": "LoopIterationTracking",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 129
+        },
+        {
+          "name": "ICMonomorphicHit",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 147
+        },
+        {
+          "name": "ICMiss",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 163
+        },
+        {
+          "name": "ICPolymorphic",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 172
+        },
+        {
+          "name": "ICMegamorphicEviction",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 188
+        },
+        {
+          "name": "ICClear",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 207
+        },
+        {
+          "name": "ICHitRate",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 218
+        },
+        {
+          "name": "ICManagerGetOrCreate",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 239
+        },
+        {
+          "name": "ICManagerInvalidateAll",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 251
+        },
+        {
+          "name": "ICManagerMemoryUsage",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 266
+        },
+        {
+          "name": "RecordCallThroughput",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/jit_stress_test.cpp",
+          "line": 284
+        }
+      ]
+    },
+    {
+      "name": "GCConcurrentStress",
+      "tests": 10,
+      "testsuite": [
+        {
+          "name": "AllocationBurst100K",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_concurrent_stress_test.cpp",
+          "line": 28
+        },
+        {
+          "name": "MarkSweepCycle10K",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_concurrent_stress_test.cpp",
+          "line": 62
+        },
+        {
+          "name": "DeepObjectGraph",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_concurrent_stress_test.cpp",
+          "line": 114
+        },
+        {
+          "name": "WriteBarrierPressure50K",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_concurrent_stress_test.cpp",
+          "line": 155
+        },
+        {
+          "name": "ConcurrentAllocation4Threads",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_concurrent_stress_test.cpp",
+          "line": 188
+        },
+        {
+          "name": "ConcurrentMarking4Threads",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_concurrent_stress_test.cpp",
+          "line": 232
+        },
+        {
+          "name": "ArrayAllocationBurst",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_concurrent_stress_test.cpp",
+          "line": 275
+        },
+        {
+          "name": "ExtensibilityToggleStress",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_concurrent_stress_test.cpp",
+          "line": 298
+        },
+        {
+          "name": "DeepPrototypeChain",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_concurrent_stress_test.cpp",
+          "line": 320
+        },
+        {
+          "name": "ResourceMonitorAllocationCycles",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_concurrent_stress_test.cpp",
+          "line": 349
+        }
+      ]
+    },
+    {
+      "name": "VMStress",
+      "tests": 21,
+      "testsuite": [
+        {
+          "name": "OperandStackFlood",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 29
+        },
+        {
+          "name": "ValueTypeStorm",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 45
+        },
+        {
+          "name": "GlobalLookupMissDensity",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 71
+        },
+        {
+          "name": "GlobalSetGetDensity",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 90
+        },
+        {
+          "name": "TerminationRequest",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 110
+        },
+        {
+          "name": "SandboxInstructionCap",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 120
+        },
+        {
+          "name": "SandboxHeapCap",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 135
+        },
+        {
+          "name": "CallDepthAccuracy",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 154
+        },
+        {
+          "name": "ConcurrentVMIsolation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 167
+        },
+        {
+          "name": "ExecuteNullChunk",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 205
+        },
+        {
+          "name": "CompileEmptySource",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 215
+        },
+        {
+          "name": "CompileInvalidSource",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 224
+        },
+        {
+          "name": "StackThroughput",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 234
+        },
+        {
+          "name": "PipelineHotLoop",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 266
+        },
+        {
+          "name": "PipelineObjectAllocation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 277
+        },
+        {
+          "name": "PipelineStringConcat",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 291
+        },
+        {
+          "name": "PipelineClosureChain",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 305
+        },
+        {
+          "name": "PipelineMixedTypes",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 324
+        },
+        {
+          "name": "PipelineExceptionStorm",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 339
+        },
+        {
+          "name": "PipelineDeepNesting",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 357
+        },
+        {
+          "name": "RapidCompileIterations",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_stress_test.cpp",
+          "line": 375
+        }
+      ]
+    },
+    {
+      "name": "GeneratorTests",
+      "tests": 5,
+      "testsuite": [
+        {
+          "name": "GeneratorCreation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 28
+        },
+        {
+          "name": "GeneratorFirstNext",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 38
+        },
+        {
+          "name": "GeneratorCompletion",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 48
+        },
+        {
+          "name": "GeneratorReturn",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 58
+        },
+        {
+          "name": "GeneratorThrow",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "name": "IteratorTests",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "IteratorResultDone",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 90
+        },
+        {
+          "name": "IteratorResultValueDouble",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 95
+        },
+        {
+          "name": "IteratorResultValueString",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 101
+        }
+      ]
+    },
+    {
+      "name": "YieldBuilderTests",
+      "tests": 1,
+      "testsuite": [
+        {
+          "name": "BuildSimpleGenerator",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 111
+        }
+      ]
+    },
+    {
+      "name": "GeneratorContextTests",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "YieldCallback",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 136
+        },
+        {
+          "name": "ResumeValue",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 150
+        },
+        {
+          "name": "ReturnValue",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 159
+        }
+      ]
+    },
+    {
+      "name": "ArrayIteratorTests",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "IterateDoubles",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 172
+        },
+        {
+          "name": "IterateStrings",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 189
+        }
+      ]
+    },
+    {
+      "name": "StringIteratorTests",
+      "tests": 1,
+      "testsuite": [
+        {
+          "name": "IterateASCII",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 201
+        }
+      ]
+    },
+    {
+      "name": "FunctionIteratorTests",
+      "tests": 1,
+      "testsuite": [
+        {
+          "name": "CustomNext",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/generator_tests.cpp",
+          "line": 221
+        }
+      ]
+    },
+    {
+      "name": "TabIsolationTests",
+      "tests": 5,
+      "testsuite": [
+        {
+          "name": "CreateMultipleTabs",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/browser_integration_tests.cpp",
+          "line": 94
+        },
+        {
+          "name": "MemoryIsolationBetweenTabs",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/browser_integration_tests.cpp",
+          "line": 116
+        },
+        {
+          "name": "InstructionCountIsolation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/browser_integration_tests.cpp",
+          "line": 139
+        },
+        {
+          "name": "TabTermination",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/browser_integration_tests.cpp",
+          "line": 155
+        },
+        {
+          "name": "DestroyTabFreeResources",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/browser_integration_tests.cpp",
+          "line": 170
+        }
+      ]
+    },
+    {
+      "name": "HeavySiteTests",
+      "tests": 4,
+      "testsuite": [
+        {
+          "name": "YouTubeSimulation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/browser_integration_tests.cpp",
+          "line": 196
+        },
+        {
+          "name": "NodejsDocsSimulation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/browser_integration_tests.cpp",
+          "line": 240
+        },
+        {
+          "name": "SPAReactAppSimulation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/browser_integration_tests.cpp",
+          "line": 271
+        },
+        {
+          "name": "WebAssemblyHeavyApp",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/browser_integration_tests.cpp",
+          "line": 303
+        }
+      ]
+    },
+    {
+      "name": "MultiTabLoadTests",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "TenTabsRunningConcurrently",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/browser_integration_tests.cpp",
+          "line": 343
+        },
+        {
+          "name": "TabCreateDestroyChurn",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/browser_integration_tests.cpp",
+          "line": 395
+        }
+      ]
+    },
+    {
+      "name": "MemoryPressureTests",
+      "tests": 1,
+      "testsuite": [
+        {
+          "name": "ApproachingLimit",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/browser_integration_tests.cpp",
+          "line": 422
+        }
+      ]
+    },
+    {
+      "name": "ParseSimulationTests",
+      "tests": 1,
+      "testsuite": [
+        {
+          "name": "FullHTMLParseBenchmark",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/browser_integration_tests.cpp",
+          "line": 450
+        }
+      ]
+    },
+    {
+      "name": "SummaryTests",
+      "tests": 1,
+      "testsuite": [
+        {
+          "name": "PrintBrowserReadinessReport",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/browser_integration_tests.cpp",
+          "line": 488
+        }
+      ]
+    },
+    {
+      "name": "MemoryLoadTests",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "AllocateUntilLimit",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/stress_tests.cpp",
+          "line": 33
+        },
+        {
+          "name": "RapidAllocDealloc",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/stress_tests.cpp",
+          "line": 60
+        }
+      ]
+    },
+    {
+      "name": "CPULoadTests",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "InstructionThroughput",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/stress_tests.cpp",
+          "line": 101
+        },
+        {
+          "name": "CallStackThroughput",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/stress_tests.cpp",
+          "line": 127
+        }
+      ]
+    },
+    {
+      "name": "SandboxLoadTests",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "CheckLimitsOverhead",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/stress_tests.cpp",
+          "line": 166
+        },
+        {
+          "name": "IsolatedGlobalLookupSpeed",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/stress_tests.cpp",
+          "line": 200
+        },
+        {
+          "name": "SecurityPolicyEvaluation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/stress_tests.cpp",
+          "line": 233
+        }
+      ]
+    },
+    {
+      "name": "ConcurrencyTests",
+      "tests": 1,
+      "testsuite": [
+        {
+          "name": "AtomicCounterScaling",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/stress_tests.cpp",
+          "line": 270
+        }
+      ]
+    },
+    {
+      "name": "ConfigurationTests",
+      "tests": 1,
+      "testsuite": [
+        {
+          "name": "PrintSandboxConfig",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/stress_tests.cpp",
+          "line": 311
+        }
+      ]
+    },
+    {
+      "name": "StackOverflowTests",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "ResourceMonitorStackDepthLimit",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 31
+        },
+        {
+          "name": "PopCallReducesDepth",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 50
+        },
+        {
+          "name": "SecurityErrorOnOverflow",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "name": "GCStressTests",
+      "tests": 4,
+      "testsuite": [
+        {
+          "name": "HeapAllocationTracking",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 83
+        },
+        {
+          "name": "HeapLimitExceeded",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 97
+        },
+        {
+          "name": "HeapDeallocation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 109
+        },
+        {
+          "name": "RapidAllocationDeallocation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 125
+        }
+      ]
+    },
+    {
+      "name": "MemorySafetyTests",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "LimitsDefaultValues",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 152
+        },
+        {
+          "name": "UntrustedLimitsAreStrict",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 161
+        },
+        {
+          "name": "ArrayLengthLimit",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 169
+        }
+      ]
+    },
+    {
+      "name": "TimeoutTests",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "NoTimeoutWhenUnlimited",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 186
+        },
+        {
+          "name": "TimeoutCheckWithinLimit",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 195
+        },
+        {
+          "name": "CheckLimitsCombined",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 204
+        }
+      ]
+    },
+    {
+      "name": "InstructionLimitTests",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "UnlimitedInstructions",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 232
+        },
+        {
+          "name": "LimitedInstructions",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 241
+        },
+        {
+          "name": "InstructionCounting",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 253
+        }
+      ]
+    },
+    {
+      "name": "TerminationTests",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "RequestTermination",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 276
+        },
+        {
+          "name": "TerminationIsPersistent",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 286
+        }
+      ]
+    },
+    {
+      "name": "ElapsedTimeTests",
+      "tests": 1,
+      "testsuite": [
+        {
+          "name": "ElapsedTimeTracking",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 302
+        }
+      ]
+    },
+    {
+      "name": "BenchmarkTests",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "ResourceMonitorOverhead",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 314
+        },
+        {
+          "name": "StackTrackingOverhead",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/robustness_tests.cpp",
+          "line": 332
+        }
+      ]
+    },
+    {
+      "name": "ExecutionLimitsTests",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "DefaultLimits",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 28
+        },
+        {
+          "name": "BrowserLimits",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 36
+        },
+        {
+          "name": "UntrustedLimits",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 43
+        }
+      ]
+    },
+    {
+      "name": "SecurityPolicyTests",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "BrowserPolicy",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 61
+        },
+        {
+          "name": "StrictPolicy",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "name": "ResourceMonitorTests",
+      "tests": 7,
+      "testsuite": [
+        {
+          "name": "InstructionCounting",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 90
+        },
+        {
+          "name": "InstructionLimit",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 103
+        },
+        {
+          "name": "HeapTracking",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 117
+        },
+        {
+          "name": "HeapLimit",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 130
+        },
+        {
+          "name": "CallStackTracking",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 144
+        },
+        {
+          "name": "StackLimit",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 158
+        },
+        {
+          "name": "TerminationRequest",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 174
+        }
+      ]
+    },
+    {
+      "name": "IsolatedGlobalTests",
+      "tests": 5,
+      "testsuite": [
+        {
+          "name": "SafeGlobalsAllowed",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 194
+        },
+        {
+          "name": "DangerousGlobalsBlocked",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 205
+        },
+        {
+          "name": "ExplicitDenyList",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 214
+        },
+        {
+          "name": "EvalControl",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 222
+        },
+        {
+          "name": "FetchControl",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 237
+        }
+      ]
+    },
+    {
+      "name": "SecureContextTests",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "CreationWithBrowserConfig",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 262
+        },
+        {
+          "name": "CreationWithStrictConfig",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 270
+        }
+      ]
+    },
+    {
+      "name": "SecurityErrorTests",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "TimeoutError",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 282
+        },
+        {
+          "name": "MemoryLimitError",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 289
+        }
+      ]
+    },
+    {
+      "name": "CrossTabIsolationTests",
+      "tests": 8,
+      "testsuite": [
+        {
+          "name": "AddressBelongsToCorrectTab",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 377
+        },
+        {
+          "name": "CrossTabPointerStoreBlocked",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 385
+        },
+        {
+          "name": "SameTabPointerStoreAllowed",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 391
+        },
+        {
+          "name": "StoreToUnmanagedAddressAllowed",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 396
+        },
+        {
+          "name": "DestroyTabRemovesFromIsolator",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 401
+        },
+        {
+          "name": "DestroyTabDoesNotAffectOtherTabs",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 408
+        },
+        {
+          "name": "DuplicateTabIdRejected",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 413
+        },
+        {
+          "name": "MultipleTabsIsolated",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/sandbox_tests.cpp",
+          "line": 417
+        }
+      ]
+    },
+    {
+      "name": "MapAPI",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "SetAndGet",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 25
+        },
+        {
+          "name": "Has",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 35
+        },
+        {
+          "name": "Delete",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 43
+        }
+      ]
+    },
+    {
+      "name": "SetAPI",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "Add",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 56
+        },
+        {
+          "name": "Delete",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "name": "TypedArrayAPI",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "CreateAndFill",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 82
+        },
+        {
+          "name": "Subarray",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 91
+        }
+      ]
+    },
+    {
+      "name": "Base64API",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "Encode",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 109
+        },
+        {
+          "name": "Decode",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 115
+        },
+        {
+          "name": "BtoaAtob",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 120
+        }
+      ]
+    },
+    {
+      "name": "CoercionAPI",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "ToBoolean",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 132
+        },
+        {
+          "name": "ToNumber",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 143
+        },
+        {
+          "name": "ToString",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 151
+        }
+      ]
+    },
+    {
+      "name": "TemporalAPI",
+      "tests": 4,
+      "testsuite": [
+        {
+          "name": "PlainDate",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 162
+        },
+        {
+          "name": "PlainDateDayOfWeek",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 171
+        },
+        {
+          "name": "Duration",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 176
+        },
+        {
+          "name": "DurationToString",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 184
+        }
+      ]
+    },
+    {
+      "name": "BufferAPI",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "ArrayBuffer",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 196
+        },
+        {
+          "name": "ArrayBufferSlice",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 203
+        },
+        {
+          "name": "DataView",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/runtime_tests.cpp",
+          "line": 212
+        }
+      ]
+    },
+    {
+      "name": "B3Tests",
+      "tests": 8,
+      "testsuite": [
+        {
+          "name": "ReturnConstant",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zir_tests.cpp",
+          "line": 72
+        },
+        {
+          "name": "Multiplication",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zir_tests.cpp",
+          "line": 109
+        },
+        {
+          "name": "Division",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zir_tests.cpp",
+          "line": 130
+        },
+        {
+          "name": "Bitwise",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zir_tests.cpp",
+          "line": 151
+        },
+        {
+          "name": "MemoryAccess",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zir_tests.cpp",
+          "line": 177
+        },
+        {
+          "name": "ControlFlowJump",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zir_tests.cpp",
+          "line": 221
+        },
+        {
+          "name": "DFGToB3Pipeline",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zir_tests.cpp",
+          "line": 253
+        },
+        {
+          "name": "ArgumentHandling",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zir_tests.cpp",
+          "line": 289
+        }
+      ]
+    },
+    {
+      "name": "ClassTests",
+      "tests": 8,
+      "testsuite": [
+        {
+          "name": "PrivateFieldNameUniqueness",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/class_tests.cpp",
+          "line": 21
+        },
+        {
+          "name": "ClassDefinitionBasics",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/class_tests.cpp",
+          "line": 41
+        },
+        {
+          "name": "ClassDefinitionFields",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/class_tests.cpp",
+          "line": 48
+        },
+        {
+          "name": "ClassBuilderStructure",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/class_tests.cpp",
+          "line": 76
+        },
+        {
+          "name": "ClassInstancePrivateStorage",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/class_tests.cpp",
+          "line": 103
+        },
+        {
+          "name": "InitializeInstanceFields",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/class_tests.cpp",
+          "line": 131
+        },
+        {
+          "name": "InitializeStatics",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/class_tests.cpp",
+          "line": 153
+        },
+        {
+          "name": "InheritanceSetup",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/class_tests.cpp",
+          "line": 178
+        }
+      ]
+    },
+    {
+      "name": "AsyncTests",
+      "tests": 23,
+      "testsuite": [
+        {
+          "name": "PromiseCreation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 21
+        },
+        {
+          "name": "PromiseResolve",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 28
+        },
+        {
+          "name": "PromiseReject",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 38
+        },
+        {
+          "name": "PromiseResolved",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 48
+        },
+        {
+          "name": "PromiseRejected",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 56
+        },
+        {
+          "name": "PromiseIgnoresSecondResolve",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 64
+        },
+        {
+          "name": "PromiseIgnoresSecondReject",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 73
+        },
+        {
+          "name": "PromiseAllEmpty",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 86
+        },
+        {
+          "name": "PromiseAllResolved",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 99
+        },
+        {
+          "name": "PromiseRaceEmpty",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 115
+        },
+        {
+          "name": "PromiseAllSettledEmpty",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 128
+        },
+        {
+          "name": "PromiseAllSettledMixed",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 136
+        },
+        {
+          "name": "PromiseAnyEmpty",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 155
+        },
+        {
+          "name": "PromiseAnyFirstFulfilled",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 164
+        },
+        {
+          "name": "PromiseWithResolvers",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 185
+        },
+        {
+          "name": "MicrotaskQueueEnqueue",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 203
+        },
+        {
+          "name": "MicrotaskQueueOrder",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 215
+        },
+        {
+          "name": "AsyncExecutionContextCreation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 234
+        },
+        {
+          "name": "AsyncExecutionContextComplete",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 248
+        },
+        {
+          "name": "AsyncExecutionContextFail",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 263
+        },
+        {
+          "name": "AwaitHandlerToPromiseFromPromise",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 281
+        },
+        {
+          "name": "AwaitHandlerToPromiseFromValue",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 291
+        },
+        {
+          "name": "AwaitHandlerAwaitResolved",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/async_tests.cpp",
+          "line": 301
+        }
+      ]
+    },
+    {
+      "name": "ValueTypeTests",
+      "tests": 10,
+      "testsuite": [
+        {
+          "name": "UndefinedType",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 29
+        },
+        {
+          "name": "NullType",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 40
+        },
+        {
+          "name": "BooleanTrue",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 47
+        },
+        {
+          "name": "BooleanFalse",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 55
+        },
+        {
+          "name": "NumberInteger",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 63
+        },
+        {
+          "name": "NumberZero",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 70
+        },
+        {
+          "name": "NumberNaN",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 77
+        },
+        {
+          "name": "NumberInfinity",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 84
+        },
+        {
+          "name": "NumberNegativeInfinity",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 91
+        },
+        {
+          "name": "NumberNegativeZero",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 98
+        }
+      ]
+    },
+    {
+      "name": "ArithmeticTests",
+      "tests": 12,
+      "testsuite": [
+        {
+          "name": "Addition",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 110
+        },
+        {
+          "name": "Subtraction",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 117
+        },
+        {
+          "name": "Multiplication",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 124
+        },
+        {
+          "name": "Division",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 131
+        },
+        {
+          "name": "DivisionByZero",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 138
+        },
+        {
+          "name": "NegativeDivisionByZero",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 145
+        },
+        {
+          "name": "ZeroByZero",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 153
+        },
+        {
+          "name": "FloatingPointPrecision",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 160
+        },
+        {
+          "name": "LargeNumbers",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 167
+        },
+        {
+          "name": "VerySmallNumbers",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 174
+        },
+        {
+          "name": "NegativeNumbers",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 181
+        },
+        {
+          "name": "MixedSigns",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 188
+        }
+      ]
+    },
+    {
+      "name": "EqualityTests",
+      "tests": 8,
+      "testsuite": [
+        {
+          "name": "StrictEqualsNumbers",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 201
+        },
+        {
+          "name": "StrictEqualsBooleans",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 206
+        },
+        {
+          "name": "StrictEqualsNull",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 212
+        },
+        {
+          "name": "StrictEqualsUndefined",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 217
+        },
+        {
+          "name": "StrictEqualsDifferentTypes",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 222
+        },
+        {
+          "name": "NaNNotEqualToItself",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 228
+        },
+        {
+          "name": "NegativeZeroEqualsPositiveZero",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 234
+        },
+        {
+          "name": "SmallDifference",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 240
+        }
+      ]
+    },
+    {
+      "name": "TypeCoercionTests",
+      "tests": 7,
+      "testsuite": [
+        {
+          "name": "TruthyPositiveNumbers",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 252
+        },
+        {
+          "name": "TruthyNegativeNumbers",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 258
+        },
+        {
+          "name": "TruthyInfinity",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 263
+        },
+        {
+          "name": "FalsyZero",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 268
+        },
+        {
+          "name": "FalsyNaN",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 273
+        },
+        {
+          "name": "FalsyBoolean",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 277
+        },
+        {
+          "name": "FalsyNullUndefined",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 282
+        }
+      ]
+    },
+    {
+      "name": "NumberEdgeCases",
+      "tests": 8,
+      "testsuite": [
+        {
+          "name": "MaxValue",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 293
+        },
+        {
+          "name": "MinValue",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 299
+        },
+        {
+          "name": "Epsilon",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 305
+        },
+        {
+          "name": "SafeInteger",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 311
+        },
+        {
+          "name": "AdditionOverflow",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 317
+        },
+        {
+          "name": "MultiplicationOverflow",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 324
+        },
+        {
+          "name": "InfinityArithmetic",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 331
+        },
+        {
+          "name": "NaNPropagation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/zeprascript_comprehensive_tests.cpp",
+          "line": 340
+        }
+      ]
+    },
+    {
+      "name": "WasmParsingTests",
+      "tests": 4,
+      "testsuite": [
+        {
+          "name": "ParseMinimalModule",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 24
+        },
+        {
+          "name": "RejectInvalidMagic",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 32
+        },
+        {
+          "name": "RejectTruncatedModule",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 37
+        },
+        {
+          "name": "ParseTypeSection",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 54
+        }
+      ]
+    },
+    {
+      "name": "WasmMemoryTests",
+      "tests": 6,
+      "testsuite": [
+        {
+          "name": "CreateMemory",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 68
+        },
+        {
+          "name": "GrowMemory",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 79
+        },
+        {
+          "name": "GrowBeyondMax",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 92
+        },
+        {
+          "name": "LoadStoreI32",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 105
+        },
+        {
+          "name": "LoadStoreI64",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 120
+        },
+        {
+          "name": "LoadStoreFloat",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 132
+        }
+      ]
+    },
+    {
+      "name": "WasmTableTests",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "CreateTable",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 151
+        },
+        {
+          "name": "GrowTable",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 162
+        },
+        {
+          "name": "SetGetElement",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 176
+        }
+      ]
+    },
+    {
+      "name": "WasmGlobalTests",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "CreateGlobal",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 194
+        },
+        {
+          "name": "MutableGlobal",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 205
+        }
+      ]
+    },
+    {
+      "name": "WasmValueTests",
+      "tests": 4,
+      "testsuite": [
+        {
+          "name": "I32Value",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 221
+        },
+        {
+          "name": "I64Value",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 227
+        },
+        {
+          "name": "F32Value",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 233
+        },
+        {
+          "name": "F64Value",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/wasm_tests.cpp",
+          "line": 239
+        }
+      ]
+    },
+    {
+      "name": "URLTests",
+      "tests": 13,
+      "testsuite": [
+        {
+          "name": "BasicParsing",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 18
+        },
+        {
+          "name": "WithPort",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 29
+        },
+        {
+          "name": "WithUserInfo",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 38
+        },
+        {
+          "name": "Origin",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 47
+        },
+        {
+          "name": "Href",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 53
+        },
+        {
+          "name": "InvalidURL",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 62
+        },
+        {
+          "name": "CanParse",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 67
+        },
+        {
+          "name": "SetPathname",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 76
+        },
+        {
+          "name": "SetSearch",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 83
+        },
+        {
+          "name": "SetHash",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 90
+        },
+        {
+          "name": "PercentEncode",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 181
+        },
+        {
+          "name": "PercentDecode",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 186
+        },
+        {
+          "name": "PercentDecodeSpecialChars",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 191
+        }
+      ]
+    },
+    {
+      "name": "URLSearchParamsTests",
+      "tests": 8,
+      "testsuite": [
+        {
+          "name": "ParseQueryString",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 101
+        },
+        {
+          "name": "ParseWithLeadingQuestion",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 113
+        },
+        {
+          "name": "Append",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 121
+        },
+        {
+          "name": "Set",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 132
+        },
+        {
+          "name": "Delete",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 141
+        },
+        {
+          "name": "Has",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 150
+        },
+        {
+          "name": "ToString",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 157
+        },
+        {
+          "name": "Sort",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/url_tests.cpp",
+          "line": 167
+        }
+      ]
+    },
+    {
+      "name": "BuiltinTests",
+      "tests": 8,
+      "testsuite": [
+        {
+          "name": "MathAbs",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/builtin_tests.cpp",
+          "line": 11
+        },
+        {
+          "name": "MathFloor",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/builtin_tests.cpp",
+          "line": 16
+        },
+        {
+          "name": "MathCeil",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/builtin_tests.cpp",
+          "line": 21
+        },
+        {
+          "name": "MathRound",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/builtin_tests.cpp",
+          "line": 26
+        },
+        {
+          "name": "MathSqrt",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/builtin_tests.cpp",
+          "line": 32
+        },
+        {
+          "name": "MathTrig",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/builtin_tests.cpp",
+          "line": 37
+        },
+        {
+          "name": "MathPow",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/builtin_tests.cpp",
+          "line": 43
+        },
+        {
+          "name": "MathLog",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/builtin_tests.cpp",
+          "line": 48
+        }
+      ]
+    },
+    {
+      "name": "ObjectTests",
+      "tests": 8,
+      "testsuite": [
+        {
+          "name": "Creation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 18
+        },
+        {
+          "name": "PropertySetAndGet",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 25
+        },
+        {
+          "name": "PropertyHas",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 37
+        },
+        {
+          "name": "PropertyDelete",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 48
+        },
+        {
+          "name": "Marking",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 60
+        },
+        {
+          "name": "Prototype",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 72
+        },
+        {
+          "name": "Keys",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 85
+        },
+        {
+          "name": "Extensibility",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 97
+        }
+      ]
+    },
+    {
+      "name": "ArrayTests",
+      "tests": 10,
+      "testsuite": [
+        {
+          "name": "Creation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 111
+        },
+        {
+          "name": "CreationWithSize",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 118
+        },
+        {
+          "name": "Push",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 124
+        },
+        {
+          "name": "At",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 134
+        },
+        {
+          "name": "Pop",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 148
+        },
+        {
+          "name": "Shift",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 161
+        },
+        {
+          "name": "Unshift",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 175
+        },
+        {
+          "name": "IndexOf",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 188
+        },
+        {
+          "name": "Includes",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 200
+        },
+        {
+          "name": "SetLength",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/gc_tests.cpp",
+          "line": 211
+        }
+      ]
+    },
+    {
+      "name": "VMTests",
+      "tests": 28,
+      "testsuite": [
+        {
+          "name": "Stack",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 24
+        },
+        {
+          "name": "StackPushPopStress",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 34
+        },
+        {
+          "name": "StackMixedTypes",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 48
+        },
+        {
+          "name": "ValueNanBoxingEdgeCases",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 67
+        },
+        {
+          "name": "ValueFalsiness",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 84
+        },
+        {
+          "name": "ArithmeticAdd",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 104
+        },
+        {
+          "name": "ArithmeticSubtract",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 114
+        },
+        {
+          "name": "ArithmeticMultiply",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 124
+        },
+        {
+          "name": "ArithmeticDivide",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 134
+        },
+        {
+          "name": "ArithmeticModulo",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 144
+        },
+        {
+          "name": "ArithmeticPower",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 154
+        },
+        {
+          "name": "BitwiseAnd",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 168
+        },
+        {
+          "name": "BitwiseOr",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 174
+        },
+        {
+          "name": "BitwiseXor",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 180
+        },
+        {
+          "name": "BitwiseShifts",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 186
+        },
+        {
+          "name": "ComparisonEqual",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 204
+        },
+        {
+          "name": "ComparisonStrictEqual",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 212
+        },
+        {
+          "name": "ComparisonLessGreater",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 218
+        },
+        {
+          "name": "ObjectPropertyAccess",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 229
+        },
+        {
+          "name": "ObjectPrototypeChain",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 242
+        },
+        {
+          "name": "ObjectDeleteProperty",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 258
+        },
+        {
+          "name": "ArrayPushPop",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 271
+        },
+        {
+          "name": "ArraySlice",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 285
+        },
+        {
+          "name": "ArrayStress",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 299
+        },
+        {
+          "name": "StringConcat",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 317
+        },
+        {
+          "name": "StringMethods",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 327
+        },
+        {
+          "name": "ErrorTypes",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 349
+        },
+        {
+          "name": "ErrorWithCause",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/vm_tests.cpp",
+          "line": 369
+        }
+      ]
+    },
+    {
+      "name": "ParserTests",
+      "tests": 19,
+      "testsuite": [
+        {
+          "name": "EmptyProgram",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 18
+        },
+        {
+          "name": "BasicClassDeclaration",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 28
+        },
+        {
+          "name": "ClassWithExtends",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 47
+        },
+        {
+          "name": "ClassWithStaticMethod",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 69
+        },
+        {
+          "name": "ClassWithGetterSetter",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 85
+        },
+        {
+          "name": "ForOfWithLet",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 109
+        },
+        {
+          "name": "ForOfWithConst",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 126
+        },
+        {
+          "name": "ForOfWithExistingVariable",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 138
+        },
+        {
+          "name": "RegularForLoop",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 157
+        },
+        {
+          "name": "ForLoopNoInit",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 172
+        },
+        {
+          "name": "ArrowFunctionSingleParam",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 190
+        },
+        {
+          "name": "ArrowFunctionMultipleParams",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 195
+        },
+        {
+          "name": "ArrowFunctionWithBlock",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 200
+        },
+        {
+          "name": "VariableDeclarations",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 214
+        },
+        {
+          "name": "FunctionDefaultParams",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 229
+        },
+        {
+          "name": "RestParameter",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 242
+        },
+        {
+          "name": "AwaitExpression",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 260
+        },
+        {
+          "name": "ImportDeclaration",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 275
+        },
+        {
+          "name": "ExportDeclaration",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/parser_tests.cpp",
+          "line": 283
+        }
+      ]
+    },
+    {
+      "name": "LexerTests",
+      "tests": 5,
+      "testsuite": [
+        {
+          "name": "EmptySource",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/lexer_tests.cpp",
+          "line": 11
+        },
+        {
+          "name": "Numbers",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/lexer_tests.cpp",
+          "line": 18
+        },
+        {
+          "name": "Strings",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/lexer_tests.cpp",
+          "line": 39
+        },
+        {
+          "name": "Keywords",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/lexer_tests.cpp",
+          "line": 52
+        },
+        {
+          "name": "Operators",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/lexer_tests.cpp",
+          "line": 65
+        }
+      ]
+    },
+    {
+      "name": "ValueTests",
+      "tests": 42,
+      "testsuite": [
+        {
+          "name": "Undefined",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 16
+        },
+        {
+          "name": "Null",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 29
+        },
+        {
+          "name": "BooleanTrue",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 38
+        },
+        {
+          "name": "BooleanFalse",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 48
+        },
+        {
+          "name": "DefaultConstructorIsUndefined",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 56
+        },
+        {
+          "name": "NumberBasic",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 65
+        },
+        {
+          "name": "NumberZero",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 74
+        },
+        {
+          "name": "NumberNegativeZero",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 81
+        },
+        {
+          "name": "NumberInfinity",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 87
+        },
+        {
+          "name": "NumberNaN",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 99
+        },
+        {
+          "name": "NumberMaxSafeInteger",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 106
+        },
+        {
+          "name": "NumberSmallFraction",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 113
+        },
+        {
+          "name": "NumberNegative",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 119
+        },
+        {
+          "name": "NumberArithmetic",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 129
+        },
+        {
+          "name": "Modulo",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 139
+        },
+        {
+          "name": "ModuloNegative",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 145
+        },
+        {
+          "name": "Power",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 151
+        },
+        {
+          "name": "PowerFractional",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 157
+        },
+        {
+          "name": "DivideByZero",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 163
+        },
+        {
+          "name": "Negate",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 170
+        },
+        {
+          "name": "NegateZero",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 176
+        },
+        {
+          "name": "LogicalNot",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 182
+        },
+        {
+          "name": "LogicalNotNumber",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 192
+        },
+        {
+          "name": "BitwiseAnd",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 204
+        },
+        {
+          "name": "BitwiseOr",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 210
+        },
+        {
+          "name": "BitwiseXor",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 216
+        },
+        {
+          "name": "BitwiseNot",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 222
+        },
+        {
+          "name": "LeftShift",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 228
+        },
+        {
+          "name": "RightShift",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 234
+        },
+        {
+          "name": "LessThan",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 244
+        },
+        {
+          "name": "LessEqual",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 251
+        },
+        {
+          "name": "GreaterThan",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 257
+        },
+        {
+          "name": "GreaterEqual",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 264
+        },
+        {
+          "name": "StrictEquals",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 274
+        },
+        {
+          "name": "StrictEqualsDifferentTypes",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 283
+        },
+        {
+          "name": "StrictEqualsNaN",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 290
+        },
+        {
+          "name": "SymbolCreation",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 301
+        },
+        {
+          "name": "SymbolUniqueness",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 309
+        },
+        {
+          "name": "SizeIs8Bytes",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 319
+        },
+        {
+          "name": "AllTagsDistinct",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 323
+        },
+        {
+          "name": "FalsyValues",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 338
+        },
+        {
+          "name": "TruthyValues",
+          "file": "C:\/Users\/Lenovo\/Music\/Zepra\/test\/zeprascript\/unit\/value_tests.cpp",
+          "line": 346
+        }
+      ]
+    }
+  ]
+}

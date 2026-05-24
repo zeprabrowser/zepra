@@ -13,7 +13,9 @@
 #ifdef __linux__
 #include <setjmp.h>
 #include <pthread.h>
+#if ZEPRA_PLATFORM_POSIX
 #include <unistd.h>
+#endif
 #endif
 
 namespace Zepra::Heap {

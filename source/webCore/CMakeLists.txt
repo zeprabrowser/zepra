@@ -59,12 +59,12 @@ else()
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../NXNet/networking)
     
     # Include main include directory for nxsvg.h, nxrender.h, nxfont.h
-    include_directories(${CMAKE_SOURCE_DIR}/include
+    include_directories(${CMAKE_SOURCE_DIR}/include)
     include_directories(${CMAKE_SOURCE_DIR}/source/integration)
+    include_directories(${CMAKE_SOURCE_DIR}/source/integration/include)
     include_directories(${CMAKE_SOURCE_DIR}/source/nxrender-cpp)
     include_directories(${CMAKE_SOURCE_DIR}/UI)
     include_directories(${CMAKE_SOURCE_DIR}/source/zepraEngine)
-            ${CMAKE_SOURCE_DIR}/source/integration/include)
     
     # Source files - check which ones exist
     set(WEBCORE_SOURCES "")

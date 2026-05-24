@@ -20,7 +20,8 @@
 #endif
 #include <windows.h>
 #include <windowsx.h>   // GET_X_LPARAM, GET_Y_LPARAM
-#include <GL/gl.h>
+#include <shellapi.h>   // HDROP, DragQueryFileW, DragFinish
+#include "nxgfx/gl_includes.h"
 
 #include "platform.h"
 #include "input/events.h"

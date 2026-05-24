@@ -30,7 +30,9 @@
 #include <algorithm>
 
 #ifdef __linux__
+#if ZEPRA_PLATFORM_POSIX
 #include <unistd.h>
+#endif
 #include <sys/syscall.h>
 #include <pthread.h>
 #include <signal.h>

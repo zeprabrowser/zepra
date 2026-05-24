@@ -114,13 +114,25 @@ void WasmMemory::store(uint32_t offset, T value) {
     std::memcpy(data_ + offset, &value, sizeof(T));
 }
 
-// Explicit instantiations
+// Explicit instantiations for all WASM memory access widths
+template uint8_t WasmMemory::load<uint8_t>(uint32_t) const;
+template int8_t WasmMemory::load<int8_t>(uint32_t) const;
+template uint16_t WasmMemory::load<uint16_t>(uint32_t) const;
+template int16_t WasmMemory::load<int16_t>(uint32_t) const;
 template int32_t WasmMemory::load<int32_t>(uint32_t) const;
+template uint32_t WasmMemory::load<uint32_t>(uint32_t) const;
 template int64_t WasmMemory::load<int64_t>(uint32_t) const;
+template uint64_t WasmMemory::load<uint64_t>(uint32_t) const;
 template float WasmMemory::load<float>(uint32_t) const;
 template double WasmMemory::load<double>(uint32_t) const;
+template void WasmMemory::store<uint8_t>(uint32_t, uint8_t);
+template void WasmMemory::store<int8_t>(uint32_t, int8_t);
+template void WasmMemory::store<uint16_t>(uint32_t, uint16_t);
+template void WasmMemory::store<int16_t>(uint32_t, int16_t);
 template void WasmMemory::store<int32_t>(uint32_t, int32_t);
+template void WasmMemory::store<uint32_t>(uint32_t, uint32_t);
 template void WasmMemory::store<int64_t>(uint32_t, int64_t);
+template void WasmMemory::store<uint64_t>(uint32_t, uint64_t);
 template void WasmMemory::store<float>(uint32_t, float);
 template void WasmMemory::store<double>(uint32_t, double);
 

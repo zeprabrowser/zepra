@@ -85,13 +85,19 @@ target_link_libraries(zeprascript-integration-tests
     PRIVATE
         zepra-core
         webcore
+        nxhttp
         networking
+        nxbase
         GTest::gtest
         GTest::gtest_main
-        ssl
-        crypto
-        pthread
 )
+if(WIN32)
+    target_link_libraries(zeprascript-integration-tests PRIVATE
+        ${OPENSSL_LIBRARIES} ws2_32)
+else()
+    target_link_libraries(zeprascript-integration-tests PRIVATE
+        ssl crypto pthread)
+endif()
 
 target_include_directories(zeprascript-integration-tests
     PRIVATE

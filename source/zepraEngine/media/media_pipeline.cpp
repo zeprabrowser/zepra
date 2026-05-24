@@ -14,8 +14,8 @@
 #include "media/audio_equalizer.h"
 #include "media/browser_audio.h"
 
-#include <SDL2/SDL.h>
-#include <GL/gl.h>
+// SDL2 removed — media pipeline uses OpenGL directly via NXRender
+#include "nxgfx/gl_includes.h"
 #include <iostream>
 #include <vector>
 #include <cstring>

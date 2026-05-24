@@ -15,7 +15,9 @@
 #include <cstdlib>
 #include <cstdio>
 #include <ctime>
+#if ZEPRA_PLATFORM_POSIX
 #include <unistd.h>
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/syscall.h>

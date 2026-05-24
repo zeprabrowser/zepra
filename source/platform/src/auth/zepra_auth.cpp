@@ -1,8 +1,58 @@
 // Copyright (c) 2025 KetiveeAI. All rights reserved.
 // Licensed under KPL-2.0. See LICENSE file for details.
 #include "auth/zepra_auth.h"
-#include "auth/zepra_auth.h"
+
+// json-c is available on Linux/NeolyxOS only.
+// On Windows, use a thin shim mapping json-c API to nlohmann/json.
+#ifndef _WIN32
 #include <json-c/json.h>
+#else
+// Minimal json-c API shim over nlohmann/json for Windows builds
+#include <nlohmann/json.hpp>
+#include <cstdlib>
+#include <cstring>
+
+struct json_object {
+    nlohmann::json data;
+    bool owned = true;
+};
+
+static inline json_object* json_object_new_object() {
+    auto* o = new json_object; o->data = nlohmann::json::object(); return o;
+}
+static inline json_object* json_object_new_string(const char* s) {
+    auto* o = new json_object; o->data = s; return o;
+}
+static inline void json_object_object_add(json_object* parent, const char* key, json_object* val) {
+    if (parent && val) { parent->data[key] = val->data; delete val; }
+}
+static inline const char* json_object_to_json_string(json_object* obj) {
+    static thread_local std::string buf;
+    buf = obj->data.dump();
+    return buf.c_str();
+}
+static inline void json_object_put(json_object* obj) { if (obj && obj->owned) delete obj; }
+static inline json_object* json_tokener_parse(const char* s) {
+    try { auto* o = new json_object; o->data = nlohmann::json::parse(s); return o; }
+    catch (...) { return nullptr; }
+}
+static inline bool json_object_object_get_ex(json_object* obj, const char* key, json_object** out) {
+    if (!obj || !obj->data.contains(key)) return false;
+    static thread_local json_object child;
+    child.data = obj->data[key]; child.owned = false;
+    *out = &child;
+    return true;
+}
+static inline bool json_object_get_boolean(json_object* obj) { return obj && obj->data.is_boolean() && obj->data.get<bool>(); }
+static inline const char* json_object_get_string(json_object* obj) {
+    static thread_local std::string buf;
+    if (!obj) return "";
+    buf = obj->data.is_string() ? obj->data.get<std::string>() : obj->data.dump();
+    return buf.c_str();
+}
+static inline int json_object_get_int(json_object* obj) { return obj ? obj->data.get<int>() : 0; }
+#endif // _WIN32
+
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
 #include <openssl/bio.h>

@@ -18,6 +18,12 @@
 #include <GL/gl.h>
 #endif
 
+// Windows winerror.h defines NO_ERROR as a macro (=0L).
+// Undef it to avoid collision with our WebGLConstants::NO_ERROR.
+#ifdef NO_ERROR
+#  undef NO_ERROR
+#endif
+
 namespace Zepra::WebCore {
 
 // =============================================================================

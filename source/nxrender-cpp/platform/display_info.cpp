@@ -10,6 +10,11 @@
 #ifdef __linux__
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
+#elif defined(_WIN32)
+#ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
 #endif
 
 namespace NXRender {
@@ -97,6 +102,27 @@ void DisplayInfo::queryFromOS() {
     }
 
     XCloseDisplay(display);
+
+    std::cout << "[DisplayInfo] Screen: " << metrics_.screenWidth << "x" << metrics_.screenHeight
+              << " DPI: " << metrics_.dpi
+              << " DPR: " << metrics_.devicePixelRatio << std::endl;
+#elif defined(_WIN32)
+    // Win32: query display metrics via system APIs
+    metrics_.screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    metrics_.screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+    // GetDpiForSystem() requires Windows 10 1607+, use fallback if unavailable
+    HDC hdc = GetDC(nullptr);
+    if (hdc) {
+        metrics_.dpi = static_cast<float>(GetDeviceCaps(hdc, LOGPIXELSX));
+        ReleaseDC(nullptr, hdc);
+    } else {
+        metrics_.dpi = 96.0f;
+    }
+
+    metrics_.devicePixelRatio = metrics_.dpi / 96.0f;
+    if (metrics_.devicePixelRatio < 0.5f) metrics_.devicePixelRatio = 1.0f;
+    if (metrics_.devicePixelRatio > 4.0f) metrics_.devicePixelRatio = 4.0f;
 
     std::cout << "[DisplayInfo] Screen: " << metrics_.screenWidth << "x" << metrics_.screenHeight
               << " DPI: " << metrics_.dpi

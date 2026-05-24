@@ -90,7 +90,10 @@ target_include_directories(nxhttp_security_test PRIVATE
     ${PROJECT_SOURCE_DIR}/source/NXNet/nxhttp
     ${PROJECT_SOURCE_DIR}/source/NXNet/networking
 )
-target_link_libraries(nxhttp_security_test nxhttp networking GTest::gtest GTest::gtest_main pthread)
+target_link_libraries(nxhttp_security_test nxhttp networking GTest::gtest GTest::gtest_main)
+if(NOT WIN32)
+    target_link_libraries(nxhttp_security_test pthread)
+endif()
 add_test(NAME NxHttpSecurityTest COMMAND nxhttp_security_test)
 
 # Test 7: nxhttp URL Tests
@@ -100,7 +103,10 @@ target_include_directories(nxhttp_tests PRIVATE
     ${PROJECT_SOURCE_DIR}/source/NXNet/nxhttp
     ${PROJECT_SOURCE_DIR}/source/NXNet/networking
 )
-target_link_libraries(nxhttp_tests nxhttp networking GTest::gtest GTest::gtest_main pthread)
+target_link_libraries(nxhttp_tests nxhttp networking GTest::gtest GTest::gtest_main)
+if(NOT WIN32)
+    target_link_libraries(nxhttp_tests pthread)
+endif()
 add_test(NAME NxHttpTests COMMAND nxhttp_tests)
 
 # Test 8: nxcrypto Tests
@@ -109,7 +115,12 @@ target_include_directories(nxcrypto_tests PRIVATE
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/source/NXNet/nxcrypto
 )
-target_link_libraries(nxcrypto_tests nxcrypto GTest::gtest GTest::gtest_main pthread ssl crypto)
+target_link_libraries(nxcrypto_tests nxcrypto GTest::gtest GTest::gtest_main)
+if(WIN32)
+    target_link_libraries(nxcrypto_tests ${OPENSSL_LIBRARIES})
+else()
+    target_link_libraries(nxcrypto_tests pthread ssl crypto)
+endif()
 add_test(NAME NxCryptoTests COMMAND nxcrypto_tests)
 
 # =============================================================================
@@ -123,12 +134,14 @@ target_link_libraries(nxrender_tests
     nxrender
     GTest::gtest
     GTest::gtest_main
-    pthread
-    GL
-    X11
     Freetype::Freetype
     z
 )
+if(WIN32)
+    target_link_libraries(nxrender_tests opengl32 gdi32)
+else()
+    target_link_libraries(nxrender_tests GL X11 pthread)
+endif()
 add_test(NAME NxRenderTests COMMAND nxrender_tests)
 
 # =============================================================================
@@ -136,7 +149,10 @@ add_test(NAME NxRenderTests COMMAND nxrender_tests)
 # =============================================================================
 add_executable(nxpdf_test nxpdf_test.cpp)
 target_include_directories(nxpdf_test PRIVATE ${PROJECT_SOURCE_DIR}/source/nxrender-cpp)
-target_link_libraries(nxpdf_test nxrender pthread z Freetype::Freetype)
+target_link_libraries(nxpdf_test nxrender z Freetype::Freetype)
+if(NOT WIN32)
+    target_link_libraries(nxpdf_test pthread)
+endif()
 add_test(NAME NxPdfTest COMMAND nxpdf_test)
 
 # =============================================================================
@@ -154,8 +170,10 @@ target_include_directories(zepra_engine_tests PRIVATE
 target_link_libraries(zepra_engine_tests
     GTest::gtest
     GTest::gtest_main
-    pthread
 )
+if(NOT WIN32)
+    target_link_libraries(zepra_engine_tests pthread)
+endif()
 add_test(NAME ZepraEngineTests COMMAND zepra_engine_tests)
 
 # =============================================================================

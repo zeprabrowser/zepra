@@ -34,9 +34,8 @@
 #include <string>
 #include <thread>
 #include <vector>
-#include <unistd.h>
+#include "platform/platform_compat.h"
 #include <csignal>
-#include <sys/stat.h>
 
 // ===========================================================================
 // SECTION 2: NXRENDER - Platform Graphics Abstraction
@@ -126,7 +125,11 @@ using ZepraBrowser::stripOuterTags;
 // CONFIGURATION
 // ===========================================================================
 #ifndef RESOURCE_PATH
-#define RESOURCE_PATH "/home/swana/Documents/zeprabrowser/resources"
+#  if ZEPRA_OS_WINDOWS
+#    define RESOURCE_PATH "resources"
+#  else
+#    define RESOURCE_PATH "resources"
+#  endif
 #endif
 
 
@@ -491,8 +494,7 @@ HttpResponse httpGet(const std::string& url) {
     if (url.substr(0, 7) == "file://") {
         std::string path = url.substr(7);
         if (!path.empty() && path[0] == '~') {
-            const char* home = getenv("HOME");
-            if (home) path = std::string(home) + path.substr(1);
+            path = Zepra::Platform::expandHomePath(path);
         }
         
         std::ifstream file(path);
@@ -594,8 +596,7 @@ std::vector<uint8_t> httpGetBinary(const std::string& url) {
     if (url.substr(0, 7) == "file://") {
         std::string path = url.substr(7);
         if (!path.empty() && path[0] == '~') {
-            const char* home = getenv("HOME");
-            if (home) path = std::string(home) + path.substr(1);
+            path = Zepra::Platform::expandHomePath(path);
         }
         
         std::ifstream file(path, std::ios::binary);
@@ -3910,10 +3911,11 @@ std::string parseSmartUrl(const std::string& input) {
     // Examples: "kernel/syscalls.html", "docs/index.html", "../style.css"
     if (hasFileExtension && (trimmed.find('/') != std::string::npos || trimmed.find("..") == 0)) {
         // Treat as relative file path - resolve against current working directory
-        char* cwd = getcwd(nullptr, 0);
+        char cwdBuf[4096];
+        char* cwd = getcwd(cwdBuf, sizeof(cwdBuf));
         if (cwd) {
-            std::string fullPath = std::string(cwd) + "/" + trimmed;
-            free(cwd);
+            std::string sep(1, Zepra::Platform::pathSeparator());
+            std::string fullPath = std::string(cwd) + sep + trimmed;
             // Check if file exists
             std::ifstream f(fullPath);
             if (f.good()) {
@@ -3921,10 +3923,13 @@ std::string parseSmartUrl(const std::string& input) {
             }
         }
         // Also check common documentation paths
-        std::vector<std::string> searchPaths = {
-            "/home/swana/Documents/NEOLYXOS/neolyx-os/docs/",
-            "/home/swana/Documents/NEOLYXOS/neolyx-os/"
-        };
+        std::string homeDir = Zepra::Platform::getHomeDirectory();
+        std::string sep(1, Zepra::Platform::pathSeparator());
+        std::vector<std::string> searchPaths;
+        if (!homeDir.empty()) {
+            searchPaths.push_back(homeDir + sep + "Documents" + sep + "NEOLYXOS" + sep + "neolyx-os" + sep + "docs" + sep);
+            searchPaths.push_back(homeDir + sep + "Documents" + sep + "NEOLYXOS" + sep + "neolyx-os" + sep);
+        }
         for (const auto& base : searchPaths) {
             std::string testPath = base + trimmed;
             std::ifstream f(testPath);

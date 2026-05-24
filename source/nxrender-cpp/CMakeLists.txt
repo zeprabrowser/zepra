@@ -33,6 +33,7 @@ set(NXRENDER_SOURCES
     nxgfx/text/text_layout.cpp
     nxgfx/svg/svg_renderer.cpp
     nxgfx/transform.cpp
+    nxgfx/ui_draw.cpp        # UI draw layer (drawButton, drawInputField, etc.)
 
     # core — rendering pipeline
     core/compositor.cpp
@@ -100,12 +101,10 @@ set(NXRENDER_SOURCES
     animation/spring.cpp
     animation/css_animation.cpp
 
-    # platform — OS abstraction
-    platform/linux_x11.cpp
+    # platform — OS abstraction (cross-platform sources only)
     platform/display_info.cpp
     platform/platform_timer.cpp
     platform/thread_pool.cpp
-    platform/linux_wayland.cpp
 
     # accessibility
     accessibility/accessible.cpp
@@ -239,20 +238,28 @@ target_link_libraries(nxrender PUBLIC
     ${HARFBUZZ_LINK_LIBS}
 )
 
-# Platform-specific
+# Platform-specific sources and linkage
 if(UNIX AND NOT APPLE)
+    # Linux/NeolyxOS: X11 and Wayland backends
+    target_sources(nxrender PRIVATE
+        platform/linux_x11.cpp
+        platform/linux_wayland.cpp
+    )
     target_link_libraries(nxrender PUBLIC X11 Xrandr pthread)
+    target_compile_definitions(nxrender PUBLIC ZEPRA_PLATFORM_LINUX)
 endif()
 
 if(WIN32)
-    # Windows platform source is gated to _WIN32 inside the file itself,
-    # but we add it here so CMake includes it in the build.
+    # Windows: WGL backend (Win32 + OpenGL)
     target_sources(nxrender PRIVATE platform/windows_wgl.cpp)
-    target_link_libraries(nxrender PUBLIC opengl32 gdi32 user32)
+    target_link_libraries(nxrender PUBLIC opengl32 gdi32 user32 shell32)
     target_compile_definitions(nxrender PUBLIC ZEPRA_PLATFORM_WINDOWS)
-    # Suppress MSVC/MinGW POSIX deprecation noise
     target_compile_definitions(nxrender PRIVATE
-        _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN)
+        _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN NOMINMAX)
+endif()
+
+if(APPLE)
+    target_compile_definitions(nxrender PUBLIC ZEPRA_PLATFORM_MACOS)
 endif()
 
 # Install

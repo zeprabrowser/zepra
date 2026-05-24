@@ -13,7 +13,9 @@
 #include <cassert>
 
 #ifdef __linux__
+#if ZEPRA_PLATFORM_POSIX
 #include <unistd.h>
+#endif
 #include <fstream>
 #include <string>
 #endif

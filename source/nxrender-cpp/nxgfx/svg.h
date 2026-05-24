@@ -14,7 +14,7 @@
 #include <regex>
 #include <iostream>
 #include <algorithm>
-#include <GL/gl.h>
+#include "nxgfx/gl_includes.h"
 
 namespace nxsvg {
 

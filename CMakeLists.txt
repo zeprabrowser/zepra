@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.16)
 project(Zepra VERSION 1.0.0 LANGUAGES CXX)
 
 # ============================================================================
@@ -66,15 +66,9 @@ if(WIN32)
     
 
     
-    # Try to find OpenSSL
-    find_package(PkgConfig QUIET)
-    if(PkgConfig_FOUND)
-        pkg_check_modules(OPENSSL REQUIRED openssl)
-    else()
-        find_package(OpenSSL REQUIRED)
-    endif()
+    # Try to find OpenSSL on Windows
+    find_package(OpenSSL QUIET)
     if(NOT OPENSSL_FOUND)
-        # If still not found, try to find it manually
         find_path(OPENSSL_INCLUDE_DIR openssl/ssl.h)
         find_library(OPENSSL_CRYPTO_LIBRARY crypto)
         find_library(OPENSSL_SSL_LIBRARY ssl)
@@ -82,11 +76,13 @@ if(WIN32)
             set(OPENSSL_FOUND TRUE)
             set(OPENSSL_INCLUDE_DIRS ${OPENSSL_INCLUDE_DIR})
             set(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})
+        else()
+            message(WARNING "OpenSSL not found on Windows — TLS will be unavailable")
         endif()
     endif()
     
     # Link Windows libraries
-    set(PLATFORM_LIBS ws2_32 wininet)
+    set(PLATFORM_LIBS ws2_32 wininet opengl32 gdi32 shell32)
     
 elseif(APPLE)
     # macOS-specific settings
@@ -111,7 +107,12 @@ else()
 endif()
 
 # Find OpenGL
-find_package(OpenGL REQUIRED)
+if(NOT WIN32)
+    find_package(OpenGL REQUIRED)
+else()
+    # On Windows, opengl32 is linked directly via PLATFORM_LIBS
+    set(OPENGL_LIBRARIES "")
+endif()
 
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/source/integration/include)
@@ -143,9 +144,13 @@ add_subdirectory(source/nxrender-cpp)
 
 # NOTE: zepraEngine demos moved to test/demos/zepraEngine/ (SDL removed)
 
-# Build Integration layer (JSâ†”DOM bridge)
+# Build Integration layer (JS↔DOM bridge)
 add_subdirectory(source/integration)
 include_directories(${CMAKE_SOURCE_DIR}/source/integration/include)
+
+# Build Platform abstraction (window system, clipboard, platform_compat.h)
+add_subdirectory(source/platform)
+include_directories(${CMAKE_SOURCE_DIR}/source/platform/include)
 
 # Build NXAudio (Audio Engine)
 add_subdirectory(source/media/nxaudio)
@@ -413,34 +418,63 @@ endif()
 # nlohmann/json.hpp is header-only, no linking needed
 # The include path is already set up in include_directories
 
-# Link json-c library (used by zepra_auth)
+# json-c (used by zepra_auth — Linux/NeolyxOS only)
 find_package(PkgConfig QUIET)
-if(PKGCONFIG_FOUND)
-    pkg_check_modules(JSON_C json-c)
-endif()
-if(JSON_C_FOUND)
-    target_link_libraries(${EXECUTABLE_NAME} ${JSON_C_LIBRARIES})
-    target_include_directories(${EXECUTABLE_NAME} PRIVATE ${JSON_C_INCLUDE_DIRS})
-else()
-    # Fallback to direct linking
-    target_link_libraries(${EXECUTABLE_NAME} json-c)
+if(NOT WIN32 AND PkgConfig_FOUND)
+    pkg_check_modules(JSON_C QUIET json-c)
+    if(JSON_C_FOUND)
+        target_link_libraries(${EXECUTABLE_NAME} ${JSON_C_LIBRARIES})
+        target_include_directories(${EXECUTABLE_NAME} PRIVATE ${JSON_C_INCLUDE_DIRS})
+    endif()
 endif()
 
 # Link OpenGL and platform libraries
 target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES} ${PLATFORM_LIBS})
 
-# Link engine libraries (zepraScript, webCore, integration)
-# ketivee_search.cpp now uses nxhttp (no more libcurl)
-target_link_libraries(${EXECUTABLE_NAME} 
-    zepra-core 
-    webcore 
-    zepra-integration
-    nxhttp
-    nxbase
-    nxcrypto
-    nxjson
-    nxxml
-)
+# zlib (used by tab_suspender, nxpdf)
+find_package(ZLIB QUIET)
+if(ZLIB_FOUND)
+    target_link_libraries(${EXECUTABLE_NAME} ZLIB::ZLIB)
+else()
+    target_link_libraries(${EXECUTABLE_NAME} z)
+endif()
+
+# Link engine libraries (zepraScript, webCore, integration, platform)
+# Use linker group for static libs to resolve circular dependencies
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_link_libraries(${EXECUTABLE_NAME}
+        -Wl,--start-group
+        zepra-core
+        webcore
+        zepra-integration
+        platform
+        nxhttp
+        networking
+        nxbase
+        nxcrypto
+        nxjson
+        nxxml
+        -Wl,--end-group
+    )
+else()
+    target_link_libraries(${EXECUTABLE_NAME}
+        zepra-core
+        webcore
+        zepra-integration
+        platform
+        nxhttp
+        networking
+        nxbase
+        nxcrypto
+        nxjson
+        nxxml
+    )
+endif()
+
+# OpenSSL (needed by nxhttp/networking for TLS)
+if(OPENSSL_FOUND)
+    target_link_libraries(${EXECUTABLE_NAME} ${OPENSSL_LIBRARIES})
+endif()
 
 # Compiler flags
 target_compile_options(${EXECUTABLE_NAME} PRIVATE

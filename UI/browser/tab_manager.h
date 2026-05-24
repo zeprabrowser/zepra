@@ -6,7 +6,9 @@
 #include <vector>
 #include <memory>
 #include <functional>
-#include <SDL2/SDL.h>
+#ifdef ZEPRA_USE_SDL2
+#  include <SDL2/SDL.h>
+#endif
 #include "engine/browser_connector.h"
 #include "network_monitor.h"  // Per-tab network isolation
 
@@ -231,7 +233,11 @@ public:
     void setTabCrashedCallback(std::function<void(const TabEntry&)> cb);
     
     // UI Integration (for main loop)
+#ifdef ZEPRA_USE_SDL2
     bool handleEvent(const SDL_Event& /*event*/) { return false; }  // Stub
+#else
+    bool handleEvent(const void* /*event*/) { return false; }  // No SDL — stub
+#endif
     void update() {}  // Stub
     void render() {}  // Stub
     void refreshCurrentTab() { reloadActiveTab(); }

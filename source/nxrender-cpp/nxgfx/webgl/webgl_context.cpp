@@ -2,7 +2,7 @@
 // Licensed under KPL-2.0. See LICENSE file for details.
 
 #include "webgl_context.h"
-#include <GL/gl.h>
+#include "nxgfx/gl_includes.h"
 #ifdef __linux__
 #include <GL/glx.h>
 #elif _WIN32

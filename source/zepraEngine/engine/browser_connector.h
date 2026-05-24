@@ -10,6 +10,15 @@
 #include <unordered_map>
 #include <nlohmann/json.hpp>
 
+// Windows headers define ERROR (=0, wingdi.h) and DELETE (WinNT.h)
+// as macros, which conflict with our enum members. Undef them.
+#ifdef ERROR
+#  undef ERROR
+#endif
+#ifdef DELETE
+#  undef DELETE
+#endif
+
 namespace zepra {
 
 using json = nlohmann::json;

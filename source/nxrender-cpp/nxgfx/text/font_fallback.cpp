@@ -6,8 +6,20 @@
 #include <hb-ft.h>
 #include <cstring>
 #include <algorithm>
-#include <dirent.h>
-#include <sys/stat.h>
+#ifdef _WIN32
+#  ifndef WIN32_LEAN_AND_MEAN
+#    define WIN32_LEAN_AND_MEAN
+#  endif
+#  include <windows.h>
+#  include <sys/stat.h>
+#  define ZEPRA_STAT _stat
+#  define ZEPRA_S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
+#else
+#  include <dirent.h>
+#  include <sys/stat.h>
+#  define ZEPRA_STAT stat
+#  define ZEPRA_S_ISDIR(m) S_ISDIR(m)
+#endif
 
 namespace NXRender {
 namespace Text {
@@ -59,8 +71,8 @@ bool FontFallbackManager::registerFont(const std::string& family,
                                          const std::string& path,
                                          bool isBold, bool isItalic) {
     // Validate file exists
-    struct stat st;
-    if (stat(path.c_str(), &st) != 0) return false;
+    struct ZEPRA_STAT st;
+    if (ZEPRA_STAT(path.c_str(), &st) != 0) return false;
 
     registry_[family].push_back({family, path, isBold, isItalic});
     return true;
@@ -71,6 +83,20 @@ bool FontFallbackManager::registerFont(const std::string& family,
 // ==================================================================
 
 void FontFallbackManager::discoverSystemFonts() {
+#ifdef _WIN32
+    // Windows font directories
+    char winDir[MAX_PATH];
+    if (GetWindowsDirectoryA(winDir, MAX_PATH)) {
+        std::string fontDir = std::string(winDir) + "\\Fonts";
+        scanFontDirectory(fontDir);
+    }
+    // User fonts (Windows 10+)
+    const char* localAppData = std::getenv("LOCALAPPDATA");
+    if (localAppData) {
+        std::string userFonts = std::string(localAppData) + "\\Microsoft\\Windows\\Fonts";
+        scanFontDirectory(userFonts);
+    }
+#else
     static const char* fontDirs[] = {
         "/usr/share/fonts",
         "/usr/local/share/fonts",
@@ -78,13 +104,52 @@ void FontFallbackManager::discoverSystemFonts() {
         "/usr/share/fonts/opentype",
         nullptr
     };
-
     for (int i = 0; fontDirs[i]; i++) {
         scanFontDirectory(fontDirs[i]);
     }
+#endif
 }
 
 void FontFallbackManager::scanFontDirectory(const std::string& dirPath) {
+#ifdef _WIN32
+    std::string searchPattern = dirPath + "\\*";
+    WIN32_FIND_DATAA findData;
+    HANDLE hFind = FindFirstFileA(searchPattern.c_str(), &findData);
+    if (hFind == INVALID_HANDLE_VALUE) return;
+
+    do {
+        if (findData.cFileName[0] == '.') continue;
+        std::string fullPath = dirPath + "\\" + findData.cFileName;
+
+        if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+            scanFontDirectory(fullPath);
+            continue;
+        }
+
+        std::string name(findData.cFileName);
+        size_t dot = name.rfind('.');
+        if (dot == std::string::npos) continue;
+
+        std::string ext = name.substr(dot);
+        std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+        if (ext != ".ttf" && ext != ".otf" && ext != ".ttc") continue;
+
+        FT_Face probeFace;
+        if (FT_New_Face(ftLibrary_, fullPath.c_str(), 0, &probeFace) == 0) {
+            if (probeFace->family_name) {
+                std::string family = probeFace->family_name;
+                bool bold = (probeFace->style_flags & FT_STYLE_FLAG_BOLD) != 0;
+                bool italic = (probeFace->style_flags & FT_STYLE_FLAG_ITALIC) != 0;
+                if (registry_.find(family) == registry_.end()) {
+                    registry_[family].push_back({family, fullPath, bold, italic});
+                }
+            }
+            FT_Done_Face(probeFace);
+        }
+    } while (FindNextFileA(hFind, &findData));
+
+    FindClose(hFind);
+#else
     DIR* dir = opendir(dirPath.c_str());
     if (!dir) return;
 
@@ -101,25 +166,20 @@ void FontFallbackManager::scanFontDirectory(const std::string& dirPath) {
             continue;
         }
 
-        // Check extension
         std::string name(entry->d_name);
         size_t dot = name.rfind('.');
         if (dot == std::string::npos) continue;
 
         std::string ext = name.substr(dot);
         std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-
         if (ext != ".ttf" && ext != ".otf" && ext != ".ttc") continue;
 
-        // Probe the face for family name
         FT_Face probeFace;
         if (FT_New_Face(ftLibrary_, fullPath.c_str(), 0, &probeFace) == 0) {
             if (probeFace->family_name) {
                 std::string family = probeFace->family_name;
                 bool bold = (probeFace->style_flags & FT_STYLE_FLAG_BOLD) != 0;
                 bool italic = (probeFace->style_flags & FT_STYLE_FLAG_ITALIC) != 0;
-
-                // Don't overwrite manually registered fonts
                 if (registry_.find(family) == registry_.end()) {
                     registry_[family].push_back({family, fullPath, bold, italic});
                 }
@@ -129,6 +189,7 @@ void FontFallbackManager::scanFontDirectory(const std::string& dirPath) {
     }
 
     closedir(dir);
+#endif
 }
 
 // ==================================================================

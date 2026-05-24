@@ -3,7 +3,7 @@
 
 #include "nxgfx/shader.h"
 #include <algorithm>
-#include <GL/gl.h>
+#include "nxgfx/gl_includes.h"
 #include <cstring>
 #include <iostream>
 

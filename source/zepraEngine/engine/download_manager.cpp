@@ -8,25 +8,26 @@
 #include <chrono>
 #include <nxhttp.h>
 #include <cstdlib>
-#include <sys/stat.h>
+#include "platform/platform_compat.h"
 
 namespace zepra {
 
 // Get system default download path (~/Downloads)
 std::string DownloadManager::getSystemDownloadPath() {
-    const char* home = std::getenv("HOME");
-    if (home) {
-        std::string downloadPath = std::string(home) + "/Downloads";
-        
-        // Create directory if it doesn't exist
-        struct stat st;
-        if (stat(downloadPath.c_str(), &st) != 0) {
-            mkdir(downloadPath.c_str(), 0755);
+    std::string home = Zepra::Platform::getHomeDirectory();
+    if (!home.empty()) {
+        std::string sep(1, Zepra::Platform::pathSeparator());
+        std::string downloadPath = home + sep + "Downloads";
+        if (!Zepra::Platform::fileExists(downloadPath.c_str())) {
+            Zepra::Platform::createDirectory(downloadPath.c_str());
         }
-        
         return downloadPath;
     }
-    return "/tmp";  // Fallback
+#if ZEPRA_OS_WINDOWS
+    return ".";
+#else
+    return "/tmp";
+#endif
 }
 
 DownloadTask::DownloadTask(const std::string& url, const std::string& destPath, int numParts)
@@ -142,7 +143,8 @@ std::shared_ptr<DownloadTask> DownloadManager::addDownload(const std::string& ur
 }
 
 std::shared_ptr<DownloadTask> DownloadManager::addDownloadToDefault(const std::string& url, const std::string& filename, int numParts) {
-    std::string fullPath = defaultDownloadPath_ + "/" + filename;
+    std::string sep(1, Zepra::Platform::pathSeparator());
+    std::string fullPath = defaultDownloadPath_ + sep + filename;
     return addDownload(url, fullPath, numParts);
 }
 
@@ -151,7 +153,8 @@ std::shared_ptr<DownloadTask> DownloadManager::startDownload(const std::string& 
     
     if (askBeforeDownload_ && pathPromptCallback_) {
         // Ask user for download path
-        std::string suggestedPath = defaultDownloadPath_ + "/" + filename;
+        std::string sep(1, Zepra::Platform::pathSeparator());
+        std::string suggestedPath = defaultDownloadPath_ + sep + filename;
         destPath = pathPromptCallback_(suggestedPath, filename);
         
         if (destPath.empty()) {
@@ -161,7 +164,8 @@ std::shared_ptr<DownloadTask> DownloadManager::startDownload(const std::string& 
         }
     } else {
         // Use default path
-        destPath = defaultDownloadPath_ + "/" + filename;
+        std::string sep2(1, Zepra::Platform::pathSeparator());
+        destPath = defaultDownloadPath_ + sep2 + filename;
     }
     
     return addDownload(url, destPath, numParts);
@@ -184,10 +188,8 @@ void DownloadManager::setOnDownloadComplete(std::function<void(std::shared_ptr<D
 void DownloadManager::setDefaultDownloadPath(const std::string& path) {
     defaultDownloadPath_ = path;
     
-    // Create directory if it doesn't exist
-    struct stat st;
-    if (stat(path.c_str(), &st) != 0) {
-        mkdir(path.c_str(), 0755);
+    if (!Zepra::Platform::fileExists(path.c_str())) {
+        Zepra::Platform::createDirectory(path.c_str());
     }
     
     std::cout << "[DownloadManager] Default path set to: " << path << std::endl;

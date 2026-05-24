@@ -15,6 +15,7 @@
 #include <vector>
 #include <functional>
 #include <memory>
+#include <cstdint>     // int64_t
 
 namespace zepra {
 namespace ui {

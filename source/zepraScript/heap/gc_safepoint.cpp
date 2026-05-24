@@ -54,7 +54,9 @@
 
 #ifdef __linux__
 #include <sys/mman.h>
+#if ZEPRA_PLATFORM_POSIX
 #include <unistd.h>
+#endif
 #include <pthread.h>
 #endif
 

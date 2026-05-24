@@ -5,8 +5,8 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
-#include <SDL2/SDL.h>
-#include <GL/gl.h>
+// SDL2 removed — using NXRender's GL context for GPU queries
+#include "nxgfx/gl_includes.h"
 #ifdef __linux__
 #include <dlfcn.h>
 #endif
@@ -60,22 +60,18 @@ bool VideoPlayer::enableGpuAcceleration(bool enable) {
 bool VideoPlayer::isGpuAccelerationEnabled() const { return gpuEnabled; }
 
 std::string VideoPlayer::getGpuInfo() const {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) return "No GPU";
-    SDL_Window* window = SDL_CreateWindow("GPU Info", 0, 0, 1, 1, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
-    if (!window) return "No GPU";
-    SDL_GLContext context = SDL_GL_CreateContext(window);
-    const GLubyte* vendor = glGetString(GL_VENDOR);
+    // Query GL strings from NXRender's existing context (no SDL needed).
+    // If no GL context is current, glGetString returns nullptr safely.
+    const GLubyte* vendor   = glGetString(GL_VENDOR);
     const GLubyte* renderer = glGetString(GL_RENDERER);
-    const GLubyte* version = glGetString(GL_VERSION);
+    const GLubyte* version  = glGetString(GL_VERSION);
+    if (!vendor && !renderer) return "No GPU context available";
     std::string info = "Vendor: ";
-    info += vendor ? reinterpret_cast<const char*>(vendor) : "?";
+    info += vendor   ? reinterpret_cast<const char*>(vendor)   : "?";
     info += ", Renderer: ";
     info += renderer ? reinterpret_cast<const char*>(renderer) : "?";
     info += ", Version: ";
-    info += version ? reinterpret_cast<const char*>(version) : "?";
-    SDL_GL_DeleteContext(context);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    info += version  ? reinterpret_cast<const char*>(version)  : "?";
     return info;
 }
 

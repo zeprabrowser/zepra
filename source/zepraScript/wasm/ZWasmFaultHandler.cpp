@@ -13,7 +13,9 @@
 
 #if defined(__linux__) || defined(__APPLE__)
 #include <signal.h>
+#if ZEPRA_PLATFORM_POSIX
 #include <unistd.h>
+#endif
 #include <sys/mman.h>
 #if defined(__linux__)
 #include <ucontext.h>

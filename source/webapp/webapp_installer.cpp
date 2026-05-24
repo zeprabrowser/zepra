@@ -11,29 +11,28 @@
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <dirent.h>
+#include "platform/platform_compat.h"
+#ifndef _WIN32
+#  include <sys/stat.h>
+#  include <dirent.h>
+#endif
 
 namespace Zepra::WebApp {
 
 WebAppInstaller::WebAppInstaller() {
-    // Get user home directory
-    const char* home = getenv("HOME");
-    if (home) {
-        install_base_ = std::string(home) + "/Applications/";
+    std::string home = Zepra::Platform::getHomeDirectory();
+    std::string sep(1, Zepra::Platform::pathSeparator());
+    if (!home.empty()) {
+        install_base_ = home + sep + "Applications" + sep;
     } else {
-        install_base_ = "/home/user/Applications/";
+        install_base_ = "." + sep + "Applications" + sep;
     }
 }
 
 WebAppInstaller::~WebAppInstaller() = default;
 
 std::string WebAppInstaller::expandPath(const std::string& path) const {
-    if (path.empty() || path[0] != '~') return path;
-    const char* home = getenv("HOME");
-    if (!home) return path;
-    return std::string(home) + path.substr(1);
+    return Zepra::Platform::expandHomePath(path);
 }
 
 std::string WebAppInstaller::getInstallPath(const std::string& app_name) const {
@@ -48,7 +47,8 @@ std::string WebAppInstaller::getInstallPath(const std::string& app_name) const {
 }
 
 bool WebAppInstaller::isInstalled(const std::string& app_id) const {
-    // Check if any app in ~/Applications has matching ID
+#ifndef _WIN32
+    // NeolyxOS/Linux: scan Applications directory
     std::string apps_dir = expandPath(install_base_);
     DIR* dir = opendir(apps_dir.c_str());
     if (!dir) return false;
@@ -71,6 +71,10 @@ bool WebAppInstaller::isInstalled(const std::string& app_id) const {
     }
     closedir(dir);
     return false;
+#else
+    (void)app_id;
+    return false;  // Web app install is NeolyxOS/Linux feature
+#endif
 }
 
 bool WebAppInstaller::createInfoNxpt(const std::string& path, 
@@ -140,8 +144,9 @@ bool WebAppInstaller::createLauncher(const std::string& path,
     
     f.close();
     
-    // Make executable
+#ifndef _WIN32
     chmod(launcher_path.c_str(), 0755);
+#endif
     
     return true;
 }
@@ -182,9 +187,9 @@ InstallResult WebAppInstaller::install(const WebAppManifest& manifest,
     std::string resources_path = app_path + "Resources/";
     
     // Create directories
-    mkdir(expandPath(install_base_).c_str(), 0755);
-    mkdir(app_path.c_str(), 0755);
-    mkdir(resources_path.c_str(), 0755);
+    Zepra::Platform::createDirectory(expandPath(install_base_).c_str());
+    Zepra::Platform::createDirectory(app_path.c_str());
+    Zepra::Platform::createDirectory(resources_path.c_str());
     
     if (callback) callback(30, "Creating Info.nxpt...");
     
@@ -228,7 +233,7 @@ InstallResult WebAppInstaller::installFromUrl(const std::string& url,
 }
 
 bool WebAppInstaller::uninstall(const std::string& app_id) {
-    // Find app with matching ID
+#ifndef _WIN32
     std::string apps_dir = expandPath(install_base_);
     DIR* dir = opendir(apps_dir.c_str());
     if (!dir) return false;
@@ -248,17 +253,18 @@ bool WebAppInstaller::uninstall(const std::string& app_id) {
                 if (content.find("\"NXAppId\": \"" + app_id + "\"") != std::string::npos) {
                     f.close();
                     closedir(dir);
-                    
-                    // Remove directory recursively
                     std::string cmd = "rm -rf \"" + app_path + "\"";
                     return system(cmd.c_str()) == 0;
                 }
             }
         }
     }
-    
     closedir(dir);
     return false;
+#else
+    (void)app_id;
+    return false;
+#endif
 }
 
 /* Helper functions */
@@ -331,11 +337,10 @@ bool quickInstall(const std::string& url) {
 
 std::vector<std::string> listInstalledWebApps() {
     std::vector<std::string> apps;
-    
-    const char* home = getenv("HOME");
-    if (!home) return apps;
-    
-    std::string apps_dir = std::string(home) + "/Applications/";
+#ifndef _WIN32
+    std::string home = Zepra::Platform::getHomeDirectory();
+    if (home.empty()) return apps;
+    std::string apps_dir = home + "/Applications/";
     DIR* dir = opendir(apps_dir.c_str());
     if (!dir) return apps;
     
@@ -348,10 +353,7 @@ std::vector<std::string> listInstalledWebApps() {
                 std::stringstream buf;
                 buf << f.rdbuf();
                 std::string content = buf.str();
-                
-                // Check if it's a web app
                 if (content.find("\"NXWebApp\": true") != std::string::npos) {
-                    // Extract app ID
                     size_t pos = content.find("\"NXAppId\": \"");
                     if (pos != std::string::npos) {
                         pos += 12;
@@ -364,8 +366,8 @@ std::vector<std::string> listInstalledWebApps() {
             }
         }
     }
-    
     closedir(dir);
+#endif
     return apps;
 }
 

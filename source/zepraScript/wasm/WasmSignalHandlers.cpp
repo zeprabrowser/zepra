@@ -16,7 +16,9 @@
 #if defined(__linux__) || defined(__APPLE__)
 #include <sys/mman.h>
 #include <ucontext.h>
+#if ZEPRA_PLATFORM_POSIX
 #include <unistd.h>
+#endif
 #endif
 
 namespace Zepra::Wasm {

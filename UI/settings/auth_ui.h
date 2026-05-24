@@ -1,176 +1,199 @@
 // Copyright (c) 2025 KetiveeAI. All rights reserved.
 // Licensed under KPL-2.0. See LICENSE file for details.
+/**
+ * @file auth_ui.h
+ * @brief Authentication UI components — NXRender native backend.
+ *        SDL2 fully removed. All drawing uses NXRender::UIDrawer + GpuContext.
+ */
+
 #ifndef ZEPRA_AUTH_UI_H
 #define ZEPRA_AUTH_UI_H
 
 #include "auth/zepra_auth.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+// NXRender UI drawing layer (GpuContext, UIDrawContext, UIDrawer, UIPalette)
+#include "nxgfx/ui_draw.h"
+// NXRender unified event system (replaces SDL_Event)
+#include "input/events.h"
 #include <string>
 #include <vector>
 #include <functional>
 #include <memory>
+#include <cstdint>
 
 namespace ZepraUI {
 
-// UI element types
-enum class UIElementType {
-    BUTTON,
-    TEXT_INPUT,
-    LABEL,
-    CHECKBOX,
-    DROPDOWN,
-    MODAL
-};
+// ============================================================================
+// Type aliases — map ZepraUI names to NXRender equivalents (zero overhead)
+//   NXColor      → NXRender::Color          (RGBA, same 4-byte layout)
+//   NXRenderCtx  → NXRender::UIDrawContext   (GpuContext + palette + viewport)
+//   NXEvent      → NXRender::Event           (unified mouse/key/text event)
+// ============================================================================
+using NXColor         = NXRender::Color;
+using NXRenderCtx     = NXRender::UIDrawContext;
+using NXRenderContext = NXRenderCtx;   // backward-compat alias
+using NXEvent         = NXRender::Event;
+using NXInputEvent    = NXEvent;       // backward-compat alias
 
-// UI element base class
+// ============================================================================
+// UIElement — base for all auth UI widgets
+// ============================================================================
 class UIElement {
 public:
     UIElement(int x, int y, int width, int height);
     virtual ~UIElement() = default;
-    
-    virtual void render(SDL_Renderer* renderer) = 0;
-    virtual bool handleEvent(const SDL_Event& event) = 0;
+
+    virtual void render(NXRenderCtx& ctx) = 0;
+    virtual bool handleEvent(const NXEvent& event) = 0;
     virtual void update() = 0;
-    
+
     void setPosition(int x, int y);
     void setSize(int width, int height);
     void setVisible(bool visible);
     void setEnabled(bool enabled);
-    
-    int getX() const { return m_x; }
-    int getY() const { return m_y; }
-    int getWidth() const { return m_width; }
-    int getHeight() const { return m_height; }
+
+    int  getX()      const { return m_x; }
+    int  getY()      const { return m_y; }
+    int  getWidth()  const { return m_width; }
+    int  getHeight() const { return m_height; }
     bool isVisible() const { return m_visible; }
     bool isEnabled() const { return m_enabled; }
 
 protected:
-    int m_x, m_y, m_width, m_height;
-    bool m_visible;
-    bool m_enabled;
-    bool m_hovered;
-    bool m_focused;
+    int  m_x, m_y, m_width, m_height;
+    bool m_visible = true;
+    bool m_enabled = true;
+    bool m_hovered = false;
+    bool m_focused = false;
 };
 
-// Button class
+// ============================================================================
+// Button — calls UIDrawer::drawButton
+// ============================================================================
 class Button : public UIElement {
 public:
     Button(int x, int y, int width, int height, const std::string& text);
     ~Button() override;
-    
-    void render(SDL_Renderer* renderer) override;
-    bool handleEvent(const SDL_Event& event) override;
+
+    void render(NXRenderCtx& ctx) override;
+    bool handleEvent(const NXEvent& event) override;
     void update() override;
-    
+
     void setText(const std::string& text);
     void setOnClick(std::function<void()> callback);
-    void setColors(SDL_Color normal, SDL_Color hover, SDL_Color pressed);
-    
+    void setColors(NXColor normal, NXColor hover, NXColor pressed);
+    void setPrimary(bool primary) { m_primary = primary; }
+
     const std::string& getText() const { return m_text; }
 
 private:
-    std::string m_text;
+    std::string           m_text;
     std::function<void()> m_onClick;
-    SDL_Color m_normalColor;
-    SDL_Color m_hoverColor;
-    SDL_Color m_pressedColor;
-    bool m_pressed;
+    NXColor               m_normalColor  { 10, 132, 255, 255};
+    NXColor               m_hoverColor   { 32, 148, 255, 255};
+    NXColor               m_pressedColor {  0, 112, 230, 255};
+    bool                  m_pressed = false;
+    bool                  m_primary = true;
 };
 
-// Text input class
+// ============================================================================
+// TextInput — calls UIDrawer::drawInputField
+// ============================================================================
 class TextInput : public UIElement {
 public:
     TextInput(int x, int y, int width, int height, const std::string& placeholder = "");
     ~TextInput() override;
-    
-    void render(SDL_Renderer* renderer) override;
-    bool handleEvent(const SDL_Event& event) override;
+
+    void render(NXRenderCtx& ctx) override;
+    bool handleEvent(const NXEvent& event) override;
     void update() override;
-    
+
     void setText(const std::string& text);
     void setPlaceholder(const std::string& placeholder);
     void setPasswordMode(bool password);
     void setOnTextChange(std::function<void(const std::string&)> callback);
     void setOnEnter(std::function<void()> callback);
-    
-    const std::string& getText() const { return m_text; }
-    bool isPasswordMode() const { return m_passwordMode; }
+
+    const std::string& getText()        const { return m_text; }
+    bool               isPasswordMode() const { return m_passwordMode; }
 
 private:
-    std::string m_text;
-    std::string m_placeholder;
-    bool m_passwordMode;
+    std::string                             m_text;
+    std::string                             m_placeholder;
+    bool                                    m_passwordMode    = false;
     std::function<void(const std::string&)> m_onTextChange;
-    std::function<void()> m_onEnter;
-    int m_cursorPos;
-    bool m_showCursor;
-    Uint32 m_cursorBlinkTime;
+    std::function<void()>                   m_onEnter;
+    int                                     m_cursorPos       = 0;
+    bool                                    m_showCursor      = true;
+    uint32_t                                m_cursorBlinkTime = 0;
 };
 
-// Label class
+// ============================================================================
+// Label — calls UIDrawer::drawLabel
+// ============================================================================
 class Label : public UIElement {
 public:
     Label(int x, int y, const std::string& text);
     ~Label() override;
-    
-    void render(SDL_Renderer* renderer) override;
-    bool handleEvent(const SDL_Event& event) override;
+
+    void render(NXRenderCtx& ctx) override;
+    bool handleEvent(const NXEvent& event) override;
     void update() override;
-    
+
     void setText(const std::string& text);
-    void setColor(SDL_Color color);
+    void setColor(NXColor color);
     void setFontSize(int size);
-    
+
     const std::string& getText() const { return m_text; }
 
 private:
     std::string m_text;
-    SDL_Color m_color;
-    int m_fontSize;
+    NXColor     m_color    {220, 220, 220, 255};
+    int         m_fontSize = 14;
 };
 
-// Modal dialog base class
+// ============================================================================
+// ModalDialog base — draws panel + backdrop via UIDrawer
+// ============================================================================
 class ModalDialog {
 public:
     ModalDialog(int x, int y, int width, int height, const std::string& title);
     virtual ~ModalDialog() = default;
-    
-    virtual void render(SDL_Renderer* renderer);
-    virtual bool handleEvent(const SDL_Event& event);
+
+    virtual void render(NXRenderCtx& ctx);
+    virtual bool handleEvent(const NXEvent& event);
     virtual void update();
-    
+
     void setVisible(bool visible);
     bool isVisible() const { return m_visible; }
-    
     void setOnClose(std::function<void()> callback);
 
 protected:
-    int m_x, m_y, m_width, m_height;
+    int         m_x, m_y, m_width, m_height;
     std::string m_title;
-    bool m_visible;
+    bool        m_visible = false;
     std::function<void()> m_onClose;
     std::vector<std::unique_ptr<UIElement>> m_elements;
-    
+
     void addElement(std::unique_ptr<UIElement> element);
     void clearElements();
 };
 
-// Login dialog
+// ============================================================================
+// LoginDialog
+// ============================================================================
 class LoginDialog : public ModalDialog {
 public:
     LoginDialog();
     ~LoginDialog() override;
-    
-    void render(SDL_Renderer* renderer) override;
-    bool handleEvent(const SDL_Event& event) override;
+
+    void render(NXRenderCtx& ctx) override;
+    bool handleEvent(const NXEvent& event) override;
     void update() override;
-    
+
     void setOnLogin(std::function<void(const std::string&, const std::string&)> callback);
     void setOnCancel(std::function<void()> callback);
     void setError(const std::string& error);
     void clearError();
-    
     void setEmail(const std::string& email);
     void setPassword(const std::string& password);
 
@@ -178,32 +201,32 @@ private:
     std::function<void(const std::string&, const std::string&)> m_onLogin;
     std::function<void()> m_onCancel;
     std::string m_errorMessage;
-    
-    TextInput* m_emailInput;
-    TextInput* m_passwordInput;
-    Button* m_loginButton;
-    Button* m_cancelButton;
-    Label* m_errorLabel;
-    Label* m_titleLabel;
-    Label* m_emailLabel;
-    Label* m_passwordLabel;
+    TextInput* m_emailInput    = nullptr;
+    TextInput* m_passwordInput = nullptr;
+    Button*    m_loginButton   = nullptr;
+    Button*    m_cancelButton  = nullptr;
+    Label*     m_errorLabel    = nullptr;
+    Label*     m_titleLabel    = nullptr;
+    Label*     m_emailLabel    = nullptr;
+    Label*     m_passwordLabel = nullptr;
 };
 
-// 2FA dialog
+// ============================================================================
+// TwoFactorDialog
+// ============================================================================
 class TwoFactorDialog : public ModalDialog {
 public:
     TwoFactorDialog();
     ~TwoFactorDialog() override;
-    
-    void render(SDL_Renderer* renderer) override;
-    bool handleEvent(const SDL_Event& event) override;
+
+    void render(NXRenderCtx& ctx) override;
+    bool handleEvent(const NXEvent& event) override;
     void update() override;
-    
+
     void setOnVerify(std::function<void(const std::string&)> callback);
     void setOnCancel(std::function<void()> callback);
     void setError(const std::string& error);
     void clearError();
-    
     void setTempToken(const std::string& token);
 
 private:
@@ -211,74 +234,72 @@ private:
     std::function<void()> m_onCancel;
     std::string m_errorMessage;
     std::string m_tempToken;
-    
-    TextInput* m_codeInput;
-    Button* m_verifyButton;
-    Button* m_cancelButton;
-    Label* m_errorLabel;
-    Label* m_titleLabel;
-    Label* m_instructionLabel;
+    TextInput* m_codeInput        = nullptr;
+    Button*    m_verifyButton     = nullptr;
+    Button*    m_cancelButton     = nullptr;
+    Label*     m_errorLabel       = nullptr;
+    Label*     m_titleLabel       = nullptr;
+    Label*     m_instructionLabel = nullptr;
 };
 
-// Password prompt dialog
+// ============================================================================
+// PasswordPromptDialog
+// ============================================================================
 class PasswordPromptDialog : public ModalDialog {
 public:
     PasswordPromptDialog(const std::string& websiteUrl, const std::string& domain);
     ~PasswordPromptDialog() override;
-    
-    void render(SDL_Renderer* renderer) override;
-    bool handleEvent(const SDL_Event& event) override;
+
+    void render(NXRenderCtx& ctx) override;
+    bool handleEvent(const NXEvent& event) override;
     void update() override;
-    
+
     void setOnSubmit(std::function<void(const std::string&, const std::string&)> callback);
     void setOnCancel(std::function<void()> callback);
     void setError(const std::string& error);
     void clearError();
 
 private:
-    std::string m_websiteUrl;
-    std::string m_domain;
+    std::string m_websiteUrl, m_domain;
     std::function<void(const std::string&, const std::string&)> m_onSubmit;
     std::function<void()> m_onCancel;
     std::string m_errorMessage;
-    
-    TextInput* m_usernameInput;
-    TextInput* m_passwordInput;
-    Button* m_submitButton;
-    Button* m_cancelButton;
-    Label* m_errorLabel;
-    Label* m_titleLabel;
-    Label* m_websiteLabel;
-    Label* m_usernameLabel;
-    Label* m_passwordLabel;
+    TextInput* m_usernameInput = nullptr;
+    TextInput* m_passwordInput = nullptr;
+    Button*    m_submitButton  = nullptr;
+    Button*    m_cancelButton  = nullptr;
+    Label*     m_errorLabel    = nullptr;
+    Label*     m_titleLabel    = nullptr;
+    Label*     m_websiteLabel  = nullptr;
+    Label*     m_usernameLabel = nullptr;
+    Label*     m_passwordLabel = nullptr;
 };
 
-// Authentication UI manager
+// ============================================================================
+// AuthUIManager — singleton managing all auth dialogs
+// ============================================================================
 class AuthUIManager {
 public:
     static AuthUIManager& getInstance();
-    
-    bool initialize(SDL_Renderer* renderer, TTF_Font* font);
+
+    bool initialize(NXRenderCtx& ctx);
     void shutdown();
-    
-    void render();
-    bool handleEvent(const SDL_Event& event);
+
+    void render(NXRenderCtx& ctx);
+    bool handleEvent(const NXEvent& event);
     void update();
-    
-    // Dialog management
+
     void showLoginDialog();
     void hideLoginDialog();
     void showTwoFactorDialog(const std::string& tempToken);
     void hideTwoFactorDialog();
     void showPasswordPromptDialog(const std::string& websiteUrl, const std::string& domain);
     void hidePasswordPromptDialog();
-    
-    // Callbacks
+
     void setOnLogin(std::function<void(const std::string&, const std::string&)> callback);
     void setOnTwoFactor(std::function<void(const std::string&)> callback);
     void setOnPasswordPrompt(std::function<void(const std::string&, const std::string&)> callback);
-    
-    // Error handling
+
     void setLoginError(const std::string& error);
     void setTwoFactorError(const std::string& error);
     void setPasswordPromptError(const std::string& error);
@@ -286,51 +307,50 @@ public:
 private:
     AuthUIManager();
     ~AuthUIManager();
-    
-    SDL_Renderer* m_renderer;
-    TTF_Font* m_font;
-    
-    std::unique_ptr<LoginDialog> m_loginDialog;
-    std::unique_ptr<TwoFactorDialog> m_twoFactorDialog;
-    std::unique_ptr<PasswordPromptDialog> m_passwordPromptDialog;
-    
-    // Callbacks
-    std::function<void(const std::string&, const std::string&)> m_onLogin;
-    std::function<void(const std::string&)> m_onTwoFactor;
-    std::function<void(const std::string&, const std::string&)> m_onPasswordPrompt;
-    
-    // Disable copy constructor and assignment
     AuthUIManager(const AuthUIManager&) = delete;
     AuthUIManager& operator=(const AuthUIManager&) = delete;
+
+    NXRenderCtx m_ctx;
+    std::unique_ptr<LoginDialog>          m_loginDialog;
+    std::unique_ptr<TwoFactorDialog>      m_twoFactorDialog;
+    std::unique_ptr<PasswordPromptDialog> m_passwordPromptDialog;
+
+    std::function<void(const std::string&, const std::string&)> m_onLogin;
+    std::function<void(const std::string&)>                     m_onTwoFactor;
+    std::function<void(const std::string&, const std::string&)> m_onPasswordPrompt;
 };
 
-// Utility functions
+// ============================================================================
+// AuthUIUtils — thin wrappers around UIDrawer for convenience
+// ============================================================================
 namespace AuthUIUtils {
-    SDL_Color createColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
-    void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string& text, 
-                   int x, int y, SDL_Color color);
-    void renderRect(SDL_Renderer* renderer, int x, int y, int width, int height, 
-                   SDL_Color color, bool filled = true);
-    void renderBorder(SDL_Renderer* renderer, int x, int y, int width, int height, 
-                     SDL_Color color, int thickness = 1);
-    bool isPointInRect(int x, int y, int rectX, int rectY, int rectWidth, int rectHeight);
+    NXColor createColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+    void renderText(NXRenderCtx& ctx, const std::string& text,
+                    int x, int y, NXColor color, int fontSize = 14);
+    void renderRect(NXRenderCtx& ctx, int x, int y, int width, int height,
+                    NXColor color, bool filled = true);
+    void renderBorder(NXRenderCtx& ctx, int x, int y, int width, int height,
+                      NXColor color, int thickness = 1);
+    bool isPointInRect(int x, int y, int rx, int ry, int rw, int rh);
     std::string maskPassword(const std::string& password);
 }
 
-// Colors
+// ============================================================================
+// Named colors (NXRender::Color)
+// ============================================================================
 namespace Colors {
-    const SDL_Color WHITE = {255, 255, 255, 255};
-    const SDL_Color BLACK = {0, 0, 0, 255};
-    const SDL_Color GRAY = {128, 128, 128, 255};
-    const SDL_Color LIGHT_GRAY = {192, 192, 192, 255};
-    const SDL_Color DARK_GRAY = {64, 64, 64, 255};
-    const SDL_Color BLUE = {0, 122, 255, 255};
-    const SDL_Color GREEN = {0, 255, 0, 255};
-    const SDL_Color RED = {255, 0, 0, 255};
-    const SDL_Color YELLOW = {255, 255, 0, 255};
-    const SDL_Color TRANSPARENT = {0, 0, 0, 0};
+    constexpr NXColor WHITE      {255, 255, 255, 255};
+    constexpr NXColor BLACK      {  0,   0,   0, 255};
+    constexpr NXColor GRAY       {128, 128, 128, 255};
+    constexpr NXColor LIGHT_GRAY {192, 192, 192, 255};
+    constexpr NXColor DARK_GRAY  { 64,  64,  64, 255};
+    constexpr NXColor BLUE       { 10, 132, 255, 255};
+    constexpr NXColor GREEN      { 48, 209,  88, 255};
+    constexpr NXColor RED        {255,  69,  58, 255};
+    constexpr NXColor YELLOW     {255, 214,  10, 255};
+    constexpr NXColor TRANSPARENT{  0,   0,   0,   0};
 }
 
 } // namespace ZepraUI
 
-#endif // ZEPRA_AUTH_UI_H 
+#endif // ZEPRA_AUTH_UI_H

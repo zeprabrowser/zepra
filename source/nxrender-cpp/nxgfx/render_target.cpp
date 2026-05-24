@@ -2,7 +2,7 @@
 // Licensed under KPL-2.0. See LICENSE file for details.
 
 #include "nxgfx/render_target.h"
-#include <GL/gl.h>
+#include "nxgfx/gl_includes.h"
 #include <cstring>
 #include <iostream>
 #include <algorithm>
@@ -28,7 +28,7 @@ typedef void (*PFNGLRENDERBUFFERSTORAGEPROC)(GLenum, GLenum, GLsizei, GLsizei);
 typedef void (*PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC)(GLenum, GLsizei, GLenum, GLsizei, GLsizei);
 typedef void (*PFNGLDELETERENDERBUFFERSPROC)(GLsizei, const GLuint*);
 typedef void (*PFNGLBLITFRAMEBUFFERPROC)(GLint, GLint, GLint, GLint, GLint, GLint, GLint, GLint, GLbitfield, GLenum);
-typedef void (*PFNGLGETINTEGERVPROC_)(GLenum, GLint*);
+typedef void (*PFNGLACTIVETEXTUREPROC)(GLenum);
 
 #define RT_GL_FRAMEBUFFER 0x8D40
 #define RT_GL_READ_FRAMEBUFFER 0x8CA8
@@ -58,6 +58,12 @@ static PFNGLRENDERBUFFERSTORAGEPROC rt_glRenderbufferStorage = nullptr;
 static PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC rt_glRenderbufferStorageMultisample = nullptr;
 static PFNGLDELETERENDERBUFFERSPROC rt_glDeleteRenderbuffers = nullptr;
 static PFNGLBLITFRAMEBUFFERPROC rt_glBlitFramebuffer = nullptr;
+static PFNGLACTIVETEXTUREPROC rt_glActiveTexture = nullptr;
+
+// GL_TEXTURE0 is OpenGL 1.3 — may not be in Windows gl.h
+#ifndef GL_TEXTURE0
+#   define GL_TEXTURE0 0x84C0
+#endif
 
 static bool s_rtGLLoaded = false;
 
@@ -86,6 +92,7 @@ static void loadRTGLFunctions() {
     RTLOAD(glRenderbufferStorageMultisample);
     RTLOAD(glDeleteRenderbuffers);
     RTLOAD(glBlitFramebuffer);
+    RTLOAD(glActiveTexture);
     #undef RTLOAD
 }
 
@@ -306,7 +313,7 @@ bool RenderTarget::resize(int width, int height) {
 void RenderTarget::bindColorTexture(int unit) const {
     uint32_t tex = resolvedTexture_ ? resolvedTexture_ : colorTexture_;
     if (!tex) return;
-    glActiveTexture(GL_TEXTURE0 + unit);
+    if (rt_glActiveTexture) rt_glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, tex);
 }
 

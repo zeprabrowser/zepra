@@ -34,7 +34,9 @@
 #include <algorithm>
 
 #ifdef __linux__
+#if ZEPRA_PLATFORM_POSIX
 #include <unistd.h>
+#endif
 #include <sys/mman.h>
 #include <sys/sysinfo.h>
 #include <fcntl.h>

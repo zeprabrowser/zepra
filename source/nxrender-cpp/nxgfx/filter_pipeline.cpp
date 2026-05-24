@@ -10,7 +10,7 @@
 #include <cstdio>
 #include <iostream>
 
-#include <GL/gl.h>
+#include "nxgfx/gl_includes.h"
 #ifdef __linux__
 #include <GL/glx.h>
 #elif _WIN32

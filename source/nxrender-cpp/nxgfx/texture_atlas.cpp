@@ -3,7 +3,7 @@
 
 #include "nxgfx/texture_atlas.h"
 #include "nxgfx/context.h"
-#include <GL/gl.h>
+#include "nxgfx/gl_includes.h"
 #include <cstring>
 #include <algorithm>
 #include <iostream>

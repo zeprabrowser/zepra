@@ -4,7 +4,17 @@
 #include <gtest/gtest.h>
 #include "zir/ZIRProcedure.h"
 #include "zir/ZIRGenerate.h"
-#include <sys/mman.h>
+#include <cstring>
+
+// Cross-platform executable memory allocation
+#ifdef _WIN32
+#  ifndef WIN32_LEAN_AND_MEAN
+#    define WIN32_LEAN_AND_MEAN
+#  endif
+#  include <windows.h>
+#else
+#  include <sys/mman.h>
+#endif
 
 using namespace Zepra::B3;
 
@@ -17,34 +27,47 @@ protected:
     // Helper to execute generated code
     int64_t execute(const GeneratedCode& code, int64_t a = 0, int64_t b = 0) {
         if (!code.success) return -1;
-        
-        // Allocate executable memory
-        void* mem = mmap(nullptr, code.code.size(), 
-            PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-        
-        if (mem == MAP_FAILED) return -1;
-        
-        // Copy code
+
+#ifdef _WIN32
+        // Windows: VirtualAlloc with read/write, copy, then VirtualProtect to execute
+        void* mem = VirtualAlloc(nullptr, code.code.size(),
+                                 MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+        if (!mem) return -1;
+
         memcpy(mem, code.code.data(), code.code.size());
-        
-        // Make executable
+
+        DWORD oldProtect;
+        VirtualProtect(mem, code.code.size(), PAGE_EXECUTE_READ, &oldProtect);
+#else
+        // POSIX: mmap + mprotect
+        void* mem = mmap(nullptr, code.code.size(),
+            PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
+        if (mem == MAP_FAILED) return -1;
+
+        memcpy(mem, code.code.data(), code.code.size());
+
         mprotect(mem, code.code.size(), PROT_READ | PROT_EXEC);
-        
-        // Cast to function pointer
+#endif
+
+        // Cast to function pointer and execute
         using FuncType = int64_t(*)(int64_t, int64_t);
         auto func = reinterpret_cast<FuncType>(mem);
-        
-        // Execute
         int64_t result = func(a, b);
-        
+
         // Cleanup
+#ifdef _WIN32
+        VirtualFree(mem, 0, MEM_RELEASE);
+#else
         munmap(mem, code.code.size());
-        
+#endif
+
         return result;
     }
 
     std::unique_ptr<Procedure> proc;
 };
+
 
 TEST_F(B3Tests, ReturnConstant) {
     BasicBlock* block = proc->addBlock();

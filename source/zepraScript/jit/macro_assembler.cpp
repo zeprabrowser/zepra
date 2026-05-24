@@ -20,7 +20,9 @@
 #include <windows.h>
 #else
 #include <sys/mman.h>
+#if ZEPRA_PLATFORM_POSIX
 #include <unistd.h>
+#endif
 #endif
 
 namespace Zepra::JIT {
@@ -791,8 +793,14 @@ ExecutableBuffer::~ExecutableBuffer() {
 }
 
 bool ExecutableBuffer::allocate(size_t size) {
-    // Round up to page size
-    long pageSize = sysconf(_SC_PAGE_SIZE);
+    // Determine page size — POSIX uses sysconf, Windows uses GetSystemInfo
+#ifdef _WIN32
+    SYSTEM_INFO si;
+    GetSystemInfo(&si);
+    size_t pageSize = static_cast<size_t>(si.dwPageSize);
+#else
+    size_t pageSize = static_cast<size_t>(sysconf(_SC_PAGE_SIZE));
+#endif
     size_ = (size + pageSize - 1) & ~(pageSize - 1);
 
 #ifdef _WIN32

@@ -38,7 +38,9 @@
 #ifdef __linux__
 #include <sys/mman.h>
 #include <sys/resource.h>
+#if ZEPRA_PLATFORM_POSIX
 #include <unistd.h>
+#endif
 #include <fcntl.h>
 #include <numa.h>
 #endif

@@ -444,6 +444,13 @@ if(UNIX AND NOT APPLE)
     target_link_libraries(zepra-core PUBLIC dl)
 endif()
 
+if(WIN32)
+    # Windows: Winsock2 for networking (fetch.cpp), advapi32 for crypto APIs
+    target_link_libraries(zepra-core PUBLIC ws2_32 advapi32)
+    target_compile_definitions(zepra-core PRIVATE
+        _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN NOMINMAX)
+endif()
+
 target_compile_definitions(zepra-core
     PRIVATE
         ZEPRA_VERSION="${PROJECT_VERSION}"

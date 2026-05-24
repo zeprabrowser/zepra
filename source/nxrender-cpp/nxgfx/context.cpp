@@ -8,18 +8,21 @@
 #include "nxgfx/context.h"
 #include <algorithm>
 #include "nxgfx/text.h"
-#include <GL/gl.h>
 #include <cmath>
 #include <vector>
 #include <unordered_map>
 
+// Centralized OpenGL headers + constant defines
+#include "nxgfx/gl_includes.h"
+
+// GL extension proc loader (file-local — needed for FBO/wglGetProcAddress)
 #ifdef _WIN32
-    #include <windows.h>
-    #define GET_GL_PROC(type, name) type name = (type)wglGetProcAddress(#name)
+#   define GET_GL_PROC(type, name) type name = (type)wglGetProcAddress(#name)
 #else
-    #include <GL/glx.h>
-    #define GET_GL_PROC(type, name) type name = (type)glXGetProcAddress((const GLubyte*)#name)
+#   include <GL/glx.h>
+#   define GET_GL_PROC(type, name) type name = (type)glXGetProcAddress((const GLubyte*)#name)
 #endif
+
 
 namespace NXRender {
 

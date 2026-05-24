@@ -8,9 +8,13 @@
 #include "nxgfx/text.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include <GL/gl.h>
 #include <unordered_map>
 #include <algorithm>
+#include <cstdlib>   // getenv (for WINDIR)
+
+// Centralized OpenGL headers + constant defines
+#include "nxgfx/gl_includes.h"
+
 
 namespace NXRender {
 
@@ -37,12 +41,19 @@ struct TextRenderer::Impl {
         if (FT_Init_FreeType(&library)) return false;
         initialized = true;
         
-        // Try to load a default font
+        // Platform-specific default font search paths
         const char* defaultFonts[] = {
+#ifdef _WIN32
+            "C:\\Windows\\Fonts\\segoeui.ttf",   // Segoe UI (Windows 7+)
+            "C:\\Windows\\Fonts\\arial.ttf",      // Arial fallback
+            "C:\\Windows\\Fonts\\tahoma.ttf",     // Tahoma fallback
+#else
+            // Linux / NeolyxOS paths (unchanged)
             "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
             "/usr/share/fonts/TTF/DejaVuSans.ttf",
             "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
             "/usr/share/fonts/liberation/LiberationSans-Regular.ttf",
+#endif
             nullptr
         };
         
@@ -52,7 +63,7 @@ struct TextRenderer::Impl {
                 return true;
             }
         }
-        return true;  // Continue without font
+        return true;  // Continue without font (fallback estimation)
     }
     
     void clearCache() {

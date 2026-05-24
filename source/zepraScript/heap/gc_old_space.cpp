@@ -35,7 +35,9 @@
 
 #ifdef __linux__
 #include <sys/mman.h>
+#if ZEPRA_PLATFORM_POSIX
 #include <unistd.h>
+#endif
 #endif
 
 namespace Zepra::Heap {

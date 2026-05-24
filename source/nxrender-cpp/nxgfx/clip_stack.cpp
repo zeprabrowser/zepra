@@ -2,7 +2,7 @@
 // Licensed under KPL-2.0. See LICENSE file for details.
 
 #include "nxgfx/clip_stack.h"
-#include <GL/gl.h>
+#include "nxgfx/gl_includes.h"
 #include <algorithm>
 
 namespace NXRender {

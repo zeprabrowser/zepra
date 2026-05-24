@@ -1,10 +1,11 @@
 // Copyright (c) 2025 KetiveeAI. All rights reserved.
 // Licensed under KPL-2.0. See LICENSE file for details.
 /**
- * clipboard.h - Native X11 Clipboard Implementation for ZepraBrowser
+ * clipboard.h - Native Clipboard Implementation for ZepraBrowser
  * 
- * Provides copy/paste functionality without external dependencies (xclip).
- * Uses X11 selections (CLIPBOARD and PRIMARY) directly.
+ * Platform-specific clipboard support:
+ *   Linux/NeolyxOS: X11 selections (CLIPBOARD + PRIMARY)
+ *   Windows:        Win32 clipboard API (OpenClipboard / SetClipboardData)
  */
 
 #ifndef ZEPRA_CLIPBOARD_H
@@ -12,6 +13,12 @@
 
 #include <string>
 #include <cstring>
+
+// ============================================================================
+// Platform: Linux / NeolyxOS  (X11 selections)
+// ============================================================================
+#ifndef _WIN32
+
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 
@@ -30,7 +37,6 @@ public:
         window_ = window;
         
         if (display_) {
-            // Get atoms for clipboard operations
             clipboard_ = XInternAtom(display_, "CLIPBOARD", False);
             targets_ = XInternAtom(display_, "TARGETS", False);
             utf8_ = XInternAtom(display_, "UTF8_STRING", False);
@@ -44,51 +50,44 @@ public:
         
         copiedText_ = text;
         
-        // Take ownership of CLIPBOARD selection
         XSetSelectionOwner(display_, clipboard_, window_, CurrentTime);
-        
-        // Also set PRIMARY selection (middle-click paste)
         XSetSelectionOwner(display_, XA_PRIMARY, window_, CurrentTime);
-        
         XFlush(display_);
         return true;
     }
     
-    // Paste from clipboard (synchronous - may block briefly)
+    // Paste from clipboard
     std::string paste() {
         if (!display_ || !window_) return "";
         
-        // Check if we own the clipboard
         Window owner = XGetSelectionOwner(display_, clipboard_);
         if (owner == window_) {
-            return copiedText_;  // We own it, return our copy
+            return copiedText_;
         }
         
         if (owner == None) {
-            return "";  // No clipboard content
+            return "";
         }
         
-        // Request clipboard content
         XConvertSelection(display_, clipboard_, utf8_, xselData_, window_, CurrentTime);
         XFlush(display_);
         
-        // Wait for SelectionNotify event (with timeout)
         XEvent event;
-        for (int i = 0; i < 50; i++) {  // 500ms timeout
+        for (int i = 0; i < 50; i++) {
             if (XCheckTypedWindowEvent(display_, window_, SelectionNotify, &event)) {
                 if (event.xselection.selection == clipboard_ && 
                     event.xselection.property != None) {
                     return getSelectionData(event.xselection.property);
                 }
-                return "";  // Selection failed
+                return "";
             }
-            usleep(10000);  // 10ms sleep
+            usleep(10000);
         }
         
-        return "";  // Timeout
+        return "";
     }
     
-    // Handle X11 SelectionRequest events (when others want our clipboard)
+    // Handle X11 SelectionRequest events
     void handleSelectionRequest(XSelectionRequestEvent& event) {
         if (!display_) return;
         
@@ -102,7 +101,6 @@ public:
         response.property = None;
         
         if (event.target == targets_) {
-            // Respond with supported targets
             Atom targets[] = { targets_, utf8_, XA_STRING };
             XChangeProperty(display_, event.requestor, event.property,
                            XA_ATOM, 32, PropModeReplace,
@@ -110,7 +108,6 @@ public:
             response.property = event.property;
         }
         else if (event.target == utf8_ || event.target == XA_STRING) {
-            // Respond with clipboard text
             XChangeProperty(display_, event.requestor, event.property,
                            event.target, 8, PropModeReplace,
                            (unsigned char*)copiedText_.c_str(), copiedText_.length());
@@ -121,7 +118,6 @@ public:
         XFlush(display_);
     }
     
-    // Get copied text (for internal use)
     const std::string& getCopiedText() const { return copiedText_; }
     
 private:
@@ -156,5 +152,72 @@ private:
 };
 
 } // namespace ZepraBrowser
+
+// ============================================================================
+// Platform: Windows  (Win32 clipboard API)
+// ============================================================================
+#else  // _WIN32
+
+#ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+
+namespace ZepraBrowser {
+
+class Clipboard {
+public:
+    static Clipboard& instance() {
+        static Clipboard inst;
+        return inst;
+    }
+    
+    // Windows doesn't need X11-style init; store HWND for OpenClipboard
+    void init(void* /*display*/ = nullptr, void* hwnd = nullptr) {
+        hwnd_ = static_cast<HWND>(hwnd);
+    }
+    
+    bool copy(const std::string& text) {
+        if (!OpenClipboard(hwnd_)) return false;
+        EmptyClipboard();
+        
+        HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, text.size() + 1);
+        if (!hMem) { CloseClipboard(); return false; }
+        
+        char* dst = static_cast<char*>(GlobalLock(hMem));
+        std::memcpy(dst, text.c_str(), text.size() + 1);
+        GlobalUnlock(hMem);
+        
+        SetClipboardData(CF_TEXT, hMem);
+        CloseClipboard();
+        
+        copiedText_ = text;
+        return true;
+    }
+    
+    std::string paste() {
+        if (!OpenClipboard(hwnd_)) return "";
+        
+        HANDLE hData = GetClipboardData(CF_TEXT);
+        if (!hData) { CloseClipboard(); return ""; }
+        
+        const char* src = static_cast<const char*>(GlobalLock(hData));
+        std::string result = src ? src : "";
+        GlobalUnlock(hData);
+        CloseClipboard();
+        return result;
+    }
+    
+    const std::string& getCopiedText() const { return copiedText_; }
+    
+private:
+    Clipboard() = default;
+    HWND hwnd_ = nullptr;
+    std::string copiedText_;
+};
+
+} // namespace ZepraBrowser
+
+#endif // _WIN32
 
 #endif // ZEPRA_CLIPBOARD_H

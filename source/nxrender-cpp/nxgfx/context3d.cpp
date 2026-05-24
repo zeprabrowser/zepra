@@ -6,7 +6,7 @@
  */
 
 #include "nxgfx/context3d.h"
-#include <GL/gl.h>
+#include "nxgfx/gl_includes.h"
 #include <GL/glu.h>
 #include <cmath>
 

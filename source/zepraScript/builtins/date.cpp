@@ -10,6 +10,27 @@
 #include <iomanip>
 #include <sstream>
 
+// Cross-platform time utility shims
+// localtime_r / gmtime_r are POSIX; Windows provides localtime_s / gmtime_s
+// with reversed argument order. We wrap both into a single portable call.
+namespace {
+#ifdef _WIN32
+    inline void zepra_localtime(const std::time_t* t, std::tm* tm) {
+        localtime_s(tm, t);
+    }
+    inline void zepra_gmtime(const std::time_t* t, std::tm* tm) {
+        gmtime_s(tm, t);
+    }
+#else
+    inline void zepra_localtime(const std::time_t* t, std::tm* tm) {
+        localtime_r(t, tm);
+    }
+    inline void zepra_gmtime(const std::time_t* t, std::tm* tm) {
+        gmtime_r(t, tm);
+    }
+#endif
+} // anonymous namespace
+
 namespace Zepra::Builtins {
 
 // =============================================================================
@@ -44,7 +65,7 @@ DateObject::DateObject(int year, int month, int day, int hours,
 std::tm DateObject::toTm() const {
     std::time_t t = static_cast<std::time_t>(timestamp_ / 1000);
     std::tm tm;
-    localtime_r(&t, &tm);
+    zepra_localtime(&t, &tm);
     return tm;
 }
 
@@ -65,49 +86,49 @@ int DateObject::getMilliseconds() const { return static_cast<int>(timestamp_) % 
 int DateObject::getUTCFullYear() const {
     std::time_t t = static_cast<std::time_t>(timestamp_ / 1000);
     std::tm tm;
-    gmtime_r(&t, &tm);
+    zepra_gmtime(&t, &tm);
     return tm.tm_year + 1900;
 }
 
 int DateObject::getUTCMonth() const {
     std::time_t t = static_cast<std::time_t>(timestamp_ / 1000);
     std::tm tm;
-    gmtime_r(&t, &tm);
+    zepra_gmtime(&t, &tm);
     return tm.tm_mon;
 }
 
 int DateObject::getUTCDate() const {
     std::time_t t = static_cast<std::time_t>(timestamp_ / 1000);
     std::tm tm;
-    gmtime_r(&t, &tm);
+    zepra_gmtime(&t, &tm);
     return tm.tm_mday;
 }
 
 int DateObject::getUTCDay() const {
     std::time_t t = static_cast<std::time_t>(timestamp_ / 1000);
     std::tm tm;
-    gmtime_r(&t, &tm);
+    zepra_gmtime(&t, &tm);
     return tm.tm_wday;
 }
 
 int DateObject::getUTCHours() const {
     std::time_t t = static_cast<std::time_t>(timestamp_ / 1000);
     std::tm tm;
-    gmtime_r(&t, &tm);
+    zepra_gmtime(&t, &tm);
     return tm.tm_hour;
 }
 
 int DateObject::getUTCMinutes() const {
     std::time_t t = static_cast<std::time_t>(timestamp_ / 1000);
     std::tm tm;
-    gmtime_r(&t, &tm);
+    zepra_gmtime(&t, &tm);
     return tm.tm_min;
 }
 
 int DateObject::getUTCSeconds() const {
     std::time_t t = static_cast<std::time_t>(timestamp_ / 1000);
     std::tm tm;
-    gmtime_r(&t, &tm);
+    zepra_gmtime(&t, &tm);
     return tm.tm_sec;
 }
 
@@ -193,7 +214,7 @@ std::string DateObject::toUTCString() const {
     char buf[64];
     std::time_t t = static_cast<std::time_t>(timestamp_ / 1000);
     std::tm tm;
-    gmtime_r(&t, &tm);
+    zepra_gmtime(&t, &tm);
     strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S GMT", &tm);
     return buf;
 }
@@ -203,8 +224,16 @@ std::string DateObject::toLocaleString() const {
 }
 
 int DateObject::getTimezoneOffset() const {
-    std::tm tm = toTm();
-    return -static_cast<int>(tm.tm_gmtoff / 60);
+    // Portable UTC offset: difference between local and UTC interpretation of same timestamp.
+    // tm_gmtoff is POSIX-only and not available on Windows.
+    std::time_t t = static_cast<std::time_t>(timestamp_ / 1000);
+    std::tm localTm, utcTm;
+    zepra_localtime(&t, &localTm);
+    zepra_gmtime(&t, &utcTm);
+    // mktime treats tm as local time; we compute difference in minutes
+    std::time_t localT = mktime(&localTm);
+    std::time_t utcT   = mktime(&utcTm);
+    return static_cast<int>(std::difftime(utcT, localT) / 60);
 }
 
 // =============================================================================
