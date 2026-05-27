@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(Zepra VERSION 1.0.0 LANGUAGES CXX)
+project(Zepra VERSION 0.0.1 LANGUAGES CXX)
 
 # ============================================================================
 # Build System - Prefer Ninja for faster, lighter builds

@@ -1,7 +1,7 @@
 # ZepraScript Engine Health Report
 
 **Generated:** 2026-03-05  
-**Engine Version:** 1.0.0  
+**Engine Version:** 0.0.1  
 **Total Lines:** ~140,000  
 **Remaining Stubs:** 82
 
