@@ -316,6 +316,8 @@ void ExecutionWatchdog::watchdogLoop() {
     }
 }
 
+} // namespace Zepra::Runtime
+
 
 #endif // _WIN32
 

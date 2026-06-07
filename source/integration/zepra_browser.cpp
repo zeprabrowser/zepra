@@ -2742,6 +2742,8 @@ void renderTopBar() {
     svg("menu.svg", rx + 4, btnY + 4, 20, 0xCDD1D8);
 }
 
+#endif // Old UI implementation extracted to UI/browser/top_navigation.hpp
+
 // ============================================================================
 // FLOATING RIGHT SIDEBAR
 // ============================================================================

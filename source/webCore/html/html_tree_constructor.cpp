@@ -148,7 +148,7 @@ void HTML5TreeConstructor::processToken(HTML5Token tok) {
 // ============================================================================
 
 std::pair<DOMNode*, DOMNode*> HTML5TreeConstructor::appropriateInsertionLocation() {
-    DOMNode* target = currentNode() ? currentNode() : doc_.get();
+    DOMNode* target = currentNode() ? static_cast<DOMNode*>(currentNode()) : static_cast<DOMNode*>(doc_.get());
     DOMNode* before = nullptr;
 
     if (fosterParenting_) {
