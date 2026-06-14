@@ -33,7 +33,7 @@ static void (*s_gfx_line)(float, float, float, float, uint32_t, float) = nullptr
 // Extended callbacks (set via setLayoutCallbacks2)
 static void (*s_gfx_rrect)(float, float, float, float, float, uint32_t, uint8_t) = nullptr;
 static void (*s_gfx_gradient)(float, float, float, float, uint32_t, uint32_t) = nullptr;
-static void (*s_gfx_svg)(float, float, float, float, const std::string&) = nullptr;
+static void (*s_gfx_svg)(float, float, float, float, const std::string&, const std::string&) = nullptr;
 
 // Set rendering callbacks
 void setLayoutCallbacks(
@@ -57,7 +57,7 @@ void setLayoutCallbacks(
 void setLayoutCallbacks2(
     void (*gfx_rrect)(float, float, float, float, float, uint32_t, uint8_t),
     void (*gfx_gradient)(float, float, float, float, uint32_t, uint32_t),
-    void (*gfx_svg)(float, float, float, float, const std::string&)
+    void (*gfx_svg)(float, float, float, float, const std::string&, const std::string&)
 ) {
     s_gfx_rrect = gfx_rrect;
     s_gfx_gradient = gfx_gradient;
@@ -905,7 +905,11 @@ void paintBox(const LayoutBox& box, float offsetX, float offsetY,
     if (box.isImage) {
         if (!box.svgData.empty() && s_gfx_svg) {
             // SVG: render via NxSVG on main thread
-            s_gfx_svg(screenX, screenY, box.width, box.height, box.svgData);
+            if (box.svgKey.empty()) {
+                std::hash<std::string> hasher;
+                box.svgKey = "web_svg_" + std::to_string(hasher(box.svgData));
+            }
+            s_gfx_svg(screenX, screenY, box.width, box.height, box.svgData, box.svgKey);
         } else if (box.textureId > 0 && s_gfx_texture) {
             s_gfx_texture(screenX, screenY, box.width, box.height, box.textureId);
         } else if (s_gfx_rect && s_gfx_border) {

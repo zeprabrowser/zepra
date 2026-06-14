@@ -920,14 +920,10 @@ void parseWithWebCore(const std::string& html) {
     
     // Extract <style> elements and load <link rel="stylesheet"> external CSS
     auto* headEl = g_document->head();
-    std::cout << "[CSS Debug] head element: " << (headEl ? "found" : "NULL") << std::endl;
     if (headEl) {
-        std::cout << "[CSS Debug] head has " << headEl->childNodes().size() << " children" << std::endl;
         for (size_t i = 0; i < headEl->childNodes().size(); i++) {
             if (auto* el = dynamic_cast<DOMElement*>(headEl->childNodes()[i].get())) {
                 std::string tag = el->tagName();
-                std::transform(tag.begin(), tag.end(), tag.begin(), ::tolower);
-                std::cout << "[CSS Debug] head child: <" << tag << ">" << std::endl;
                 std::transform(tag.begin(), tag.end(), tag.begin(), ::tolower);
                 
                 // Inline <style> elements
@@ -943,12 +939,12 @@ void parseWithWebCore(const std::string& html) {
                         if (!href.empty()) {
                             // Resolve relative URL
                             std::string cssUrl = resolveUrl(g_currentUrl, href);
-                            std::cout << "[CSS] Loading external stylesheet: " << cssUrl << std::endl;
+                            // std::cout << "[CSS] Loading external stylesheet: " << cssUrl << std::endl;
                             
                             // Fetch the CSS file
                             HttpResponse cssResult = httpGet(cssUrl);
                             if (cssResult.success && !cssResult.data.empty()) {
-                                std::cout << "[CSS] Loaded " << cssResult.data.size() << " bytes of CSS" << std::endl;
+                                // std::cout << "[CSS] Loaded " << cssResult.data.size() << " bytes of CSS" << std::endl;
                                 g_cssEngine->addStyleSheet(cssResult.data, StyleOrigin::Author);
                             } else {
                                 std::cerr << "[CSS] Failed to load: " << cssResult.error << std::endl;
@@ -962,7 +958,7 @@ void parseWithWebCore(const std::string& html) {
     
     // FALLBACK: Add CSS extracted from raw HTML (when HTMLParser fails to add style elements to head)
     if (rawStyles.size() > 0) {
-        std::cout << "[CSS] Adding " << rawStyles.size() << " stylesheets from raw HTML extraction" << std::endl;
+        // std::cout << "[CSS] Adding " << rawStyles.size() << " stylesheets from raw HTML extraction" << std::endl;
         for (const auto& css : rawStyles) {
             g_cssEngine->addStyleSheet(css, StyleOrigin::Author);
         }
@@ -970,13 +966,13 @@ void parseWithWebCore(const std::string& html) {
     
     // Add extracted body element style
     if (!bodyStyle.empty()) {
-        std::cout << "[CSS] Adding extracted body inline style: " << bodyStyle << std::endl;
+        // std::cout << "[CSS] Adding extracted body inline style: " << bodyStyle << std::endl;
         g_cssEngine->addStyleSheet(bodyStyle, StyleOrigin::Author);
     }
     
     // Compute styles
     g_cssEngine->computeStyles();
-    std::cout << "[CSS] Styles computed" << std::endl;
+    // std::cout << "[CSS] Styles computed" << std::endl;
     
     // Create layout root (Modular LayoutBox)
     g_focusedBox = nullptr;
@@ -1075,24 +1071,7 @@ void parseWithWebCore(const std::string& html) {
             }
             
             // Debug: body computed style
-            std::cout << "[Body CSS Debug] display=" << (int)bodyStyle->display
-                      << " bgImage='" << bodyStyle->backgroundImage << "'"
-                      << " flexDir=" << (int)bodyStyle->flexDirection
-                      << " justifyContent=" << (int)bodyStyle->justifyContent
-                      << " alignItems=" << (int)bodyStyle->alignItems
-                      << " minHeight=" << bodyStyle->minHeight.value << "(" << (int)bodyStyle->minHeight.unit << ")"
-                      << " padding=" << bodyStyle->paddingTop.value << "," << bodyStyle->paddingLeft.value
-                      << " margin=" << bodyStyle->marginTop.value << "," << bodyStyle->marginLeft.value
-                      << std::endl;
-            std::cout << "[LayoutRoot Debug] type=" << (int)g_layoutRoot->type
-                      << " bgImage='" << g_layoutRoot->backgroundImage << "'"
-                      << " hasBgColor=" << g_layoutRoot->hasBgColor
-                      << " flex=" << g_layoutRoot->flexDirection
-                      << " justify=" << g_layoutRoot->justifyContent
-                      << " align=" << g_layoutRoot->alignItems
-                      << " minH=" << g_layoutRoot->cssMinHeight.value << "(" << (int)g_layoutRoot->cssMinHeight.unit << ")"
-                      << " w=" << g_layoutRoot->width
-                      << std::endl;
+            // Removed Body CSS and LayoutRoot debug logging for performance
         }
     }
      
@@ -1871,7 +1850,7 @@ void buildLayoutFromDOM(DOMElement* element, LayoutBox* parentBox, bool inLink,
             }
             if (childTag == "img") {
                 std::string src = childElement->getAttribute("src");
-                std::cout << "[Layout] processing img src=" << src << std::endl;
+                // std::cout << "[Layout] processing img src=" << src << std::endl;
                 if (!src.empty()) {
                     src = resolveUrl(g_currentUrl, src);
 
@@ -2327,10 +2306,8 @@ static void initLayoutEngine() {
         layout_gfx_rrect,
         layout_gfx_gradient,
         // SVG rendering callback: parse and render via NxSVG
-        [](float x, float y, float w, float h, const std::string& svgData) {
-            // Generate a unique key from the SVG data hash
-            std::hash<std::string> hasher;
-            std::string key = "web_svg_" + std::to_string(hasher(svgData));
+        [](float x, float y, float w, float h, const std::string& svgData, const std::string& svgKey) {
+            std::string key = svgKey;
             
             // Load if not already cached
             if (!g_svg.has(key)) {
@@ -4861,9 +4838,6 @@ void handleNXEvent(const NXRender::Event& event) {
         
         // Update GPU viewport
         g_nxGpu.setViewport(0, 0, g_width, g_height);
-        
-        // Trigger layout update
-        initLayoutEngine();
     } else if (event.isKeyboard()) {
         bool down = (event.type == NXRender::EventType::KeyDown);
         if (down) {

@@ -191,6 +191,7 @@ struct LayoutBox {
     bool isImage = false;
     uint32_t textureId = 0; // 0 = no texture
     std::string svgData;    // Raw SVG string for NxSVG rendering on main thread
+    mutable std::string svgKey; // Cached hash key for NxSVG
     
     
     // Children (using list for stable pointers - vector invalidates on realloc)
@@ -230,7 +231,7 @@ void setLayoutCallbacks(
 void setLayoutCallbacks2(
     void (*gfx_rrect)(float x, float y, float w, float h, float radius, uint32_t color, uint8_t alpha),
     void (*gfx_gradient)(float x, float y, float w, float h, uint32_t c1, uint32_t c2),
-    void (*gfx_svg)(float x, float y, float w, float h, const std::string& svgData) = nullptr
+    void (*gfx_svg)(float x, float y, float w, float h, const std::string& svgData, const std::string& svgKey) = nullptr
 );
 
 /**

@@ -351,3 +351,50 @@ engine->loadURL(url);
 6. 🎨 **Polish** - Add loading indicators, favorites, etc.
 
 The UI shell is complete and ready for your components!
+
+---
+
+## 🎯 Neolyx OS Engineering Philosophy: "Predictable > Flashy"
+
+The core goal of Zepra Browser is **NOT** "Can it render this website?" 
+It is: **"Can it render this website 1000 times without degrading?"**
+
+For the Neolyx OS ecosystem, providing browser capabilities with much lower memory overhead (50–150 MB vs Electron's 300–800 MB) is the most valuable asset.
+
+**Core Priorities:**
+- **Predictable** > flashy
+- **Stable** > feature-rich
+- **Memory-efficient** > benchmark-winning
+
+### 📊 The Metric That Actually Matters for Beta (NeolyxOS Targets)
+If we hit these numbers, Zepra becomes the most memory-efficient full-featured browser in existence.
+
+| Condition | Target RSS |
+| :--- | :--- |
+| **Idle, 1 tab** | `< 80MB` |
+| **10 tabs, moderate sites** | `< 300MB` |
+| **50 tabs** | `< 800MB` |
+| **After closing all tabs (Z ≈ X)** | `< 100MB` |
+| **24hr runtime, idle** | `< 5% memory growth` |
+
+### 🧪 The "Ironclad" Testing Priority Sequence
+
+#### 1. The "Immediate Bug Exposure" Tests (Run First)
+- **Memory Stability:** `valgrind --leak-check=full --track-origins=yes ./zepra_browser`
+  *Goal: Catch the JIT cache leak (B06) where 50+ tabs fill 16MB and silently die.*
+- **Long Runtime:**
+  *Goal: Catch ObjectSecurity pointer reuse (B08) that only manifests after enough alloc/free cycles.*
+
+#### 2. The "Low Resource" Test (Run Second - After engine fixes)
+- **Action:** `systemd-run --scope -p MemoryMax=1G ./zepra_browser`
+- **Goal:** Immediately expose whether tab discard (TabSuspender) actually works under pressure instead of just printing to logs.
+
+#### 3. The "Heavy Site" Test (Run Third - After TLS fix)
+- **GitHub:** Tests HTTPS + complex CSS + moderate JS.
+- **Reddit:** Tests infinite scroll + lazy loading.
+- **Gmail:** Tests heavy JS + WebSockets.
+- **Discord/Figma/Docs:** Save for last (WebGL/Canvas/heavy APIs).
+
+#### 4. The "Crash Recovery" Test (Run Before Beta)
+- **Action:** Open 20 tabs, `kill -9 zepra_browser`, then restart.
+- **Goal:** Verify what state survives. (Currently fails due to stubbed storage).

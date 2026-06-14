@@ -84,7 +84,7 @@ void LazyImageLoader::queueImage(LayoutBox* box, const std::string& url,
             // Already loaded - update box directly
             box->textureId = it->second;
             box->text = ""; // Clear placeholder
-            std::cout << "[LazyImageLoader] Cache hit: " << url.substr(url.rfind('/') + 1) << std::endl;
+            // std::cout << "[LazyImageLoader] Cache hit: " << url.substr(url.rfind('/') + 1) << std::endl;
             return;
         }
     }
@@ -143,8 +143,8 @@ void LazyImageLoader::pollCompleted(std::vector<ImageResult>& results, int maxRe
                 raw.box->width = (float)(-raw.width);
                 raw.box->height = (float)raw.height;
                 raw.box->isImage = true;
-                std::cout << "[LazyImageLoader] SVG applied to box: " 
-                          << raw.box->width << "x" << raw.box->height << std::endl;
+                // std::cout << "[LazyImageLoader] SVG applied to box: " 
+                //           << raw.box->width << "x" << raw.box->height << std::endl;
                 continue;
             }
             
@@ -158,8 +158,8 @@ void LazyImageLoader::pollCompleted(std::vector<ImageResult>& results, int maxRe
                     raw.box->height = (float)raw.height;
                     raw.box->text = "";
                     
-                    std::cout << "[LazyImageLoader] Texture created: " << raw.width 
-                              << "x" << raw.height << std::endl;
+                    // std::cout << "[LazyImageLoader] Texture created: " << raw.width 
+                    //           << "x" << raw.height << std::endl;
                 } else if (raw.box) {
                     raw.box->text = "[IMG: GPU Error]";
                     raw.box->color = 0xFF0000;
@@ -413,8 +413,8 @@ ImageResult LazyImageLoader::loadImage(const PendingImage& pending) {
         }
         
         // Debug logging
-        std::cout << "[LazyImageLoader] Format detected: " << detectedFormat 
-                  << " (CT: " << (contentType.empty() ? "none" : contentType.substr(0, 30)) << ")" << std::endl;
+        // std::cout << "[LazyImageLoader] Format detected: " << detectedFormat 
+        //           << " (CT: " << (contentType.empty() ? "none" : contentType.substr(0, 30)) << ")" << std::endl;
         
         // Handle SVG — queue data for main-thread processing (never write box from worker)
         if (isSvg) {
@@ -456,8 +456,8 @@ ImageResult LazyImageLoader::loadImage(const PendingImage& pending) {
             result.success = true;
             result.width = (int)svgW;
             result.height = (int)svgH;
-            std::cout << "[LazyImageLoader] SVG queued for main thread: " 
-                      << pending.url.substr(pending.url.rfind('/') + 1) << std::endl;
+            // std::cout << "[LazyImageLoader] SVG queued for main thread: " 
+            //           << pending.url.substr(pending.url.rfind('/') + 1) << std::endl;
             return result;
         }
         
@@ -468,7 +468,7 @@ ImageResult LazyImageLoader::loadImage(const PendingImage& pending) {
                 pending.box->text = "[IMG: Unknown]";
                 pending.box->color = 0xFF6600; // Orange for warnings
             }
-            std::cout << "[LazyImageLoader] Skipping unknown format: " << pending.url.substr(0, 80) << std::endl;
+            // std::cout << "[LazyImageLoader] Skipping unknown format: " << pending.url.substr(0, 80) << std::endl;
             return result;
         }
         
@@ -503,8 +503,8 @@ ImageResult LazyImageLoader::loadImage(const PendingImage& pending) {
         
         stbi_image_free(pixels);
         
-        std::cout << "[LazyImageLoader] Loaded: " << pending.url.substr(pending.url.rfind('/') + 1) 
-                  << " (" << w << "x" << h << ")" << std::endl;
+        // std::cout << "[LazyImageLoader] Loaded: " << pending.url.substr(pending.url.rfind('/') + 1) 
+        //           << " (" << w << "x" << h << ")" << std::endl;
         
     } catch (const std::exception& e) {
         result.error = e.what();
