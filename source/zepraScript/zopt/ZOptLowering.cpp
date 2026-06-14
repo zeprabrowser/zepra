@@ -132,12 +132,17 @@ private:
     }
 
     // Store a register value to the assigned location
-    void storeResult(Value* v) {
+    void storeResult(Value* v, JIT::Register resultReg) {
         auto ra = regOf(v);
         if (ra.isStack()) {
-            // Value was computed in a temp register, spill to stack
-            // (in practice we'd track which register the result is in)
+            // Spill the computed result from resultReg to the stack slot.
+            if (isFloat(v->type())) {
+                masm_.movsd(stackAddr(ra.stackSlot), resultReg);
+            } else {
+                masm_.mov(stackAddr(ra.stackSlot), resultReg);
+            }
         }
+        // If ra.isReg() the value is already in the right register — nothing to do.
     }
 
     // =========================================================================

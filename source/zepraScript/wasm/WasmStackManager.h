@@ -3,14 +3,16 @@
 /**
  * @file WasmStackManager.h
  * @brief WebAssembly Stack Overflow Protection
- * 
- * Manages stack limits and guard pages for safe execution.
+ *
+ * Manages per-thread stack limits and guard pages for safe WASM execution.
+ * Call StackManager::instance().initThreadStack() once per thread before
+ * entering WASM execution, then check isStackSafe(sp) at each call frame.
  */
 
 #pragma once
 
 #include <cstdint>
-#include <vector>
+#include <cstddef>
 #include <mutex>
 #include <thread>
 
@@ -22,32 +24,30 @@ public:
         static StackManager manager;
         return manager;
     }
-    
-    // Get stack limit for current thread
-    uintptr_t getCurrentStackLimit() {
-        // Simple implementation: return thread-local limit
-        // In real impl, would read from TCB or VM context
-        return threadLimit_;
-    }
-    
-    void setCurrentStackLimit(uintptr_t limit) {
-        threadLimit_ = limit;
-    }
-    
-    // Initialize stack for a thread
-    void initThreadStack(size_t stackSize) {
-        // Calculate stack bounds
-        // Set guard pages at bottom
-        // threadLimit_ = ...
-    }
-    
+
+    /**
+     * @brief Probe the current thread's stack bounds and set the thread-local
+     *        limit. Must be called once per thread before WASM execution.
+     * @param guardReserve Bytes to reserve above the platform stack bottom
+     *                     as an additional guard zone. Default: 64 KB.
+     */
+    void initThreadStack(size_t guardReserve = 64u * 1024u);
+
+    /**
+     * @brief Returns true if currentSP is safely above the guard limit.
+     *        Call this before allocating a new WASM stack frame.
+     */
+    bool isStackSafe(uintptr_t currentSP) const;
+
+    /** @brief Raw accessor — 0 means not yet initialized. */
+    uintptr_t currentLimit() const { return threadLimit_; }
+
+    /** @brief Explicit override (used by tests or embedders). */
+    void setLimit(uintptr_t limit) { threadLimit_ = limit; }
+
 private:
     static thread_local uintptr_t threadLimit_;
 };
 
-// Thread-local storage definition
-// In C++17 inline variables are better, but we use this pattern compatibility
-// Definition needs to be in .cpp usually, but for header-only simple style:
-// (Actually we need .cpp or just rely on the compiler)
-
 } // namespace Zepra::Wasm
+

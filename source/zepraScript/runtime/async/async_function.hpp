@@ -44,7 +44,18 @@ public:
     
     // Resume execution after await completes
     void resume(const Value& awaitResult);
-    
+
+    /**
+     * @brief Consume the value stored by the last resume() call.
+     * Called by the VM (OP_AWAIT handler) to push the settled value
+     * back onto the operand stack after re-entering the async frame.
+     */
+    Value takeResumeValue() {
+        Value v = resumeValue_;
+        resumeValue_ = Value::undefined();
+        return v;
+    }
+
     // Complete with success
     void complete(const Value& result);
     
@@ -66,8 +77,9 @@ private:
     Context* ctx_;
     AsyncState state_;
     Promise* resultPromise_;
+    Value resumeValue_;            // Set by resume(), consumed by takeResumeValue()
     size_t awaitDepth_ = 0;
-    
+
     // Stack of awaited promises for resumption
     std::vector<Promise*> awaitStack_;
 };

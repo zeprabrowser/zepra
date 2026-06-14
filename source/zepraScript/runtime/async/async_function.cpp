@@ -25,10 +25,11 @@ AsyncExecutionContext::AsyncExecutionContext(Function* fn, Context* ctx)
 
 void AsyncExecutionContext::resume(const Value& awaitResult) {
     if (state_ != AsyncState::Suspended) return;
-    
+
     state_ = AsyncState::Running;
+    resumeValue_ = awaitResult;   // stored — VM reads this via takeResumeValue()
     awaitDepth_--;
-    
+
     if (!awaitStack_.empty()) {
         awaitStack_.pop_back();
     }
