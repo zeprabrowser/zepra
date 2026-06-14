@@ -17,7 +17,8 @@
 #include "runtime/objects/function.hpp"
 #include "runtime/execution/context.hpp"
 #include "runtime/execution/global_object.hpp"
-#include "runtime/objects/string.hpp"
+#include "frontend/parser.hpp"
+#include "bytecode/bytecode_generator.hpp"
 #include <unordered_map>
 #include <string>
 #include <functional>
@@ -136,9 +137,16 @@ void JSDOMBridge::exposeConsoleObject() {
 
 Value JSDOMBridge::executeScript(const std::string& code) {
     if (!vm_) return Value::undefined();
-    // The VM already knows how to compile + run source via its public API.
-    // We simply delegate here.
-    return vm_->execute(code);
+
+    auto ast = Frontend::parse(code, "<bridge>");
+    if (!ast) return Value::undefined();
+
+    Bytecode::BytecodeGenerator gen;
+    auto chunk = gen.compile(ast.get());
+    if (!chunk) return Value::undefined();
+
+    auto result = vm_->execute(chunk.get());
+    return result.value;
 }
 
 void JSDOMBridge::dispatchEventToJS(WebCore::DOMEvent* /*event*/) {

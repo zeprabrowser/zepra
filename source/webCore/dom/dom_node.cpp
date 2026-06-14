@@ -7,6 +7,7 @@
 
 #include "dom_node.hpp"
 #include <algorithm>
+#include <functional>
 
 namespace Zepra::WebCore {
 

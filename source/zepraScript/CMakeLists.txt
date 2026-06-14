@@ -426,6 +426,7 @@ target_include_directories(zepra-core
         ${NXHTTP_INCLUDE_DIR}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/..   # Resolves webCore/ includes from context_impl.hpp
 )
 
 # Link threading support

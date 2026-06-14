@@ -22,7 +22,7 @@ if(EXISTS ${PREBUILT_LIB})
     # Set include directories - these will be propagated to consumers
     target_include_directories(webcore INTERFACE
         ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/../zepraScript/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/../zepraScript
         ${CMAKE_CURRENT_SOURCE_DIR}/../NXNet/networking/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../NXNet/networking
         ${CMAKE_SOURCE_DIR}/source/nxrender-cpp/include
@@ -54,7 +54,7 @@ else()
     
     # ZepraScript include path
     set(ZEPRASCRIPT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../zepraScript)
-    include_directories(${ZEPRASCRIPT_DIR}/include)
+    include_directories(${ZEPRASCRIPT_DIR})
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../NXNet/networking/include)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../NXNet/networking)
     
@@ -91,7 +91,7 @@ else()
         
         target_include_directories(webcore PUBLIC
             ${CMAKE_CURRENT_SOURCE_DIR}
-            ${CMAKE_CURRENT_SOURCE_DIR}/../zepraScript/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/../zepraScript
             ${CMAKE_CURRENT_SOURCE_DIR}/../NXNet/networking/include
             ${CMAKE_CURRENT_SOURCE_DIR}/../NXNet/networking
             ${CMAKE_SOURCE_DIR}/source/nxrender-cpp/include
