@@ -1,0 +1,220 @@
+name: Beta Release
+
+on:
+  push:
+    tags:
+      - 'v*'         # Triggers on: v0.1.0, v0.1.0-beta, v0.2.0-rc1, etc.
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  # ============================================================================
+  # Linux Build
+  # ============================================================================
+  build-linux:
+    name: Linux (x86-64)
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            build-essential cmake ninja-build \
+            libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev \
+            libfreetype-dev libx11-dev libgl-dev \
+            libssl-dev zlib1g-dev libjson-c-dev \
+            pkg-config
+
+      - name: Parse version from tag
+        id: version
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}                   # e.g. v0.1.0-beta
+          VERSION=${TAG#v}                                # e.g. 0.1.0-beta
+          BASE=${VERSION%%-*}                             # e.g. 0.1.0
+          SUFFIX=${VERSION#${BASE}}                       # e.g. -beta  (empty for stable)
+          SUFFIX=${SUFFIX#-}                              # e.g. beta
+          [ -z "$SUFFIX" ] && SUFFIX="stable"
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "base=${BASE}" >> $GITHUB_OUTPUT
+          echo "suffix=${SUFFIX}" >> $GITHUB_OUTPUT
+
+      - name: Configure CMake
+        run: |
+          cmake -G Ninja -B build \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DZEPRA_VERSION_SUFFIX="${{ steps.version.outputs.suffix }}" \
+            -DZEPRA_BUILD_CHANNEL="${{ steps.version.outputs.suffix }}"
+
+      - name: Build
+        run: cmake --build build --parallel $(nproc)
+
+      - name: Run tests
+        run: |
+          cd build
+          ctest --output-on-failure --timeout 60 || true
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          cp build/bin/zepra_browser dist/
+          cp README.md LICENSE.md RELEASE_NOTES.md dist/ 2>/dev/null || true
+          tar -czf zepra-browser-linux-x86_64-${{ steps.version.outputs.tag }}.tar.gz -C dist .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zepra-linux-release
+          path: zepra-browser-linux-x86_64-${{ steps.version.outputs.tag }}.tar.gz
+
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
+      suffix: ${{ steps.version.outputs.suffix }}
+
+  # ============================================================================
+  # Windows Build
+  # ============================================================================
+  build-windows:
+    name: Windows (x86-64, MinGW)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up MSYS2 + MinGW toolchain
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-SDL2
+            mingw-w64-x86_64-SDL2_image
+            mingw-w64-x86_64-SDL2_ttf
+            mingw-w64-x86_64-freetype
+            mingw-w64-x86_64-openssl
+            mingw-w64-x86_64-zlib
+            mingw-w64-x86_64-pkg-config
+
+      - name: Parse version from tag
+        id: version
+        shell: bash
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          VERSION=${TAG#v}
+          BASE=${VERSION%%-*}
+          SUFFIX=${VERSION#${BASE}}
+          SUFFIX=${SUFFIX#-}
+          [ -z "$SUFFIX" ] && SUFFIX="stable"
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "suffix=${SUFFIX}" >> $GITHUB_OUTPUT
+
+      - name: Configure CMake
+        shell: msys2 {0}
+        run: |
+          cmake -G Ninja -B build \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DCMAKE_C_COMPILER=gcc \
+            -DCMAKE_CXX_COMPILER=g++ \
+            -DZEPRA_VERSION_SUFFIX="${{ steps.version.outputs.suffix }}" \
+            -DZEPRA_BUILD_CHANNEL="${{ steps.version.outputs.suffix }}"
+
+      - name: Build
+        shell: msys2 {0}
+        run: cmake --build build --parallel
+
+      - name: Package
+        shell: msys2 {0}
+        run: |
+          mkdir -p dist
+          cp build/bin/zepra_browser.exe dist/
+          cp README.md LICENSE.md dist/ 2>/dev/null || true
+          MINGW_BIN="/mingw64/bin"
+          for dll in libssl-3-x64.dll libcrypto-3-x64.dll libfreetype-6.dll \
+                     libharfbuzz-0.dll zlib1.dll libpng16-16.dll \
+                     libgcc_s_seh-1.dll libstdc++-6.dll libwinpthread-1.dll \
+                     SDL2.dll SDL2_image.dll SDL2_ttf.dll; do
+            [ -f "${MINGW_BIN}/${dll}" ] && cp "${MINGW_BIN}/${dll}" dist/
+          done
+          cd dist && 7z a ../zepra-browser-windows-x86_64-${{ steps.version.outputs.tag }}.zip .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zepra-windows-release
+          path: zepra-browser-windows-x86_64-${{ steps.version.outputs.tag }}.zip
+
+  # ============================================================================
+  # GitHub Release
+  # ============================================================================
+  release:
+    name: Publish Release
+    needs: [build-linux, build-windows]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release/
+          merge-multiple: true
+
+      - name: Read release notes
+        id: notes
+        run: |
+          if [ -f RELEASE_NOTES.md ]; then
+            echo "body<<EOF" >> $GITHUB_OUTPUT
+            cat RELEASE_NOTES.md >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "body=See [Architecture.md](./Architecture.md) for engine details." >> $GITHUB_OUTPUT
+          fi
+
+      - name: Determine pre-release flag
+        id: prerelease
+        run: |
+          SUFFIX="${{ needs.build-linux.outputs.suffix }}"
+          if [ "$SUFFIX" = "stable" ]; then
+            echo "flag=false" >> $GITHUB_OUTPUT
+          else
+            echo "flag=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          IS_PRE="${{ steps.prerelease.outputs.flag }}"
+          PRE_FLAG=""
+          [ "$IS_PRE" = "true" ] && PRE_FLAG="--prerelease"
+          
+          gh release create ${{ needs.build-linux.outputs.tag }} \
+            --title "Zepra Browser ${{ needs.build-linux.outputs.version }}" \
+            --notes "${{ steps.notes.outputs.body }}" \
+            $PRE_FLAG \
+            release/*

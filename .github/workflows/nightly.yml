@@ -1,0 +1,231 @@
+name: Nightly Build
+
+on:
+  schedule:
+    # Runs at 00:00 UTC every day
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allow manual trigger from GitHub UI
+
+concurrency:
+  group: nightly
+  cancel-in-progress: true
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  # ============================================================================
+  # Linux Build
+  # ============================================================================
+  build-linux:
+    name: Linux (x86-64, SDL)
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            build-essential cmake ninja-build \
+            libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev \
+            libfreetype-dev libx11-dev libgl-dev \
+            libssl-dev zlib1g-dev libjson-c-dev \
+            pkg-config
+
+      - name: Compute nightly version
+        id: version
+        run: |
+          DATE=$(date -u +%Y%m%d)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "tag=nightly-${DATE}" >> $GITHUB_OUTPUT
+          echo "suffix=nightly.${DATE}+${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "display=0.1.0-nightly.${DATE}+${SHORT_SHA}" >> $GITHUB_OUTPUT
+
+      - name: Configure CMake
+        run: |
+          cmake -G Ninja -B build \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DZEPRA_VERSION_SUFFIX="${{ steps.version.outputs.suffix }}" \
+            -DZEPRA_BUILD_CHANNEL="nightly"
+
+      - name: Build
+        run: cmake --build build --parallel $(nproc)
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          cp build/bin/zepra_browser dist/
+          cp README.md LICENSE.md dist/
+          tar -czf zepra-browser-linux-x86_64-${{ steps.version.outputs.tag }}.tar.gz -C dist .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zepra-linux-nightly
+          path: zepra-browser-linux-x86_64-${{ steps.version.outputs.tag }}.tar.gz
+          retention-days: 7
+
+      - name: Export version tag
+        id: export_tag
+        run: echo "nightly_tag=${{ steps.version.outputs.tag }}" >> $GITHUB_OUTPUT
+
+    outputs:
+      nightly_tag: ${{ steps.version.outputs.tag }}
+      display_version: ${{ steps.version.outputs.display }}
+
+  # ============================================================================
+  # Windows Build
+  # ============================================================================
+  build-windows:
+    name: Windows (x86-64, MinGW)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up MSYS2 + MinGW toolchain
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-SDL2
+            mingw-w64-x86_64-SDL2_image
+            mingw-w64-x86_64-SDL2_ttf
+            mingw-w64-x86_64-freetype
+            mingw-w64-x86_64-openssl
+            mingw-w64-x86_64-zlib
+            mingw-w64-x86_64-pkg-config
+
+      - name: Compute nightly version
+        id: version
+        shell: bash
+        run: |
+          DATE=$(date -u +%Y%m%d)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "tag=nightly-${DATE}" >> $GITHUB_OUTPUT
+          echo "suffix=nightly.${DATE}+${SHORT_SHA}" >> $GITHUB_OUTPUT
+
+      - name: Configure CMake
+        shell: msys2 {0}
+        run: |
+          cmake -G Ninja -B build \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DCMAKE_C_COMPILER=gcc \
+            -DCMAKE_CXX_COMPILER=g++ \
+            -DZEPRA_VERSION_SUFFIX="${{ steps.version.outputs.suffix }}" \
+            -DZEPRA_BUILD_CHANNEL="nightly"
+
+      - name: Build
+        shell: msys2 {0}
+        run: cmake --build build --parallel
+
+      - name: Package
+        shell: msys2 {0}
+        run: |
+          mkdir -p dist
+          cp build/bin/zepra_browser.exe dist/
+          cp README.md LICENSE.md dist/
+          # Copy required runtime DLLs
+          MINGW_BIN="/mingw64/bin"
+          for dll in libssl-3-x64.dll libcrypto-3-x64.dll libfreetype-6.dll \
+                     libharfbuzz-0.dll zlib1.dll libpng16-16.dll \
+                     libgcc_s_seh-1.dll libstdc++-6.dll libwinpthread-1.dll \
+                     SDL2.dll SDL2_image.dll SDL2_ttf.dll; do
+            [ -f "${MINGW_BIN}/${dll}" ] && cp "${MINGW_BIN}/${dll}" dist/
+          done
+          cd dist && 7z a ../zepra-browser-windows-x86_64-${{ steps.version.outputs.tag }}.zip .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zepra-windows-nightly
+          path: zepra-browser-windows-x86_64-${{ steps.version.outputs.tag }}.zip
+          retention-days: 7
+
+  # ============================================================================
+  # GitHub Release (Nightly Rolling Tag)
+  # ============================================================================
+  release:
+    name: Publish Nightly Release
+    needs: [build-linux, build-windows]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: zepra-linux-nightly
+          path: release/
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: zepra-windows-nightly
+          path: release/
+
+      - name: Compute release metadata
+        id: meta
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          COMMIT_MSG=$(git log -1 --format='%s')
+          echo "date=${DATE}" >> $GITHUB_OUTPUT
+          echo "sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "commit_msg=${COMMIT_MSG}" >> $GITHUB_OUTPUT
+
+      - name: Delete previous nightly release (rolling tag)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete nightly --yes 2>/dev/null || true
+          git push --delete origin nightly 2>/dev/null || true
+
+      - name: Create nightly release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create nightly \
+            --title "Nightly Build — ${{ steps.meta.outputs.date }}" \
+            --notes "## Zepra Browser — Nightly Build
+
+          **Date:** ${{ steps.meta.outputs.date }}
+          **Commit:** \`${{ steps.meta.outputs.sha }}\` — ${{ steps.meta.outputs.commit_msg }}
+          **Version:** ${{ needs.build-linux.outputs.display_version }}
+          **Channel:** nightly (rolling, may be unstable)
+
+          ### Downloads
+          | Platform | File |
+          |---|---|
+          | Linux x86-64 | \`zepra-browser-linux-x86_64-nightly-${{ steps.meta.outputs.date }}.tar.gz\` |
+          | Windows x86-64 | \`zepra-browser-windows-x86_64-nightly-${{ steps.meta.outputs.date }}.zip\` |
+
+          ### Build Info
+          - ZepraScript JS Engine with Baseline JIT
+          - WebCore layout engine
+          - NXNet networking stack (TLS via OpenSSL)
+          - NXAudio audio engine
+
+          > ⚠️ This is an automated nightly build. It is **not** intended for production use.
+          > For stable builds, see the [Releases](../../releases) page." \
+            --prerelease \
+            --target main \
+            release/*
